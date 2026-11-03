@@ -1,0 +1,372 @@
+# =====================================================================
+# FDIC Call Report semantic model  (single source of truth for Arms B and C)
+#
+#   Arm B: rendered into the prompt as a glossary (descriptions + formulas).
+#   Arm C: compiled to SQL by query_metrics(metrics, dimensions, filters, period).
+#
+# Every formula below is written against the RAW columns of raw_financials (f)
+# and raw_institutions (i), plus the governed base view defined in `base_view`.
+# Change log lives in DECISIONS.md. Bump `version` on every edit.
+# =====================================================================
+version: 0.1.0
+model: fdic_call_reports
+snapshot:
+  path: data/snapshot_2026Q2/
+  fetched: 2026-11-02
+  quarters: [2024Q3, 2024Q4, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1, 2026Q2]
+  source: FDIC BankFind API (api.fdic.gov/banks), financials + institutions endpoints
+
+# ---------------------------------------------------------------------
+# 1. Conventions: the rules every answer must follow
+# ---------------------------------------------------------------------
+conventions:
+  units:
+    rule: >
+      All dollar fields in raw_financials are in THOUSANDS of dollars.
+      Multiply by 1,000 for dollars; divide by 1,000,000 for $ billions.
+    answer_format:
+      dollars: "$ billions, 1 decimal (e.g. $171.9B); use $ trillions, 2 decimals, above $1,000B"
+      ratios: "percent, 2 decimals (e.g. 1.29%)"
+      counts: "integer"
+      growth: "percent change, 2 decimals"
+
+  periods:
+    format: "YYYYQn (e.g. 2026Q2). REPDTE is the quarter-end date as an integer YYYYMMDD."
+    available: 2024Q3 through 2026Q2 only. Any other period is out of scope.
+    full_year: "'2025' or 'full-year 2025' means the 2025Q4 year-to-date value."
+
+  year_to_date:
+    rule: >
+      Income-statement fields (INTINC, EINTEXP, NIM, NONII, NONIX, ELNATR, NETINC, NTLNLS)
+      are YEAR-TO-DATE. The 2025Q3 value of NETINC is nine months of income (Jan–Sep), not the
+      third quarter alone. Balance-sheet fields (ASSET, DEP, DEPDOM, LNLSGR, LNLSNET, EQ, NCLNLS)
+      are point-in-time balances at quarter-end.
+    default_basis: >
+      "Net income in 2025Q3" or "Q3 2025 net income" means income EARNED IN THAT QUARTER
+      (quarterly basis). Use YTD only when the question says year-to-date, and full-year
+      for "full-year" or a bare year.
+    quarterly_derivation: >
+      Quarterly flow for a bank = this quarter's YTD minus the same bank's YTD for the prior
+      quarter of the SAME calendar year. Q1 quarterly = Q1 YTD. If the bank did not file the prior
+      quarter of that year (new bank), its quarterly flow = its YTD. Quarterly flows are NOT
+      available for 2024Q3 (its 2024Q2 YTD is outside the snapshot).
+    annualization: >
+      Ratios built on income are annualized: YTD amount x (4 / quarter number).
+      Q1 x4, Q2 x2, Q3 x4/3, Q4 x1.
+
+  population:
+    rule: >
+      A bank is in the population for a quarter if it filed a call report for that quarter
+      (it has a row in raw_financials with that REPDTE). Do NOT use the ACTIVE flag to decide who
+      existed in a past quarter: ACTIVE is status as of the fetch date (Nov 2026). 342 banks in
+      this snapshot have ACTIVE = 0, including 51 that filed for 2026Q2.
+    active_banks: >
+      "Active banks" / "banks operating" in a quarter = banks that filed that quarter.
+      Use ACTIVE = 1 only for questions explicitly about status today.
+    income_reporters: >
+      17 insured U.S. branches of foreign banks (charter classes OI and NC) report balance-sheet
+      fields but leave income fields NULL in every quarter. Income-based ratios use only banks with
+      non-null NETINC in BOTH numerator and denominator. Balance-sheet totals include all filers.
+
+  unknown_bank_attributes:
+    rule: >
+      57 CERTs file call reports but have no record in raw_institutions (0.11% of industry assets
+      in 2026Q2). They are INCLUDED in industry totals. In any breakdown by a bank attribute
+      (state, region, regulator, charter, holding company, specialization, FDIC community flag)
+      they appear as 'Unknown'. Never drop them with an inner join.
+
+  attribute_timing: >
+    Bank attributes (state, regulator, holding company, charter) are as of the fetch date and are
+    applied to every quarter. Size class is the exception: it is computed from assets in each quarter.
+
+  ratio_aggregation:
+    rule: >
+      An industry or group ratio is the ratio of SUMS (aggregate), e.g. industry ROA =
+      sum of annualized net income / sum of assets. It is NOT the average of bank ratios.
+      Use the mean or median of bank-reported ratios ONLY when the question explicitly asks for
+      the average bank, typical bank, mean bank, or median bank.
+    reported_ratio_fields: >
+      ROA, ROE, NIMY, EEFFR, RBC1AAJ are each bank's own reported ratios (FDIC computes them on
+      average balances). Use them for single-bank questions and bank-distribution statistics only.
+
+  identifiers:
+    bank: "CERT is the unique bank key. Bank names are NOT unique (e.g. two 'State Bank of India' records)."
+    holding_company: "RSSDHCR is the holding-company key. Names change (one RSSDHCR has two names in this snapshot)."
+
+# ---------------------------------------------------------------------
+# 2. Ontology: entities and how they relate
+# ---------------------------------------------------------------------
+ontology:
+  entities:
+    bank:
+      key: CERT
+      description: An FDIC-insured institution that files a quarterly call report.
+    holding_company:
+      key: RSSDHCR
+      description: Top-tier parent company (Federal Reserve RSSD ID). NULL = bank has no holding company.
+    organization:
+      key: "COALESCE('HC-' || RSSDHCR, 'BANK-' || CERT)"
+      description: >
+        Holding company if the bank has one, otherwise the bank itself. Use for "largest banking
+        organizations" questions so independent banks are not lumped together.
+    regulator:
+      key: REGAGNT
+      values: {OCC: Office of the Comptroller of the Currency, FED: Federal Reserve, FDIC: FDIC, STATE: state authority (foreign-bank branches only)}
+    state:
+      key: STALP
+      description: Two-letter state or territory code of the bank's headquarters (50 states, DC, PR, VI, GU, FM).
+    region:
+      key: FDICREGN
+      description: FDIC supervisory region. Each state belongs to exactly one region (verified 1:1 in this snapshot).
+    size_class:
+      key: derived
+      description: Asset-size class of a bank IN A GIVEN QUARTER (see dimensions.size_class).
+  relationships:
+    - bank -> holding_company   (many-to-one, optional; via RSSDHCR)
+    - bank -> organization      (many-to-one; holding company else self)
+    - bank -> regulator         (many-to-one; REGAGNT)
+    - bank -> state -> region   (many-to-one; STALP, then FDICREGN)
+    - bank -> size_class        (many-to-one, per quarter; from ASSET)
+  state_to_region:
+    Atlanta: [AL, FL, GA, NC, SC, VA, WV]
+    Chicago: [IL, IN, KY, MI, OH, WI]
+    Dallas: [AR, CO, LA, MS, NM, OK, TN, TX]
+    Kansas City: [IA, KS, MN, MO, ND, NE, SD]
+    New York: [CT, DC, DE, MA, MD, ME, NH, NJ, NY, PA, PR, RI, VI, VT]
+    San Francisco: [AK, AZ, CA, FM, GU, HI, ID, MT, NV, OR, UT, WA, WY]
+
+# ---------------------------------------------------------------------
+# 3. Governed base view (one row per bank per quarter). Arm C compiles against this.
+# ---------------------------------------------------------------------
+base_view:
+  name: bank_quarter
+  sql: |
+    WITH hc AS (            -- one canonical name per holding company (prefer active banks, then A-Z)
+      SELECT RSSDHCR,
+             COALESCE(MAX(NAMEHCR) FILTER (WHERE ACTIVE = 1), MAX(NAMEHCR)) AS hc_name
+      FROM raw_institutions WHERE RSSDHCR IS NOT NULL GROUP BY 1
+    ),
+    f AS (
+      SELECT *,
+        REPDTE // 10000                     AS year,
+        ((REPDTE // 100) % 100) // 3        AS qtr,
+        CAST(REPDTE // 10000 AS VARCHAR) || 'Q' || CAST(((REPDTE // 100) % 100) // 3 AS VARCHAR) AS period,
+        4.0 / (((REPDTE // 100) % 100) // 3) AS annualize_factor
+      FROM raw_financials
+    )
+    SELECT
+      f.*,
+      i.NAME, i.CITY, i.STALP, i.STNAME, i.BKCLASS, i.ACTIVE, i.ESTYMD,
+      i.RSSDHCR, i.REGAGNT, i.CHRTAGNT, i.SPECGRPN, i.CB, i.FDICREGN,
+      (i.CERT IS NOT NULL)                  AS has_bank_record,
+      hc.hc_name,
+      -- quarterly (de-cumulated) flows; NULL for 2024Q3
+      CASE WHEN f.REPDTE = 20240930 THEN NULL
+           ELSE f.NETINC - COALESCE(LAG(f.NETINC) OVER w, 0) END AS NETINC_Q,
+      CASE WHEN f.REPDTE = 20240930 THEN NULL
+           ELSE f.NIM    - COALESCE(LAG(f.NIM)    OVER w, 0) END AS NIM_Q,
+      CASE WHEN f.REPDTE = 20240930 THEN NULL
+           ELSE f.NONII  - COALESCE(LAG(f.NONII)  OVER w, 0) END AS NONII_Q,
+      CASE WHEN f.REPDTE = 20240930 THEN NULL
+           ELSE f.NONIX  - COALESCE(LAG(f.NONIX)  OVER w, 0) END AS NONIX_Q,
+      CASE WHEN f.REPDTE = 20240930 THEN NULL
+           ELSE f.ELNATR - COALESCE(LAG(f.ELNATR) OVER w, 0) END AS ELNATR_Q,
+      CASE WHEN f.REPDTE = 20240930 THEN NULL
+           ELSE f.NTLNLS - COALESCE(LAG(f.NTLNLS) OVER w, 0) END AS NTLNLS_Q
+    FROM f
+    LEFT JOIN raw_institutions i USING (CERT)
+    LEFT JOIN hc ON hc.RSSDHCR = i.RSSDHCR
+    WINDOW w AS (PARTITION BY f.CERT, f.year ORDER BY f.REPDTE)
+
+# ---------------------------------------------------------------------
+# 4. Dimensions (group-by and filter attributes)
+# ---------------------------------------------------------------------
+dimensions:
+  period:          {sql: period, description: "Quarter, YYYYQn"}
+  year:            {sql: year}
+  bank:            {sql: "CERT", label_sql: "COALESCE(NAME, 'Unknown (CERT ' || CERT || ')')", description: "Single bank; key is CERT"}
+  bank_name:       {sql: "COALESCE(NAME, 'Unknown')", description: "Display only. Not unique; filter by CERT"}
+  state:           {sql: "COALESCE(STALP, 'Unknown')"}
+  state_name:      {sql: "COALESCE(STNAME, 'Unknown')"}
+  region:          {sql: "COALESCE(FDICREGN, 'Unknown')", description: "FDIC supervisory region (6 regions)"}
+  regulator:       {sql: "COALESCE(REGAGNT, 'Unknown')", description: "Primary federal regulator: OCC, FED, FDIC (STATE for 5 foreign-bank branches)"}
+  charter_class:   {sql: "COALESCE(BKCLASS, 'Unknown')", description: "FDIC charter class code: N, SM, NM, SB, SI, SL, OI, NC"}
+  charter_type:
+    sql: |
+      CASE WHEN BKCLASS IN ('N','SM','NM') THEN 'Commercial bank'
+           WHEN BKCLASS IN ('SB','SI','SL') THEN 'Savings institution'
+           WHEN BKCLASS IN ('OI','NC')      THEN 'U.S. branch of foreign bank'
+           ELSE 'Unknown' END
+  charter_agency:  {sql: "COALESCE(CHRTAGNT, 'Unknown')", description: "Who granted the charter: OCC (national/federal) or STATE"}
+  specialization:  {sql: "COALESCE(SPECGRPN, 'Unknown')", description: "FDIC asset-concentration peer group"}
+  fdic_community_bank:
+    sql: "CASE CB WHEN 1 THEN 'Community bank' WHEN 0 THEN 'Non-community bank' ELSE 'Unknown' END"
+    description: >
+      FDIC's own community-bank designation (CB flag). Based on FDIC criteria, not just size;
+      some designated community banks exceed $10B. This is what "community bank" means.
+  size_class:
+    sql: |
+      CASE WHEN ASSET < 10000000  THEN 'Under $10B'
+           WHEN ASSET < 100000000 THEN '$10B-$100B'
+           ELSE '$100B and over' END
+    description: >
+      Asset-size class using total assets IN THAT QUARTER (thresholds in $ thousands:
+      10,000,000 = $10B; 100,000,000 = $100B). For growth comparisons across quarters, classify
+      banks by the LATER quarter's assets.
+  holding_company:
+    sql: "COALESCE(hc_name, CASE WHEN has_bank_record THEN 'No holding company' ELSE 'Unknown' END)"
+    key_sql: "RSSDHCR"
+    description: "Group by RSSDHCR; display canonical name"
+  organization:
+    sql: "COALESCE(hc_name, NAME, 'Unknown (CERT ' || CERT || ')')"
+    key_sql: "COALESCE('HC-' || CAST(RSSDHCR AS VARCHAR), 'BANK-' || CAST(CERT AS VARCHAR))"
+    description: "Holding company if any, else the bank itself"
+  active_today:    {sql: "CASE ACTIVE WHEN 1 THEN 'Active' WHEN 0 THEN 'Inactive' ELSE 'Unknown' END", description: "Status as of Nov 2026. Not for past-population questions"}
+
+# ---------------------------------------------------------------------
+# 5. Base measures (raw fields, additive across banks)
+# ---------------------------------------------------------------------
+measures:
+  # balance sheet: point-in-time, $ thousands
+  total_assets:          {sql: ASSET,  kind: stock, unit: usd_thousands}
+  total_deposits:        {sql: DEP,    kind: stock, unit: usd_thousands}
+  domestic_deposits:     {sql: DEPDOM, kind: stock, unit: usd_thousands}
+  gross_loans:           {sql: LNLSGR, kind: stock, unit: usd_thousands, description: "Total loans and leases, gross"}
+  net_loans:             {sql: LNLSNET, kind: stock, unit: usd_thousands, description: "Loans net of unearned income and loss allowance"}
+  total_equity:          {sql: EQ,     kind: stock, unit: usd_thousands}
+  noncurrent_loans:      {sql: NCLNLS, kind: stock, unit: usd_thousands, description: "Loans 90+ days past due or nonaccrual"}
+  # income statement: year-to-date flows, $ thousands
+  interest_income:       {sql: INTINC,  kind: ytd_flow, unit: usd_thousands}
+  interest_expense:      {sql: EINTEXP, kind: ytd_flow, unit: usd_thousands}
+  net_interest_income:   {sql: NIM,     kind: ytd_flow, unit: usd_thousands, quarterly_sql: NIM_Q, description: "DOLLARS. The FDIC field named NIM is net interest income, not a margin"}
+  noninterest_income:    {sql: NONII,   kind: ytd_flow, unit: usd_thousands, quarterly_sql: NONII_Q}
+  noninterest_expense:   {sql: NONIX,   kind: ytd_flow, unit: usd_thousands, quarterly_sql: NONIX_Q}
+  provision_for_credit_losses: {sql: ELNATR, kind: ytd_flow, unit: usd_thousands, quarterly_sql: ELNATR_Q}
+  net_income:            {sql: NETINC,  kind: ytd_flow, unit: usd_thousands, quarterly_sql: NETINC_Q}
+  net_charge_offs:       {sql: NTLNLS,  kind: ytd_flow, unit: usd_thousands, quarterly_sql: NTLNLS_Q}
+
+# ---------------------------------------------------------------------
+# 6. Metrics (what users ask for). Arm C exposes ONLY these names.
+# ---------------------------------------------------------------------
+metrics:
+  bank_count:
+    type: count
+    sql: "COUNT(DISTINCT CERT)"
+    description: "Number of banks that filed in the period"
+
+  # ---- dollar totals ----
+  total_assets:         {type: sum, measure: total_assets}
+  total_deposits:       {type: sum, measure: total_deposits}
+  domestic_deposits:    {type: sum, measure: domestic_deposits}
+  gross_loans:          {type: sum, measure: gross_loans}
+  total_equity:         {type: sum, measure: total_equity}
+  noncurrent_loans:     {type: sum, measure: noncurrent_loans}
+  net_income:
+    type: sum
+    measure: net_income
+    bases: [quarterly, ytd]       # default: quarterly (see conventions.year_to_date)
+  net_interest_income:  {type: sum, measure: net_interest_income, bases: [quarterly, ytd]}
+  noninterest_income:   {type: sum, measure: noninterest_income, bases: [quarterly, ytd]}
+  noninterest_expense:  {type: sum, measure: noninterest_expense, bases: [quarterly, ytd]}
+  provision_for_credit_losses: {type: sum, measure: provision_for_credit_losses, bases: [quarterly, ytd]}
+  net_charge_offs:      {type: sum, measure: net_charge_offs, bases: [quarterly, ytd]}
+
+  # ---- aggregate ratios (ratio of sums, percent) ----
+  return_on_assets:
+    type: ratio
+    numerator:   "SUM(NETINC * annualize_factor)"
+    denominator: "SUM(CASE WHEN NETINC IS NOT NULL THEN ASSET END)"
+    scale: 100
+    description: >
+      Annualized YTD net income / quarter-end total assets, income reporters only.
+      Simplification: FDIC's published ROA uses average assets, so this runs a few
+      basis points off FDIC's own figures. That difference is by design.
+  return_on_equity:
+    type: ratio
+    numerator:   "SUM(NETINC * annualize_factor)"
+    denominator: "SUM(CASE WHEN NETINC IS NOT NULL THEN EQ END)"
+    scale: 100
+  efficiency_ratio:
+    type: ratio
+    numerator:   "SUM(NONIX)"
+    denominator: "SUM(NIM + NONII)"
+    scale: 100
+    description: "Noninterest expense / (net interest income + noninterest income), YTD. Lower is better"
+  noncurrent_loan_rate:
+    type: ratio
+    numerator:   "SUM(NCLNLS)"
+    denominator: "SUM(LNLSGR)"
+    scale: 100
+  net_charge_off_rate:
+    type: ratio
+    numerator:   "SUM(NTLNLS * annualize_factor)"
+    denominator: "SUM(CASE WHEN NTLNLS IS NOT NULL THEN LNLSGR END)"
+    scale: 100
+    description: "Annualized YTD net charge-offs / quarter-end gross loans (FDIC uses average loans)"
+  loan_to_deposit_ratio:
+    type: ratio
+    numerator:   "SUM(LNLSGR)"
+    denominator: "SUM(DEP)"
+    scale: 100
+  equity_to_assets:
+    type: ratio
+    numerator:   "SUM(EQ)"
+    denominator: "SUM(CASE WHEN EQ IS NOT NULL THEN ASSET END)"
+    scale: 100
+
+  # ---- share metrics ----
+  share_of_industry_assets:
+    type: share
+    numerator:   "SUM(ASSET)"
+    denominator: "SUM(SUM(ASSET)) OVER (PARTITION BY period)"
+    scale: 100
+    description: "Group's assets as a percent of all filers' assets in the same quarter (incl. Unknown)"
+
+  # ---- bank-distribution statistics (only when explicitly asked) ----
+  mean_bank_roa:       {type: bank_stat, stat: mean,   field: ROA,   description: "Simple average of banks' reported ROA. Use only for 'average/typical bank' questions"}
+  median_bank_roa:     {type: bank_stat, stat: median, field: ROA}
+  median_bank_efficiency_ratio: {type: bank_stat, stat: median, field: EEFFR, description: "Median, not mean: EEFFR has extreme outliers (-700 to 9,841)"}
+  median_bank_leverage_ratio:   {type: bank_stat, stat: median, field: RBC1AAJ}
+  median_bank_nim:     {type: bank_stat, stat: median, field: NIMY, description: "Net interest margin (%), bank-reported"}
+
+  # ---- single-bank reported ratios (with a bank filter) ----
+  reported_roa:            {type: bank_field, field: ROA,     requires: single_bank}
+  reported_roe:            {type: bank_field, field: ROE,     requires: single_bank}
+  reported_nim:            {type: bank_field, field: NIMY,    requires: single_bank}
+  reported_efficiency_ratio: {type: bank_field, field: EEFFR, requires: single_bank}
+  reported_leverage_ratio: {type: bank_field, field: RBC1AAJ, requires: single_bank}
+
+# ---------------------------------------------------------------------
+# 7. Comparisons (period-over-period)
+# ---------------------------------------------------------------------
+comparisons:
+  prior_quarter:   "Same metric, previous quarter"
+  prior_year:      "Same metric, same quarter one year earlier (e.g. 2026Q2 vs 2025Q2)"
+  rule: >
+    Growth = (current - comparison) / comparison x 100. Each period uses its own population
+    (all banks filing that quarter), so industry growth includes the effect of banks entering
+    and exiting. Flow metrics compare like bases: quarterly to quarterly, YTD to YTD.
+    Ratios compare as a change in percentage points, not percent growth.
+
+# ---------------------------------------------------------------------
+# 8. Out of scope: Arm C must decline these; not answerable from this data
+# ---------------------------------------------------------------------
+out_of_scope:
+  - "Any period outside 2024Q3–2026Q2, and any forecast or projection"
+  - "Credit unions, nonbank lenders, or any non-FDIC-insured institution"
+  - "Branch counts, branch locations, or deposits by county/city (Summary of Deposits data, not loaded)"
+  - "Loan breakdowns by type (CRE, residential mortgage, credit card, C&I); only total loans are loaded"
+  - "Industry net interest margin as an aggregate (requires average earning assets, not loaded). Bank-reported NIM and its median are available"
+  - "Stock prices, market capitalization, credit ratings, CAMELS ratings, or enforcement actions"
+  - "Number of customers, accounts, or employees"
+  - "Why a metric moved (causal explanations), or opinions on which bank is best"
+
+# ---------------------------------------------------------------------
+# 9. Known data facts (for the glossary and the article; verified 2026-11-02)
+# ---------------------------------------------------------------------
+data_facts:
+  banks_filing:      {2024Q3: 4589, 2024Q4: 4560, 2025Q1: 4536, 2025Q2: 4494, 2025Q3: 4452, 2025Q4: 4411, 2026Q1: 4353, 2026Q2: 4313}
+  missing_bank_records: "57 CERTs (56 in 2026Q2; $30.3B; 0.11% of assets; largest $11.0B)"
+  null_income_filers: "17 per quarter, all U.S. branches of foreign banks (classes OI/NC)"
+  holding_company_renamed: "RSSDHCR 2333663 appears as both BERKSHIRE HILLS BCORP INC and BEACON FINANCIAL CORP"
+  duplicate_bank_names: "e.g. State Bank of India appears under two CERTs"

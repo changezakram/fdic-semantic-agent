@@ -1,0 +1,6 @@
+.venv/
+fdic.duckdb
+*.csv
+!data/snapshot_*/*.csv
+.env
+.DS_Store
