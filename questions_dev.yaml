@@ -1,0 +1,294 @@
+# Dev question set: tune prompts and code against THIS set only.
+# Answer SQL is written against the RAW tables (raw_financials f, raw_institutions i),
+# independently of semantic_model.yaml, so the key does not grade the semantic layer
+# against itself. build_answer_key.py runs every query and writes answer_key_dev.json.
+#
+# Answer types and grading tolerance:
+#   dollars_bn / dollars_tn : relative error <= 0.5%
+#   ratio_pct               : absolute error <= 0.02 percentage points
+#   growth_pct              : absolute error <= 0.05 percentage points
+#   pp_change               : absolute error <= 0.02 percentage points
+#   count                   : exact
+#   label                   : exact match, case-insensitive
+#   list                    : same set of entities (order ignored), matched by aliases
+#   decline                 : the agent must say it cannot answer from this data
+version: 1
+semantic_model_version: 0.1.0
+questions:
+
+# ---------------- Year-to-date income ----------------
+- id: D01
+  category: ytd
+  question: "What was total net income for all FDIC-insured banks in the third quarter of 2025?"
+  trap: "NETINC is year-to-date; the 2025Q3 value is nine months. Answer is Q3 alone."
+  type: dollars_bn
+  sql: |
+    SELECT SUM(c.NETINC - COALESCE(p.NETINC, 0)) / 1e6
+    FROM raw_financials c
+    LEFT JOIN raw_financials p ON p.CERT = c.CERT AND p.REPDTE = 20250630
+    WHERE c.REPDTE = 20250930
+
+- id: D02
+  category: ytd
+  question: "What was the banking industry's year-to-date net income through the second quarter of 2026?"
+  trap: "Here YTD is the right answer; checks the agent does not over-correct."
+  type: dollars_bn
+  sql: "SELECT SUM(NETINC) / 1e6 FROM raw_financials WHERE REPDTE = 20260630"
+
+- id: D03
+  category: ytd
+  question: "How much did FDIC-insured banks earn in total in full-year 2025?"
+  trap: "Full year = the Q4 YTD value; summing four YTD values overstates it."
+  type: dollars_bn
+  sql: "SELECT SUM(NETINC) / 1e6 FROM raw_financials WHERE REPDTE = 20251231"
+
+- id: D04
+  category: ytd
+  question: "Which quarter of 2025 had the highest industry net income?"
+  trap: "On raw YTD values Q4 always looks highest; on quarterly income it is Q3."
+  type: label
+  sql: |
+    WITH x AS (
+      SELECT REPDTE,
+             NETINC - COALESCE(LAG(NETINC) OVER (PARTITION BY CERT, REPDTE // 10000 ORDER BY REPDTE), 0) AS ni_q
+      FROM raw_financials)
+    SELECT CAST(REPDTE // 10000 AS VARCHAR) || 'Q' || CAST(((REPDTE // 100) % 100) // 3 AS VARCHAR)
+    FROM x WHERE REPDTE BETWEEN 20250101 AND 20251231
+    GROUP BY REPDTE ORDER BY SUM(ni_q) DESC LIMIT 1
+
+- id: D05
+  category: ytd
+  question: "How much net interest income did JPMorgan Chase Bank (FDIC cert 628) earn in the second quarter of 2026?"
+  trap: "YTD de-cumulation for one bank, plus NIM is a dollar field, not a margin."
+  type: dollars_bn
+  sql: |
+    SELECT (MAX(NIM) FILTER (WHERE REPDTE = 20260630) - MAX(NIM) FILTER (WHERE REPDTE = 20260331)) / 1e6
+    FROM raw_financials WHERE CERT = 628
+
+# ---------------- Units ----------------
+- id: D06
+  category: units
+  question: "What were total deposits at FDIC-insured banks at the end of the second quarter of 2026, in trillions of dollars?"
+  trap: "Amounts are in $ thousands."
+  type: dollars_tn
+  sql: "SELECT SUM(DEP) / 1e9 FROM raw_financials WHERE REPDTE = 20260630"
+
+- id: D07
+  category: units
+  question: "How many banks had total assets of at least $100 billion at the end of the second quarter of 2026?"
+  trap: "Threshold must be 100,000,000 in $ thousands; using 100e9 returns zero."
+  type: count
+  sql: "SELECT COUNT(*) FROM raw_financials WHERE REPDTE = 20260630 AND ASSET >= 100000000"
+
+# ---------------- Ratios ----------------
+- id: D08
+  category: ratio
+  question: "What was the banking industry's return on assets for the second quarter of 2026?"
+  trap: "Aggregate (sum/sum, annualized YTD), not AVG(ROA); exclude null-income filers from the denominator."
+  type: ratio_pct
+  sql: |
+    SELECT SUM(NETINC * 2) / SUM(CASE WHEN NETINC IS NOT NULL THEN ASSET END) * 100
+    FROM raw_financials WHERE REPDTE = 20260630
+
+- id: D09
+  category: ratio
+  question: "What was the banking industry's efficiency ratio for full-year 2025?"
+  trap: "Aggregate ratio; AVG(EEFFR) is distorted by outliers."
+  type: ratio_pct
+  sql: "SELECT SUM(NONIX) / SUM(NIM + NONII) * 100 FROM raw_financials WHERE REPDTE = 20251231"
+
+- id: D10
+  category: ratio
+  question: "What was the median return on assets across individual banks in the second quarter of 2026?"
+  trap: "Here the bank-level statistic IS the question; checks the agent can switch."
+  type: ratio_pct
+  sql: "SELECT MEDIAN(ROA) FROM raw_financials WHERE REPDTE = 20260630"
+
+- id: D11
+  category: ratio
+  question: "What was the noncurrent loan rate for banks with at least $100 billion in assets at the end of the second quarter of 2026?"
+  trap: "Units in the size filter, and aggregate ratio within the group."
+  type: ratio_pct
+  sql: |
+    SELECT SUM(NCLNLS) / SUM(LNLSGR) * 100
+    FROM raw_financials WHERE REPDTE = 20260630 AND ASSET >= 100000000
+
+- id: D12
+  category: ratio
+  question: "What was the banking industry's return on equity for full-year 2025?"
+  trap: "Aggregate; Q4 YTD needs no annualization."
+  type: ratio_pct
+  sql: |
+    SELECT SUM(NETINC) / SUM(CASE WHEN NETINC IS NOT NULL THEN EQ END) * 100
+    FROM raw_financials WHERE REPDTE = 20251231
+
+# ---------------- Growth ----------------
+- id: D13
+  category: growth
+  question: "By what percentage did total industry deposits grow from the second quarter of 2025 to the second quarter of 2026?"
+  trap: "Join across quarters; each quarter's own population."
+  type: growth_pct
+  sql: |
+    SELECT (SUM(DEP) FILTER (WHERE REPDTE = 20260630) / SUM(DEP) FILTER (WHERE REPDTE = 20250630) - 1) * 100
+    FROM raw_financials
+
+- id: D14
+  category: growth
+  question: "How much did industry return on assets change from the second quarter of 2025 to the second quarter of 2026, in percentage points?"
+  trap: "Change in a ratio is percentage points, not percent growth; both periods annualized."
+  type: pp_change
+  sql: |
+    WITH r AS (
+      SELECT REPDTE, SUM(NETINC * 2) / SUM(CASE WHEN NETINC IS NOT NULL THEN ASSET END) * 100 AS roa
+      FROM raw_financials WHERE REPDTE IN (20250630, 20260630) GROUP BY 1)
+    SELECT MAX(roa) FILTER (WHERE REPDTE = 20260630) - MAX(roa) FILTER (WHERE REPDTE = 20250630) FROM r
+
+- id: D15
+  category: growth
+  question: "By what percentage did industry net income in the second quarter of 2026 exceed net income in the second quarter of 2025?"
+  trap: "Quarterly basis on both sides; comparing YTD values gives a different number."
+  type: growth_pct
+  sql: |
+    WITH x AS (
+      SELECT REPDTE,
+             NETINC - COALESCE(LAG(NETINC) OVER (PARTITION BY CERT, REPDTE // 10000 ORDER BY REPDTE), 0) AS ni_q
+      FROM raw_financials)
+    SELECT (SUM(ni_q) FILTER (WHERE REPDTE = 20260630) / SUM(ni_q) FILTER (WHERE REPDTE = 20250630) - 1) * 100
+    FROM x
+
+- id: D16
+  category: growth
+  question: "How many fewer banks filed call reports in the second quarter of 2026 than in the third quarter of 2024?"
+  trap: "Population = filers, not the ACTIVE flag."
+  type: count
+  sql: |
+    SELECT COUNT(*) FILTER (WHERE REPDTE = 20240930) - COUNT(*) FILTER (WHERE REPDTE = 20260630)
+    FROM raw_financials
+
+# ---------------- Population filters ----------------
+- id: D17
+  category: population
+  question: "How many banks were operating at the end of 2024?"
+  trap: "Filtering ACTIVE = 1 drops banks that have since merged away."
+  type: count
+  sql: "SELECT COUNT(*) FROM raw_financials WHERE REPDTE = 20241231"
+
+- id: D18
+  category: population
+  question: "How many community banks filed call reports in the second quarter of 2026?"
+  trap: "Community bank = FDIC designation (CB = 1), not 'under $10B'."
+  type: count
+  sql: |
+    SELECT COUNT(*) FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630 AND i.CB = 1
+
+- id: D19
+  category: population
+  question: "What was return on assets for banks with less than $10 billion in assets in the second quarter of 2026?"
+  trap: "Size filter in $ thousands, annualization, aggregate ratio."
+  type: ratio_pct
+  sql: |
+    SELECT SUM(NETINC * 2) / SUM(CASE WHEN NETINC IS NOT NULL THEN ASSET END) * 100
+    FROM raw_financials WHERE REPDTE = 20260630 AND ASSET < 10000000
+
+- id: D20
+  category: population
+  question: "Of the banks that filed a call report for the fourth quarter of 2025, how many are no longer active today?"
+  trap: "Correct use of ACTIVE: status today, applied to a past population."
+  type: count
+  sql: |
+    SELECT COUNT(*) FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20251231 AND i.ACTIVE = 0
+
+# ---------------- Ontology ----------------
+- id: D21
+  category: ontology
+  question: "What were the combined total assets of all banks owned by Wintrust Financial Corp at the end of the second quarter of 2026?"
+  trap: "Holding-company roll-up across 16 bank charters."
+  type: dollars_bn
+  sql: |
+    SELECT SUM(f.ASSET) / 1e6 FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630 AND i.RSSDHCR = 2260406
+
+- id: D22
+  category: ontology
+  question: "Which FDIC supervisory region had the most bank assets at the end of the second quarter of 2026?"
+  trap: "Region via state; assets follow the charter's headquarters state (JPMorgan Chase Bank is in Ohio)."
+  type: label
+  sql: |
+    SELECT i.FDICREGN FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630 GROUP BY 1 ORDER BY SUM(f.ASSET) DESC LIMIT 1
+
+- id: D23
+  category: ontology
+  question: "What were the total assets of banks whose primary federal regulator is the OCC, at the end of the second quarter of 2026?"
+  trap: "Regulator relationship (REGAGNT), units."
+  type: dollars_tn
+  sql: |
+    SELECT SUM(f.ASSET) / 1e9 FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630 AND i.REGAGNT = 'OCC'
+
+- id: D24
+  category: ontology
+  question: "What were the total assets of banks headquartered in Texas at the end of the second quarter of 2026?"
+  trap: "State relationship, units."
+  type: dollars_bn
+  sql: |
+    SELECT SUM(f.ASSET) / 1e6 FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630 AND i.STALP = 'TX'
+
+- id: D25
+  category: ontology
+  question: "List the seven largest banking organizations by total assets at the end of the second quarter of 2026."
+  trap: "Rank organizations (holding company, else bank), not individual charters. By charter, Capital One is #7; by organization, Morgan Stanley's two charters put it at #7."
+  type: list
+  sql: |
+    SELECT COALESCE(i.NAMEHCR, i.NAME) AS org
+    FROM raw_financials f LEFT JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630
+    GROUP BY COALESCE('HC' || CAST(i.RSSDHCR AS VARCHAR), 'B' || CAST(f.CERT AS VARCHAR)), 1
+    ORDER BY SUM(f.ASSET) DESC LIMIT 7
+  aliases:
+    "JPMORGAN CHASE&CO": [jpmorgan, "jp morgan", chase]
+    "BANK OF AMERICA CORP": ["bank of america", bofa]
+    "CITIGROUP INC": [citigroup, citi]
+    "WELLS FARGO&COMPANY": ["wells fargo"]
+    "GOLDMAN SACHS GROUP INC THE": [goldman]
+    "U S BCORP": ["u.s. bancorp", "us bancorp", "u s bcorp", "u.s. bank"]
+    "MORGAN STANLEY": ["morgan stanley"]
+
+# ---------------- Out of scope ----------------
+- id: D26
+  category: out_of_scope
+  subtype: data_absent
+  question: "How many branches does Bank of America operate?"
+  type: decline
+  reason: "Branch data (Summary of Deposits) is not loaded."
+
+- id: D27
+  category: out_of_scope
+  subtype: data_absent
+  question: "What will total industry net income be for the fourth quarter of 2026?"
+  type: decline
+  reason: "Forecast; data ends at 2026Q2."
+
+- id: D28
+  category: out_of_scope
+  subtype: data_absent
+  question: "How much commercial real estate lending did banks hold at the end of the second quarter of 2026?"
+  type: decline
+  reason: "Only total loans are loaded; no loan-type breakdown."
+
+- id: D29
+  category: out_of_scope
+  subtype: governed_decline
+  question: "What was the banking industry's net interest margin in the second quarter of 2026?"
+  type: decline
+  reason: "Aggregate NIM needs average earning assets, not loaded. Averaging bank NIMY is not the industry margin."
+
+- id: D30
+  category: out_of_scope
+  subtype: data_absent
+  question: "What were the total assets of U.S. credit unions at the end of the second quarter of 2026?"
+  type: decline
+  reason: "Credit unions are not FDIC-insured and are not in this data."

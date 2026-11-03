@@ -1,0 +1,125 @@
+{
+  "set": "heldout",
+  "questions_file": "questions_heldout.yaml",
+  "questions_sha256": "967a5e19ff85ee7b8e6e54f5c53f785b6894ca5efd357b664a6c3bfb748f7cd1",
+  "snapshot": "data/snapshot_2026Q2",
+  "answers": [
+    {
+      "id": "H01",
+      "category": "ytd",
+      "type": "dollars_bn",
+      "expected": 70.509,
+      "tolerance": {
+        "relative": 0.005
+      },
+      "display": 70.5
+    },
+    {
+      "id": "H02",
+      "category": "ytd",
+      "type": "dollars_bn",
+      "expected": 270.34,
+      "tolerance": {
+        "relative": 0.005
+      },
+      "display": 270.3
+    },
+    {
+      "id": "H03",
+      "category": "units",
+      "type": "dollars_tn",
+      "expected": 13.60354,
+      "tolerance": {
+        "relative": 0.005
+      },
+      "display": 13.604
+    },
+    {
+      "id": "H04",
+      "category": "ratio",
+      "type": "ratio_pct",
+      "expected": 1.1782,
+      "tolerance": {
+        "absolute": 0.02
+      },
+      "display": 1.18
+    },
+    {
+      "id": "H05",
+      "category": "ratio",
+      "type": "ratio_pct",
+      "expected": 1.3667,
+      "tolerance": {
+        "absolute": 0.02
+      },
+      "display": 1.37
+    },
+    {
+      "id": "H06",
+      "category": "growth",
+      "type": "growth_pct",
+      "expected": 4.8363,
+      "tolerance": {
+        "absolute": 0.05
+      },
+      "display": 4.84
+    },
+    {
+      "id": "H07",
+      "category": "population",
+      "type": "count",
+      "expected": 4536,
+      "tolerance": {
+        "exact": true
+      }
+    },
+    {
+      "id": "H08",
+      "category": "ontology",
+      "type": "dollars_tn",
+      "expected": 2.33793,
+      "tolerance": {
+        "relative": 0.005
+      },
+      "display": 2.338
+    },
+    {
+      "id": "H09",
+      "category": "ontology",
+      "type": "dollars_bn",
+      "expected": 457.359,
+      "tolerance": {
+        "relative": 0.005
+      },
+      "display": 457.4
+    },
+    {
+      "id": "H10",
+      "category": "population",
+      "type": "ratio_pct",
+      "expected": 56.0162,
+      "tolerance": {
+        "absolute": 0.02
+      },
+      "display": 56.02
+    },
+    {
+      "id": "H11",
+      "category": "out_of_scope",
+      "type": "decline",
+      "expected": null,
+      "tolerance": {
+        "must_decline": true
+      }
+    },
+    {
+      "id": "H12",
+      "category": "out_of_scope",
+      "type": "decline",
+      "expected": null,
+      "tolerance": {
+        "must_decline": true
+      }
+    }
+  ]
+}

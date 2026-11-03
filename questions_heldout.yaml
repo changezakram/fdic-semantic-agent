@@ -1,0 +1,96 @@
+# HELD-OUT question set. LOCKED: do not run, read answers from, or tune against this set
+# until the final run. Its SHA-256 fingerprint is recorded in DECISIONS.md; any edit
+# changes the fingerprint and invalidates it as a held-out set.
+# Same answer types, tolerances and SQL conventions as questions_dev.yaml.
+version: 1
+semantic_model_version: 0.1.0
+questions:
+
+- id: H01
+  category: ytd
+  question: "What was total net income for FDIC-insured banks in the second quarter of 2025?"
+  type: dollars_bn
+  sql: |
+    SELECT SUM(c.NETINC - COALESCE(p.NETINC, 0)) / 1e6
+    FROM raw_financials c
+    LEFT JOIN raw_financials p ON p.CERT = c.CERT AND p.REPDTE = 20250331
+    WHERE c.REPDTE = 20250630
+
+- id: H02
+  category: ytd
+  question: "What was the banking industry's total net income for 2024?"
+  type: dollars_bn
+  sql: "SELECT SUM(NETINC) / 1e6 FROM raw_financials WHERE REPDTE = 20241231"
+
+- id: H03
+  category: units
+  question: "What were total gross loans at FDIC-insured banks at the end of 2025, in trillions of dollars?"
+  type: dollars_tn
+  sql: "SELECT SUM(LNLSGR) / 1e9 FROM raw_financials WHERE REPDTE = 20251231"
+
+- id: H04
+  category: ratio
+  question: "What was the banking industry's return on assets for 2025?"
+  type: ratio_pct
+  sql: |
+    SELECT SUM(NETINC) / SUM(CASE WHEN NETINC IS NOT NULL THEN ASSET END) * 100
+    FROM raw_financials WHERE REPDTE = 20251231
+
+- id: H05
+  category: ratio
+  question: "What was the average return on assets of an individual bank in 2025?"
+  type: ratio_pct
+  sql: "SELECT AVG(ROA) FROM raw_financials WHERE REPDTE = 20251231"
+
+- id: H06
+  category: growth
+  question: "By what percentage did total industry assets grow from the end of 2024 to the end of 2025?"
+  type: growth_pct
+  sql: |
+    SELECT (SUM(ASSET) FILTER (WHERE REPDTE = 20251231) / SUM(ASSET) FILTER (WHERE REPDTE = 20241231) - 1) * 100
+    FROM raw_financials
+
+- id: H07
+  category: population
+  question: "How many banks were operating at the end of the first quarter of 2025?"
+  type: count
+  sql: "SELECT COUNT(*) FROM raw_financials WHERE REPDTE = 20250331"
+
+- id: H08
+  category: ontology
+  question: "What were the total assets of banks in the FDIC's San Francisco region at the end of 2025?"
+  type: dollars_tn
+  sql: |
+    SELECT SUM(f.ASSET) / 1e9 FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20251231 AND i.FDICREGN = 'San Francisco'
+
+- id: H09
+  category: ontology
+  question: "What were the combined total assets of all banks owned by Bank of New York Mellon Corp at the end of the second quarter of 2026?"
+  type: dollars_bn
+  sql: |
+    SELECT SUM(f.ASSET) / 1e6 FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630 AND i.RSSDHCR = (
+      SELECT RSSDHCR FROM raw_institutions WHERE NAMEHCR = 'BANK OF NY MELLON CORP THE' LIMIT 1)
+
+- id: H10
+  category: population
+  question: "What was the efficiency ratio for banks with $10 billion to $100 billion in assets in the first quarter of 2026?"
+  type: ratio_pct
+  sql: |
+    SELECT SUM(NONIX) / SUM(NIM + NONII) * 100
+    FROM raw_financials WHERE REPDTE = 20260331 AND ASSET >= 10000000 AND ASSET < 100000000
+
+- id: H11
+  category: out_of_scope
+  subtype: data_absent
+  question: "What is JPMorgan Chase's current stock price?"
+  type: decline
+  reason: "Market data is not loaded."
+
+- id: H12
+  category: out_of_scope
+  subtype: data_absent
+  question: "What were total industry deposits at the end of 2023?"
+  type: decline
+  reason: "Period outside 2024Q3–2026Q2."
