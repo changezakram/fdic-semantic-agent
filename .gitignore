@@ -5,3 +5,4 @@ fdic.duckdb
 .env
 .DS_Store
 __pycache__/
+.streamlit/secrets.toml
