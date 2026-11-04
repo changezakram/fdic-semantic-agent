@@ -1,0 +1,766 @@
+Run: 20261103_224556_final-heldout
+
+==========================================================================================
+H01  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was total net income for FDIC-insured banks in the second quarter of 2025?
+Expected: 70.509
+Answer:   number  140324685  usd_thousands
+Why:      Summed NETINC for the 20250630 report date (2025Q2) across 4,494 banks, each with one unique CERT. The total is 140,324,685 thousand USD, about $140.3 billion. Net income is reported in thousands, so this is the raw sum with 4,477 non-null values.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, SUM(NETINC) AS total_netinc, MIN(NETINC) AS min_ni, MAX(NETINC) AS max_ni, COUNT(NETINC) AS nonnull FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "total_netinc", "min_ni", "max_ni", "nonnull"], "rows": [[20240930, 4589, 203022930.0, -935711.0, 40057000.0, 4572], [20241231, 4560, 270340452.0, -1360632.0, 52502000.0, 4543], [20250331, 4536, 70851794.0, -214466.0, 12708000.0, 4519], [20250630, 4494, 140324685.0, -2607
+  -> run_sql: {"sql": "SELECT COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS certs FROM raw_financials WHERE REPDTE=20250630"}
+     {"columns": ["rows_", "certs"], "rows": [[4494, 4494]], "truncated": false}
+==========================================================================================
+H01  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was total net income for FDIC-insured banks in the second quarter of 2025?
+Expected: 70.509
+Answer:   number  140324685  usd_thousands
+Why:      Summed NETINC across all 4,494 institutions reporting for the 2025-06-30 quarter (one row per bank, 17 with null net income excluded automatically). The total is about 140.3 billion USD, and the field is reported in thousands.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, SUM(NETINC) AS total_netinc, MIN(NETINC) AS min_ni, MAX(NETINC) AS max_ni FROM raw_financials WHERE REPDTE IN (20250630) GROUP BY REPDTE"}
+     {"columns": ["REPDTE", "n", "total_netinc", "min_ni", "max_ni"], "rows": [[20250630, 4494, 140324685.0, -2607458.0, 25810000.0]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(DISTINCT CERT) AS certs, COUNT(*) AS rows, SUM(CASE WHEN NETINC IS NULL THEN 1 ELSE 0 END) AS null_ni FROM raw_financials WHERE REPDTE = 20250630"}
+     {"columns": ["certs", "rows", "null_ni"], "rows": [[4494, 4494, 17]], "truncated": false}
+==========================================================================================
+H05  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was the average return on assets of an individual bank in 2025?
+Expected: 1.3667
+Answer:   number  1.41  percent
+Why:      I averaged the ROA field across all bank-quarter reports dated in 2025 (17,893 observations across 4,539 banks), giving 1.41%. Averaging each bank's own 2025 mean ROA gives a similar 1.42%. The median is about 1.07%, and the field has some extreme outliers.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, AVG(ROA) AS avg_roa, COUNT(ROA) AS n_roa, MIN(ROA), MAX(ROA) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "avg_roa", "n_roa", "min(ROA)", "max(ROA)"], "rows": [[20240930, 4589, 1.297231767512207, 4589, -21.19478743068392, 328.6555318588905], [20241231, 4560, 1.2723415919835501, 4560, -22.922349867445348, 356.56766056646705], [20250331, 4536, 1.3595821724581096, 4536, -30.8251
+  -> run_sql: {"sql": "SELECT COUNT(*) AS n, AVG(ROA) AS avg_roa, MEDIAN(ROA) AS med, QUANTILE_CONT(ROA, 0.01) AS p01, QUANTILE_CONT(ROA, 0.99) AS p99, COUNT(DISTINCT CERT) AS banks FROM raw_financials WHERE REPDTE BETWEEN 20250101 AND 20251231 AND ROA IS NOT NULL"}
+     {"columns": ["n", "avg_roa", "med", "p01", "p99", "banks"], "rows": [[17893, 1.4125106946670078, 1.0703798653901748, -2.2252691077281703, 10.12497535329325, 4539]], "truncated": false}
+  -> run_sql: {"sql": "SELECT AVG(bank_avg) AS avg_of_bank_avgs FROM (SELECT CERT, AVG(ROA) AS bank_avg FROM raw_financials WHERE REPDTE BETWEEN 20250101 AND 20251231 AND ROA IS NOT NULL GROUP BY CERT)"}
+     {"columns": ["avg_of_bank_avgs"], "rows": [[1.4211652797798064]], "truncated": false}
+==========================================================================================
+H05  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was the average return on assets of an individual bank in 2025?
+Expected: 1.3667
+Answer:   number  1.41  percent
+Why:      I averaged the ROA field across all 17,893 bank-quarter reports dated 2025 (March, June, September and December 2025 quarters, covering 4,539 banks), giving a mean of about 1.41%. The mean is pulled up by some extreme values (some quarters show ROA above 300 or below -30), and the median is lower, around 1.0 to 1.1% per quarter.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, COUNT(ROA) n_roa, AVG(ROA) avg_roa, MEDIAN(ROA) med_roa, MIN(ROA) mn, MAX(ROA) mx FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "n_roa", "avg_roa", "med_roa", "mn", "mx"], "rows": [[20240930, 4589, 4589, 1.297231767512207, 0.9365300006735916, -21.19478743068392, 328.6555318588905], [20241231, 4560, 4560, 1.2723415919835501, 0.9361378894161633, -22.922349867445348, 356.56766056646705], [20250331, 4
+  -> run_sql: {"sql": "SELECT COUNT(*) n, COUNT(ROA) n_roa, AVG(ROA) avg_roa, COUNT(DISTINCT CERT) banks FROM raw_financials WHERE REPDTE BETWEEN 20250101 AND 20251231"}
+     {"columns": ["n", "n_roa", "avg_roa", "banks"], "rows": [[17893, 17893, 1.4125106946670052, 4539]], "truncated": false}
+==========================================================================================
+H05  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was the average return on assets of an individual bank in 2025?
+Expected: 1.3667
+Answer:   number  1.41  percent
+Why:      I averaged the ROA field across all bank-quarter reports dated in 2025 (17,893 observations, 2025Q1–Q4), giving a mean of about 1.41%. The median is about 1.07%, and a few extreme values (four outside ±100%) pull the mean up; excluding them gives about 1.33%.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, COUNT(ROA) n_roa, AVG(ROA) avg_roa, MEDIAN(ROA) med_roa, MIN(ROA), MAX(ROA) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "n_roa", "avg_roa", "med_roa", "min(ROA)", "max(ROA)"], "rows": [[20240930, 4589, 4589, 1.297231767512207, 0.9365300006735916, -21.19478743068392, 328.6555318588905], [20241231, 4560, 4560, 1.2723415919835501, 0.9361378894161633, -22.922349867445348, 356.56766056646705], 
+  -> run_sql: {"sql": "SELECT COUNT(*) n, AVG(ROA) avg_roa, MEDIAN(ROA) med_roa, AVG(CASE WHEN ROA BETWEEN -100 AND 100 THEN ROA END) avg_trim, COUNT(CASE WHEN ROA NOT BETWEEN -100 AND 100 THEN 1 END) n_out FROM raw_financials WHERE REPDTE BETWEEN 20250101 AND 20251231"}
+     {"columns": ["n", "avg_roa", "med_roa", "avg_trim", "n_out"], "rows": [[17893, 1.4125106946670132, 1.0703798653901748, 1.3292757585337107, 4]], "truncated": false}
+==========================================================================================
+H09  Arm B  rep 2  ->  WRONG_VALUE
+Q: What were the combined total assets of all banks owned by Bank of New York Mellon Corp at the end of the second quarter of 2026?
+Expected: 457.359
+Answer:   number  426.5  usd_billions
+Why:      Two banks in the snapshot list BANK OF NY MELLON CORP THE (RSSDHCR 3587146) as their holding company: The Bank of New York Mellon (CERT 639, $425,115,000K) and The Bank of New York Mellon Trust Company, N.A. (CERT 23472, $1,372,597K). Both filed for 2026Q2, so their combined quarter-end total assets are $426,487,597K, or about $426.5B.
+  -> run_sql: {"sql": "SELECT i.CERT, i.NAME, i.NAMEHCR, i.RSSDHCR, i.ACTIVE, f.ASSET, f.REPDTE\nFROM raw_institutions i\nLEFT JOIN raw_financials f ON f.CERT = i.CERT AND f.REPDTE = 20260630\nWHERE i.NAMEHCR ILIKE '%new york mellon%' OR i.NAME ILIKE '%new york mellon%'"}
+     {"columns": ["CERT", "NAME", "NAMEHCR", "RSSDHCR", "ACTIVE", "ASSET", "REPDTE"], "rows": [[639, "The Bank of New York Mellon", "BANK OF NY MELLON CORP THE", 3587146, 1, 425115000, 20260630], [23472, "The Bank of New York Mellon Trust Company, National Association", "BANK OF NY MELLON CORP THE", 3587
+  -> run_sql: {"sql": "SELECT DISTINCT i.RSSDHCR, i.NAMEHCR FROM raw_institutions i WHERE i.NAMEHCR ILIKE '%mellon%'"}
+     {"columns": ["RSSDHCR", "NAMEHCR"], "rows": [[3587146, "BANK OF NY MELLON CORP THE"]], "truncated": false}
+==========================================================================================
+H10  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was the efficiency ratio for banks with $10 billion to $100 billion in assets in the first quarter of 2026?
+Expected: 56.0162
+Answer:   number  52.2  percent
+Why:      For REPDTE 2026-03-31, 128 banks with assets between $10B and $100B had an average reported efficiency ratio (EEFFR) of 52.2% (median 54.8%). For reference, the asset-weighted aggregate ratio (sum of noninterest expense over net interest income plus noninterest income) is about 56.0%, so the answer depends on whether the simple bank average or the aggregate is wanted.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, MIN(ASSET), MAX(ASSET), AVG(EEFFR), MEDIAN(EEFFR) FROM raw_financials WHERE REPDTE = 20260331 AND ASSET BETWEEN 10000000 AND 100000000 GROUP BY REPDTE"}
+     {"columns": ["REPDTE", "n", "min(ASSET)", "max(ASSET)", "avg(EEFFR)", "median(EEFFR)"], "rows": [[20260331, 128, 10084903, 99947369, 52.22315804497816, 54.7708484759752]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, CERT, ASSET, EEFFR, NONIX, NIM, NONII, INTINC, EINTEXP FROM raw_financials WHERE REPDTE = 20260331 AND ASSET BETWEEN 10000000 AND 100000000 LIMIT 10"}
+     {"columns": ["REPDTE", "CERT", "ASSET", "EEFFR", "NONIX", "NIM", "NONII", "INTINC", "EINTEXP"], "rows": [[20260331, 110, 41663976, 39.35431560467736, 164540.0, 385568.0, 32531.0, 629016.0, 243448.0], [20260331, 131, 21134120, 54.649790363123664, 120696.0, 177317.0, 25176.0, 250706.0, 73389.0], [2026
+  -> run_sql: {"sql": "SELECT COUNT(*) n, AVG(EEFFR) avg_eeffr, MEDIAN(EEFFR) med_eeffr, SUM(NONIX)/(SUM(NIM)+SUM(NONII))*100 agg_ratio, SUM(NONIX)/SUM(NIM+NONII)*100 agg2 FROM raw_financials WHERE REPDTE = 20260331 AND ASSET BETWEEN 10000000 AND 100000000"}
+     {"columns": ["n", "avg_eeffr", "med_eeffr", "agg_ratio", "agg2"], "rows": [[128, 52.22315804497816, 54.7708484759752, 56.01623379535644, 56.01623379535644]], "truncated": false}
+==========================================================================================
+Run: 20261103_224735_final-hard-heldout
+
+==========================================================================================
+HH01  Arm A  rep 1  ->  WRONG_VALUE
+Q: By what percentage did net income at banks in the FDIC's Atlanta region that are not FDIC-designated community banks change in the second quarter of 2026 compared with the second quarter of 2025?
+Expected: 103.6883
+Answer:   number  110  percent
+Why:      Atlanta-region banks with CB=0 (non-community banks). Call-report net income is cumulative year-to-date (Q1 values are much lower than Q4 values), so I de-cumulated it: Q2 standalone = June YTD minus March YTD for each bank. Using the 51 banks that report in all four quarters, Q2 2025 net income was about $7.71M and Q2 2026 about $16.19M, a +110% change. Using the raw June YTD totals without de-cumulating would instead show about +49% (about $20.8M to $30.9M, across differing bank panels).
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN, CB, COUNT(*) FROM raw_institutions GROUP BY 1,2 ORDER BY 1,2; SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT FDICREGN, CB, COUNT(*) AS n FROM raw_institutions GROUP BY 1,2 ORDER BY 1,2"}
+     {"columns": ["FDICREGN", "CB", "n"], "rows": [["Atlanta", 0, 57], ["Atlanta", 1, 453], ["Chicago", 0, 81], ["Chicago", 1, 893], ["Chicago", null, 1], ["Dallas", 0, 90], ["Dallas", 1, 932], ["Kansas City", 0, 50], ["Kansas City", 1, 1104], ["New York", 0, 93], ["New York", 1, 440], ["New York", null,
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) AS rows_n, COUNT(DISTINCT f.CERT) AS certs, SUM(f.NETINC) AS ni, SUM(f.NETINC)/1000.0 AS ni_k FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Atlanta' AND i.CB=0 AND f.REPDTE IN (20250630,20260630,20250331,20240930,20241231,20250930
+     {"columns": ["REPDTE", "rows_n", "certs", "ni", "ni_k"], "rows": [[20240930, 56, 56, 36340641.0, 36340.641], [20241231, 56, 56, 49219624.0, 49219.624], [20250331, 56, 56, 12860184.0, 12860.184], [20250630, 56, 56, 20807216.0, 20807.216], [20250930, 55, 55, 37347530.0, 37347.53], [20251231, 54, 54, 5
+  -> run_sql: {"sql": "WITH b AS (SELECT f.CERT, f.REPDTE, f.NETINC FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Atlanta' AND i.CB=0 AND f.REPDTE IN (20250331,20250630,20260331,20260630)), p AS (SELECT CERT, MAX(CASE WHEN REPDTE=20250331 THEN NETINC END) q1_25, MAX(CASE WHEN RE
+     {"columns": ["n", "h25", "h26", "ytd_chg", "q2_25", "q2_26", "q2_chg"], "rows": [[51, 20326041.0, 30916102.0, 0.5210095266461383, 7710267.0, 16189025.0, 1.0996711268234938]], "truncated": false}
+==========================================================================================
+HH01  Arm A  rep 2  ->  WRONG_VALUE
+Q: By what percentage did net income at banks in the FDIC's Atlanta region that are not FDIC-designated community banks change in the second quarter of 2026 compared with the second quarter of 2025?
+Expected: 103.6883
+Answer:   number  48.57  percent
+Why:      For FDIC Atlanta-region banks with CB=0 (not community banks), summed NETINC was 20,807,216 (thousands) for 2025Q2 across 56 banks and 30,914,254 for 2026Q2 across 52 banks, an increase of about 48.57%. The comparison uses only banks reporting in both periods' totals as present in the data, with no duplicate records found.
+  -> run_sql: {"sql": "SELECT DISTINCT i.FDICREGN, i.CB, f.REPDTE, COUNT(*) n, SUM(f.NETINC) ni FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN ILIKE '%atlanta%' AND f.REPDTE IN (20250630,20260630) GROUP BY ALL ORDER BY 1,2,3"}
+     {"columns": ["FDICREGN", "CB", "REPDTE", "n", "ni"], "rows": [["Atlanta", 0, 20250630, 56, 20807216.0], ["Atlanta", 0, 20260630, 52, 30914254.0], ["Atlanta", 1, 20250630, 445, 1498438.0], ["Atlanta", 1, 20260630, 425, 1692625.0]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) rows_, COUNT(DISTINCT f.CERT) certs, COUNT(f.NETINC) nn, SUM(f.NETINC) ni, MIN(f.NETINC) mn FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Atlanta' AND i.CB=0 AND f.REPDTE IN (20250630,20260630) GROUP BY ALL ORDER BY 1; SELECT CERT
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) rows_, COUNT(DISTINCT f.CERT) certs, COUNT(f.NETINC) nn, SUM(f.NETINC) ni, MIN(f.NETINC) mn FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Atlanta' AND i.CB=0 AND f.REPDTE IN (20250630,20260630) GROUP BY ALL ORDER BY 1"}
+     {"columns": ["REPDTE", "rows_", "certs", "nn", "ni", "mn"], "rows": [[20250630, 56, 56, 56, 20807216.0, -2607458.0], [20260630, 52, 52, 52, 30914254.0, -2218.0]], "truncated": false}
+==========================================================================================
+HH01  Arm A  rep 3  ->  WRONG_VALUE
+Q: By what percentage did net income at banks in the FDIC's Atlanta region that are not FDIC-designated community banks change in the second quarter of 2026 compared with the second quarter of 2025?
+Expected: 103.6883
+Answer:   number  48.6  percent
+Why:      Atlanta-region banks with CB=0 (not community banks) reported total quarterly net income of about $20.81 billion in 2025Q2 (56 banks) and $30.91 billion in 2026Q2 (52 banks), a 48.6% increase. On a like-for-like basis (51 banks that reported in both quarters) net income rose about 52.1%.
+  -> run_sql: {"sql": "SELECT FDICREGN, CB, COUNT(*) n, COUNT(DISTINCT CERT) c FROM raw_institutions GROUP BY 1,2 ORDER BY 1,2;\nSELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT FDICREGN, CB, COUNT(*) n, COUNT(DISTINCT CERT) c FROM raw_institutions GROUP BY 1,2 ORDER BY 1,2"}
+     {"columns": ["FDICREGN", "CB", "n", "c"], "rows": [["Atlanta", 0, 57, 57], ["Atlanta", 1, 453, 453], ["Chicago", 0, 81, 81], ["Chicago", 1, 893, 893], ["Chicago", null, 1, 1], ["Dallas", 0, 90, 90], ["Dallas", 1, 932, 932], ["Kansas City", 0, 50, 50], ["Kansas City", 1, 1104, 1104], ["New York", 0, 
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) n, COUNT(DISTINCT f.CERT) c, SUM(f.NETINC) ni, SUM(f.NETINC)/1000.0 ni_k FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Atlanta' AND i.CB=0 AND f.REPDTE IN (20250630,20260630) GROUP BY 1 ORDER BY 1"}
+     {"columns": ["REPDTE", "n", "c", "ni", "ni_k"], "rows": [[20250630, 56, 56, 20807216.0, 20807.216], [20260630, 52, 52, 30914254.0, 30914.254]], "truncated": false}
+  -> run_sql: {"sql": "SELECT SUM(CASE WHEN a.NETINC IS NULL THEN 1 ELSE 0 END) null_a, SUM(CASE WHEN b.NETINC IS NULL THEN 1 ELSE 0 END) null_b, COUNT(*) matched, SUM(a.NETINC) ni_a, SUM(b.NETINC) ni_b, SUM(b.NETINC)/SUM(a.NETINC)-1 pct_all FROM (SELECT f.* FROM raw_financials f JOIN raw_institutions i ON f.CERT
+     {"columns": ["null_a", "null_b", "matched", "ni_a", "ni_b", "pct_all"], "rows": [[0, 0, 51, 20326041.0, 30916102.0, 0.5210095266461383]], "truncated": false}
+==========================================================================================
+HH01  Arm B  rep 2  ->  WRONG_VALUE
+Q: By what percentage did net income at banks in the FDIC's Atlanta region that are not FDIC-designated community banks change in the second quarter of 2026 compared with the second quarter of 2025?
+Expected: 103.6883
+Answer:   number  48.57  percent
+Why:      Filtered to FDIC Atlanta region banks with CB=0 (non-community). Quarterly net income for Q2 was derived as Q2 YTD minus Q1 YTD of the same year (banks lacking a prior-quarter filing use YTD). Q2 2025 totaled about $20.81B (56 banks) and Q2 2026 about $30.91B (52 banks), a change of 48.57%.
+  -> run_sql: {"sql": "\nWITH atl AS (\n  SELECT f.CERT, f.REPDTE, f.NETINC\n  FROM raw_financials f\n  JOIN raw_institutions i ON f.CERT = i.CERT\n  WHERE i.FDICREGN = 'Atlanta' AND i.CB = 0\n    AND f.REPDTE IN (20250331, 20250630, 20260331, 20260630)\n),\nq AS (\n  SELECT\n    c.CERT,\n    c.REPDTE,\n    c.NET
+     {"columns": ["REPDTE", "banks_filed", "income_reporters", "q2_netinc_thousands", "n"], "rows": [[20250630, 56, 56, 20807216.0, 56], [20260630, 52, 52, 30914254.0, 52]], "truncated": false}
+==========================================================================================
+HH01  Arm B  rep 3  ->  WRONG_VALUE
+Q: By what percentage did net income at banks in the FDIC's Atlanta region that are not FDIC-designated community banks change in the second quarter of 2026 compared with the second quarter of 2025?
+Expected: 103.6883
+Answer:   number  3.69  percent
+Why:      For non-community banks (CB=0) in the FDIC Atlanta region, I computed each bank's Q2 quarterly net income as Q2 YTD minus Q1 YTD of the same year (Q2 YTD alone for banks without a Q1 filing), then summed. Q2 2025 was about $7.95M (56 banks) and Q2 2026 about $16.19M (52 banks), a change of +3.69%.
+  -> run_sql: {"sql": "\nWITH base AS (\n  SELECT f.CERT, f.REPDTE, f.NETINC\n  FROM raw_financials f\n  JOIN raw_institutions i ON f.CERT = i.CERT\n  WHERE i.FDICREGN = 'Atlanta' AND i.CB = 0\n    AND f.REPDTE IN (20250331, 20250630, 20260331, 20260630)\n),\np AS (\n  SELECT CERT,\n    MAX(CASE WHEN REPDTE=20250
+     {"columns": ["ni_q2_25", "ni_q2_26", "n25", "n26", "new25", "new26"], "rows": [[7947032.0, 16187177.0, 56, 52, 0, 1]], "truncated": false}
+==========================================================================================
+HH02  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was return on equity in the first quarter of 2026 for banks with less than $10 billion in assets whose primary federal regulator is the FDIC?
+Expected: 11.5174
+Answer:   number  10.85  percent
+Why:      For REPDTE 20260331, I took the 2,643 institutions with REGAGNT = 'FDIC' and ASSET under $10 billion (ASSET is in thousands, so under 10,000,000) and averaged their reported ROE field, which gives 10.85%. As a cross-check, aggregate annualized net income over aggregate equity gives about 11.5%. I used the simple average of the reported ROE field.
+  -> run_sql: {"sql": "SELECT r.REPDTE, COUNT(*) n, AVG(r.ROE) avg_roe, SUM(r.NETINC)*4.0/SUM(r.EQ)*100 agg_roe, MIN(r.ASSET), MAX(r.ASSET) FROM raw_financials r JOIN raw_institutions i ON r.CERT=i.CERT WHERE r.REPDTE=20260331 AND i.REGAGNT='FDIC' AND r.ASSET<10000000 GROUP BY r.REPDTE"}
+     {"columns": ["REPDTE", "n", "avg_roe", "agg_roe", "min(r.ASSET)", "max(r.ASSET)"], "rows": [[20260331, 2643, 10.84884046987497, 11.51739215768319, 3490, 9946447]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE; SELECT DISTINCT REGAGNT FROM raw_institutions;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT COUNT(*) rows_, COUNT(DISTINCT CERT) certs, COUNT(DISTINCT r.CERT) fin_certs FROM raw_institutions i, (SELECT DISTINCT CERT FROM raw_financials WHERE REPDTE=20260331) r WHERE i.CERT=r.CERT"}
+     ERROR ERROR: Binder Error: Ambiguous reference to column name "CERT" (use: 'i.CERT' or 'r.CERT')
+  -> run_sql: {"sql": "SELECT COUNT(*) n, COUNT(DISTINCT CERT) c FROM raw_financials WHERE REPDTE=20260331 AND ROE IS NULL"}
+     {"columns": ["n", "c"], "rows": [[18, 18]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) rows_, COUNT(DISTINCT i.CERT) certs FROM raw_institutions i JOIN raw_financials r ON r.CERT=i.CERT WHERE r.REPDTE=20260331 AND i.REGAGNT='FDIC' AND r.ASSET<10000000"}
+     {"columns": ["rows_", "certs"], "rows": [[2643, 2643]], "truncated": false}
+==========================================================================================
+HH02  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was return on equity in the first quarter of 2026 for banks with less than $10 billion in assets whose primary federal regulator is the FDIC?
+Expected: 11.5174
+Answer:   number  10.85  percent
+Why:      For the 2026Q1 report date (20260331), I took the 2,643 banks with REGAGNT = 'FDIC' and ASSET under $10 billion (ASSET is in thousands) and averaged their reported ROE field, which gives 10.85%. The median is 11.43%, and the aggregate net income over equity is about 2.9% for the quarter, which is not annualized.
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) n, AVG(f.ROE) avg_roe, MEDIAN(f.ROE) med_roe, SUM(f.NETINC) ni, SUM(f.EQ) eq, MIN(f.ASSET) minA, MAX(f.ASSET) maxA\nFROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT\nWHERE f.REPDTE=20260331 AND i.REGAGNT='FDIC' AND f.ASSET<10000000\nGROUP BY f.REPDTE"
+     {"columns": ["REPDTE", "n", "avg_roe", "med_roe", "ni", "eq", "minA", "maxA"], "rows": [[20260331, 2643, 10.84884046987497, 11.43, 6489814.0, 225391787.0, 3490, 9946447]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "count_star()"], "rows": [[20240930, 4589], [20241231, 4560], [20250331, 4536], [20250630, 4494], [20250930, 4452], [20251231, 4411], [20260331, 4353], [20260630, 4313]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*), COUNT(DISTINCT CERT) FROM raw_institutions;\nSELECT COUNT(*), COUNT(DISTINCT CERT) FROM raw_financials WHERE REPDTE=20260331;\nSELECT REGAGNT, COUNT(*) FROM raw_institutions GROUP BY 1;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT COUNT(*) n, COUNT(DISTINCT CERT) d FROM raw_institutions"}
+     {"columns": ["n", "d"], "rows": [[4550, 4550]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) n, COUNT(DISTINCT CERT) d FROM raw_financials WHERE REPDTE=20260331"}
+     {"columns": ["n", "d"], "rows": [[4353, 4353]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REGAGNT, COUNT(*) FROM raw_institutions GROUP BY 1"}
+     {"columns": ["REGAGNT", "count_star()"], "rows": [["STATE", 5], ["FED", 744], ["FDIC", 2860], ["OCC", 941]], "truncated": false}
+==========================================================================================
+HH02  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was return on equity in the first quarter of 2026 for banks with less than $10 billion in assets whose primary federal regulator is the FDIC?
+Expected: 11.5174
+Answer:   number  10.85  percent
+Why:      For the 2026Q1 report date (20260331), I filtered to banks with total assets under $10 billion (ASSET < 10,000,000 thousand) whose primary regulator (REGAGNT) is FDIC, giving 2,639 banks with reported ROE. The simple average of their reported ROE is 10.85%. For reference, the median is 11.43% and the aggregate annualized net income / equity is 11.52%.
+  -> run_sql: {"sql": "SELECT r.REPDTE, i.REGAGNT, COUNT(*) n, AVG(r.ROE) avg_roe, SUM(r.NETINC)*4/SUM(r.EQ)*100 agg_roe_ann, MIN(r.ASSET), MAX(r.ASSET)\nFROM raw_financials r LEFT JOIN raw_institutions i ON r.CERT=i.CERT\nWHERE r.REPDTE >= 20260101 AND r.REPDTE < 20260401 AND r.ASSET < 10000000\nGROUP BY 1,2 ORD
+     {"columns": ["REPDTE", "REGAGNT", "n", "avg_roe", "agg_roe_ann", "min(r.ASSET)", "max(r.ASSET)"], "rows": [[20260331, "FDIC", 2643, 10.84884046987497, 11.51739215768319, 3490, 9946447], [20260331, "FED", 659, 12.038373860182375, 11.93662743132936, 9373, 9902571], [20260331, "OCC", 833, 10.1863417569
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(r.ROE) n, AVG(r.ROE) avg_roe, quantile_cont(r.ROE, 0.5) median_roe, SUM(r.NETINC)/SUM(r.EQ)*100 agg_roe_q, SUM(r.NETINC*4)/SUM(r.EQ)*100 agg_ann\nFROM raw_financials r LEFT JOIN raw_institutions i ON r.CERT=i.CERT\nWHERE r.REPDTE = 20260331 AND r.ASSET < 10000000 AND i.REGAGNT=
+     {"columns": ["n", "avg_roe", "median_roe", "agg_roe_q", "agg_ann"], "rows": [[2639, 10.84884046987497, 11.43, 2.8793480394207975, 11.51739215768319]], "truncated": false}
+==========================================================================================
+HH03  Arm C  rep 1  ->  FALSE_DECLINE
+Q: How many banks that filed a call report for the second quarter of 2026 had not filed one for the third quarter of 2024?
+Expected: 18
+Answer:   decline  None  none
+Why:      The answer requires a set comparison: banks that filed in 2026Q2 with no filing in 2024Q3. The semantic layer only returns per-period counts and cannot perform this anti-join, and list_values shows only a sample of banks. The available totals are 4,313 banks in 2026Q2 and 4,589 in 2024Q3, but those counts alone cannot give the number that filed in 2026Q2 but not 2024Q3, because banks can also exit and re-enter.
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["period"]}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2024Q4", "bank_count": 4560}, {"period": "2025Q1", "bank_count": 4536}, {"period": "2025Q2", "bank_count": 4494}, {"period": "2025Q3", "bank_count": 4452}, {"period": "2025Q4", "bank_count": 4411}, {"period": "2026Q1", "bank_count": 435
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2026Q2", "dimensions": ["active_today"]}
+     {"rows": [{"active_today": "Inactive", "bank_count": 51}, {"active_today": "Unknown", "bank_count": 56}, {"active_today": "Active", "bank_count": 4206}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> list_values: {"dimension": "bank"}
+     {"dimension": "bank", "description": "Single bank; key is CERT", "values": [{"value": "1NB Bank", "cert": 14761}, {"value": "1st Advantage Bank", "cert": 57899}, {"value": "1st Bank in Hominy", "cert": 4122}, {"value": "1st Bank of Sea Isle City", "cert": 30367}, {"value": "1st Community Bank", "cer
+==========================================================================================
+HH03  Arm C  rep 2  ->  FALSE_DECLINE
+Q: How many banks that filed a call report for the second quarter of 2026 had not filed one for the third quarter of 2024?
+Expected: 18
+Answer:   decline  None  none
+Why:      The semantic layer returns only per-quarter counts (4,589 banks filed 2024Q3; 4,313 filed 2026Q2). Counting banks in 2026Q2 but not in 2024Q3 requires a set difference between the two filer populations (matching CERTs across quarters), which none of the governed metrics or dimensions can express, and I cannot write SQL. The overlap cannot be derived from these aggregates.
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["period"]}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2024Q4", "bank_count": 4560}, {"period": "2025Q1", "bank_count": 4536}, {"period": "2025Q2", "bank_count": 4494}, {"period": "2025Q3", "bank_count": 4452}, {"period": "2025Q4", "bank_count": 4411}, {"period": "2026Q1", "bank_count": 435
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2026Q2", "dimensions": ["period"]}
+     {"rows": [{"period": "2026Q2", "bank_count": 4313}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+==========================================================================================
+HH03  Arm C  rep 3  ->  FALSE_DECLINE
+Q: How many banks that filed a call report for the second quarter of 2026 had not filed one for the third quarter of 2024?
+Expected: 18
+Answer:   decline  None  none
+Why:      The answer requires matching individual bank CERTs across two quarters (2026Q2 filers minus those who also filed 2024Q3). The available tools only return per-quarter counts or per-period groupings; filtering on two periods still returns separate counts (4,589 for 2024Q3 and 4,313 for 2026Q2), and there is no way to get the distinct-bank overlap without listing CERTs, which the 50-row limit prevents. The quarterly counts alone cannot determine the overlap, so the number cannot be reliably produced from this data.
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2026Q2"}
+     {"rows": [{"bank_count": 4313}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3"}
+     {"rows": [{"bank_count": 4589}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["period"]}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2024Q4", "bank_count": 4560}, {"period": "2025Q1", "bank_count": 4536}, {"period": "2025Q2", "bank_count": 4494}, {"period": "2025Q3", "bank_count": 4452}, {"period": "2025Q4", "bank_count": 4411}, {"period": "2026Q1", "bank_count": 435
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "filters": {"period": ["2024Q3", "2026Q2"]}}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2026Q2", "bank_count": 4313}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+==========================================================================================
+HH07  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was the combined net income of all banks owned by Wells Fargo & Company in the third quarter of 2025?
+Expected: 6.113
+Answer:   number  18529341  usd_thousands
+Why:      Four institutions have Wells Fargo&Company as their holding company (CERTs 3511, 5146, 13718, 27389). Summing their NETINC for the 2025-09-30 report date gives 18,403,000 + 43,562 + 19,780 + 62,999 = 18,529,341 thousand dollars (about $18.53 billion). This includes Wells Fargo Trust Company, N.A., which is flagged inactive but still filed a Q3 2025 report.
+  -> run_sql: {"sql": "SELECT DISTINCT NAMEHCR, RSSDHCR, COUNT(*) OVER (PARTITION BY NAMEHCR) AS n FROM raw_institutions WHERE NAMEHCR ILIKE '%wells fargo%'"}
+     {"columns": ["NAMEHCR", "RSSDHCR", "n"], "rows": [["WELLS FARGO&COMPANY", 1120754, 4]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT i.CERT, i.NAME, i.ACTIVE, f.REPDTE, f.NETINC, f.ASSET FROM raw_institutions i LEFT JOIN raw_financials f ON f.CERT = i.CERT AND f.REPDTE = 20250930 WHERE i.NAMEHCR = 'WELLS FARGO&COMPANY'"}
+     {"columns": ["CERT", "NAME", "ACTIVE", "REPDTE", "NETINC", "ASSET"], "rows": [[3511, "Wells Fargo Bank, National Association", 1, 20250930, 18403000.0, 1767105000], [5146, "Wells Fargo Bank South Central, National Association", 1, 20250930, 43562.0, 3660918], [13718, "Wells Fargo Trust Company, Nati
+==========================================================================================
+HH07  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was the combined net income of all banks owned by Wells Fargo & Company in the third quarter of 2025?
+Expected: 6.113
+Answer:   number  18529341  usd_thousands
+Why:      Four institutions list WELLS FARGO&COMPANY as holding company (CERTs 3511, 5146, 13718, 27389). Summing their NETINC for the 2025Q3 report date (20250930) gives 18,403,000 + 43,562 + 19,780 + 62,999 = 18,529,341 thousand dollars (about $18.53 billion). This includes the Wells Fargo Trust Company, which is flagged inactive but still has Q3 2025 data.
+  -> run_sql: {"sql": "SELECT DISTINCT i.CERT, i.NAME, i.NAMEHCR, i.RSSDHCR, i.ACTIVE FROM raw_institutions i WHERE i.NAMEHCR ILIKE '%wells fargo%' OR i.NAME ILIKE '%wells fargo%'"}
+     {"columns": ["CERT", "NAME", "NAMEHCR", "RSSDHCR", "ACTIVE"], "rows": [[3511, "Wells Fargo Bank, National Association", "WELLS FARGO&COMPANY", 1120754, 1], [13718, "Wells Fargo Trust Company, National Association", "WELLS FARGO&COMPANY", 1120754, 0], [27389, "Wells Fargo National Bank West", "WELLS 
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.CERT, i.NAME, f.REPDTE, f.NETINC, f.ASSET FROM raw_financials f JOIN raw_institutions i ON i.CERT=f.CERT WHERE f.CERT IN (3511,13718,27389,5146) AND f.REPDTE=20250930"}
+     {"columns": ["CERT", "NAME", "REPDTE", "NETINC", "ASSET"], "rows": [[3511, "Wells Fargo Bank, National Association", 20250930, 18403000.0, 1767105000], [5146, "Wells Fargo Bank South Central, National Association", 20250930, 43562.0, 3660918], [13718, "Wells Fargo Trust Company, National Association
+==========================================================================================
+HH07  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was the combined net income of all banks owned by Wells Fargo & Company in the third quarter of 2025?
+Expected: 6.113
+Answer:   number  18529341  usd_thousands
+Why:      I matched the four institutions whose holding company is WELLS FARGO&COMPANY and summed their NETINC for 2025Q3 (REPDTE 20250930): 18,403,000 + 43,562 + 19,780 + 62,999 = 18,529,341 thousand USD, about $18.53 billion. The Wells Fargo Trust Company entry is marked inactive but has a 2025Q3 filing, so I included it.
+  -> run_sql: {"sql": "SELECT DISTINCT i.CERT, i.NAME, i.NAMEHCR, i.RSSDHCR, i.ACTIVE FROM raw_institutions i WHERE UPPER(i.NAMEHCR) LIKE '%WELLS FARGO%' OR UPPER(i.NAME) LIKE '%WELLS FARGO%'"}
+     {"columns": ["CERT", "NAME", "NAMEHCR", "RSSDHCR", "ACTIVE"], "rows": [[3511, "Wells Fargo Bank, National Association", "WELLS FARGO&COMPANY", 1120754, 1], [5146, "Wells Fargo Bank South Central, National Association", "WELLS FARGO&COMPANY", 1120754, 1], [27389, "Wells Fargo National Bank West", "WE
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.CERT, i.NAME, f.REPDTE, f.NETINC, f.ASSET FROM raw_financials f JOIN raw_institutions i ON f.CERT = i.CERT WHERE i.NAMEHCR = 'WELLS FARGO&COMPANY' AND f.REPDTE = 20250930 ORDER BY f.CERT"}
+     {"columns": ["CERT", "NAME", "REPDTE", "NETINC", "ASSET"], "rows": [[3511, "Wells Fargo Bank, National Association", 20250930, 18403000.0, 1767105000], [5146, "Wells Fargo Bank South Central, National Association", 20250930, 43562.0, 3660918], [13718, "Wells Fargo Trust Company, National Association
+==========================================================================================
+HH08  Arm A  rep 1  ->  MISSED_DECLINE
+Q: What was net income for banks headquartered in Texas in the third quarter of 2024?
+Expected: None
+Answer:   number  5435141  usd_thousands
+Why:      I joined raw_financials to raw_institutions on CERT, filtered to banks with state code TX and REPDTE 20240930 (2024Q3), and summed NETINC across 379 banks (one row each). The sum is 5,435,141 in thousands, about $5.44 billion, assuming the call report figures are reported in thousands.
+  -> run_sql: {"sql": "SELECT COUNT(*) AS n, SUM(f.NETINC) AS netinc_sum, MIN(f.REPDTE), MAX(f.REPDTE), COUNT(DISTINCT f.CERT) AS banks\nFROM raw_financials f\nJOIN raw_institutions i ON f.CERT = i.CERT\nWHERE i.STALP = 'TX' AND f.REPDTE = 20240930"}
+     {"columns": ["n", "netinc_sum", "min(f.REPDTE)", "max(f.REPDTE)", "banks"], "rows": [[379, 5435141.0, 20240930, 20240930, 379]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT STALP, STNAME FROM raw_institutions WHERE STNAME ILIKE '%texas%' OR STALP = 'TX'"}
+     {"columns": ["STALP", "STNAME"], "rows": [["TX", "Texas"]], "truncated": false}
+==========================================================================================
+HH08  Arm A  rep 2  ->  MISSED_DECLINE
+Q: What was net income for banks headquartered in Texas in the third quarter of 2024?
+Expected: None
+Answer:   number  5435141  usd_thousands
+Why:      Summed NETINC for the 379 FDIC-insured banks headquartered in Texas (STALP = 'TX', confirmed by STNAME = 'Texas') in the 2024Q3 report date (20240930). The total is $5,435,141 thousand, about $5.4 billion, assuming the source reports NETINC in thousands.
+  -> run_sql: {"sql": "SELECT COUNT(*) AS n, SUM(f.NETINC) AS netinc_sum, MIN(f.REPDTE), MAX(f.REPDTE), COUNT(DISTINCT f.CERT) AS banks\nFROM raw_financials f JOIN raw_institutions i ON f.CERT = i.CERT\nWHERE i.STALP = 'TX' AND f.REPDTE = 20240930"}
+     {"columns": ["n", "netinc_sum", "min(f.REPDTE)", "max(f.REPDTE)", "banks"], "rows": [[379, 5435141.0, 20240930, 20240930, 379]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) AS n, SUM(f.NETINC) AS netinc_sum\nFROM raw_financials f JOIN (SELECT DISTINCT CERT, STALP, STNAME FROM raw_institutions) i ON f.CERT = i.CERT\nWHERE (i.STNAME = 'Texas' OR i.STALP = 'TX') AND f.REPDTE = 20240930"}
+     {"columns": ["n", "netinc_sum"], "rows": [[379, 5435141.0]], "truncated": false}
+==========================================================================================
+HH08  Arm A  rep 3  ->  MISSED_DECLINE
+Q: What was net income for banks headquartered in Texas in the third quarter of 2024?
+Expected: None
+Answer:   number  5435141  usd_thousands
+Why:      I summed NETINC for the 379 Texas-headquartered banks (STALP = 'TX') with 2024-09-30 call report data. The total is 5,435,141 thousand USD, about $5.44 billion. I assumed NETINC is reported in thousands, as in standard FDIC call report data.
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE;"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT STALP, STNAME FROM raw_institutions WHERE STALP='TX' OR STNAME ILIKE '%texas%';"}
+     {"columns": ["STALP", "STNAME"], "rows": [["TX", "Texas"]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) AS n_banks, SUM(f.NETINC) AS total_netinc, COUNT(f.NETINC) AS n_nonnull, MIN(f.NETINC), MAX(f.NETINC) FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.STALP='TX' AND f.REPDTE=20240930;"}
+     {"columns": ["n_banks", "total_netinc", "n_nonnull", "min(f.NETINC)", "max(f.NETINC)"], "rows": [[379, 5435141.0, 379, -425295.0, 562000.0]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) FROM raw_institutions WHERE STALP='TX' AND CERT IN (SELECT CERT FROM raw_financials WHERE REPDTE=20240930); SELECT COUNT(*), COUNT(DISTINCT CERT) FROM raw_financials WHERE REPDTE=20240930;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS certs FROM raw_institutions WHERE STALP='TX';"}
+     {"columns": ["rows_", "certs"], "rows": [[381, 381]], "truncated": false}
+==========================================================================================
+Run: 20261103_224925_final-dev
+
+==========================================================================================
+D01  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was total net income for all FDIC-insured banks in the third quarter of 2025?
+Expected: 79.895
+Answer:   number  220028886  usd_thousands
+Why:      Summed NETINC across all 4,452 banks (one row per bank, no duplicate CERTs) for the 2025-09-30 report date (2025Q3). The total is 220,028,886 in thousands, about $220.0 billion. 4,435 banks reported a non-null net income value.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, SUM(NETINC) AS total_netinc, COUNT(NETINC) AS n_nonnull FROM raw_financials WHERE REPDTE IN (20250930) GROUP BY REPDTE UNION ALL SELECT REPDTE, COUNT(*), SUM(NETINC), COUNT(NETINC) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "total_netinc", "n_nonnull"], "rows": [[20240930, 4589, 203022930.0, 4572], [20241231, 4560, 270340452.0, 4543], [20250331, 4536, 70851794.0, 4519], [20250630, 4494, 140324685.0, 4477], [20250930, 4452, 220028886.0, 4435], [20250930, 4452, 220028886.0, 4435], [20251231, 4
+  -> run_sql: {"sql": "SELECT COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS certs FROM raw_financials WHERE REPDTE = 20250930"}
+     {"columns": ["rows_", "certs"], "rows": [[4452, 4452]], "truncated": false}
+==========================================================================================
+D01  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was total net income for all FDIC-insured banks in the third quarter of 2025?
+Expected: 79.895
+Answer:   number  220028886  usd_thousands
+Why:      Summed NETINC across all 4,452 banks (one row per bank, no duplicates) for the 2025-09-30 report date (2025Q3). Total is 220,028,886 thousands, about $220.0 billion. 17 banks had no reported net income value and were excluded from the sum.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, SUM(NETINC) AS total_netinc, COUNT(NETINC) AS n_nonnull FROM raw_financials WHERE REPDTE BETWEEN 20250701 AND 20250930 GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "total_netinc", "n_nonnull"], "rows": [[20250930, 4452, 220028886.0, 4435]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS certs FROM raw_financials WHERE REPDTE = 20250930"}
+     {"columns": ["rows_", "certs"], "rows": [[4452, 4452]], "truncated": false}
+==========================================================================================
+D04  Arm A  rep 3  ->  WRONG_VALUE
+Q: Which quarter of 2025 had the highest industry net income?
+Expected: 2025Q3
+Answer:   label  2025Q4  none
+Why:      Summed NETINC across all banks by report date for 2025. Totals rose each quarter: Q1 about 70.9 billion, Q2 about 140.3 billion, Q3 about 220.0 billion, and Q4 (REPDTE 20251231) about 297.8 billion (assuming call report values are in thousands). The highest was the quarter ending December 31, 2025.
+  -> run_sql: {"sql": "SELECT REPDTE, SUM(NETINC) AS total_netinc, COUNT(*) AS n FROM raw_financials WHERE REPDTE >= 20250101 AND REPDTE < 20260101 GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "total_netinc", "n"], "rows": [[20250331, 70851794.0, 4536], [20250630, 140324685.0, 4494], [20250930, 220028886.0, 4452], [20251231, 297818656.0, 4411]], "truncated": false}
+==========================================================================================
+D05  Arm A  rep 2  ->  WRONG_VALUE
+Q: How much net interest income did JPMorgan Chase Bank (FDIC cert 628) earn in the second quarter of 2026?
+Expected: 25.536
+Answer:   number  50852000  usd_thousands
+Why:      For cert 628 in the 2026Q2 report (REPDTE 20260630), interest income was 84,603,000 and interest expense was 33,751,000 (thousands), so net interest income is 50,852,000 thousand, about $50.85 billion. This matches the NIM column value for that quarter.
+  -> run_sql: {"sql": "SELECT REPDTE, INTINC, EINTEXP, NIM, NIMY, ASSET FROM raw_financials WHERE CERT = 628 ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "INTINC", "EINTEXP", "NIM", "NIMY", "ASSET"], "rows": [[20240930, 127918000.0, 56800000.0, 71118000.0, 3.024369064923224, 3584105000], [20241231, 169911000.0, 74797000.0, 95114000.0, 3.042332738710401, 3459261000], [20250331, 40624000.0, 16656000.0, 23968000.0, 3.0145815983552
+==========================================================================================
+D05  Arm A  rep 3  ->  WRONG_VALUE
+Q: How much net interest income did JPMorgan Chase Bank (FDIC cert 628) earn in the second quarter of 2026?
+Expected: 25.536
+Answer:   number  50852000  usd_thousands
+Why:      For JPMorgan Chase Bank (CERT 628) in the 2026Q2 report date (20260630), interest income was 84,603,000 and interest expense was 33,751,000 (in thousands), so net interest income is 50,852,000 thousand, about $50.85 billion. This matches the NIM column's dollar value for that quarter.
+  -> run_sql: {"sql": "SELECT REPDTE, INTINC, EINTEXP, NIM, NIMY, ASSET FROM raw_financials WHERE CERT = 628 ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "INTINC", "EINTEXP", "NIM", "NIMY", "ASSET"], "rows": [[20240930, 127918000.0, 56800000.0, 71118000.0, 3.024369064923224, 3584105000], [20241231, 169911000.0, 74797000.0, 95114000.0, 3.042332738710401, 3459261000], [20250331, 40624000.0, 16656000.0, 23968000.0, 3.0145815983552
+==========================================================================================
+D08  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was the banking industry's return on assets for the second quarter of 2026?
+Expected: 1.2978
+Answer:   number  1.32  percent
+Why:      For 2026Q2 (REPDTE 20260630, 4,313 banks), I took the industry ROA as the asset-weighted average of each bank's reported ROA, excluding banks with missing ROA: 1.32%. The simple average across banks is 1.48% and the median is 1.23%. Summing NETINC over total assets gives 2.57% annualized, but that figure looks inconsistent with the reported ROA values, so I did not use it.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, SUM(NETINC) AS netinc_sum, SUM(ASSET) AS asset_sum, AVG(ROA) AS avg_roa, SUM(NETINC)*4/SUM(ASSET)*100 AS agg_roa_annualized, SUM(NETINC)*400/SUM(ASSET) AS chk FROM raw_financials WHERE REPDTE IN (20260630) GROUP BY REPDTE"}
+     {"columns": ["REPDTE", "n", "netinc_sum", "asset_sum", "avg_roa", "agg_roa_annualized", "chk"], "rows": [[20260630, 4313, 171891779.0, 26753048556, 1.4775778692547552, 2.5700514637080376, 2.5700514637080376]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) n, COUNT(DISTINCT CERT) dc, SUM(ASSET*ROA)/SUM(ASSET) asset_weighted_roa, MEDIAN(ROA) med_roa, SUM(NETINC)*4/SUM(ASSET)*100 agg, SUM(CASE WHEN ASSET IS NULL OR NETINC IS NULL OR ROA IS NULL THEN 1 ELSE 0 END) nulls, MAX(ASSET) maxa, MAX(NETINC) maxni FROM raw_financials WHER
+     {"columns": ["n", "dc", "asset_weighted_roa", "med_roa", "agg", "nulls", "maxa", "maxni"], "rows": [[4313, 4313, 1.316204394425144, 1.2295153273777881, 2.5700514637080376, 17, 4091315000, 31335000.0]], "truncated": false}
+  -> run_sql: {"sql": "SELECT SUM(ASSET*ROA)/SUM(CASE WHEN ROA IS NOT NULL THEN ASSET END) asset_weighted_roa_nonnull FROM raw_financials WHERE REPDTE=20260630"}
+     {"columns": ["asset_weighted_roa_nonnull"], "rows": [[1.3162043944251394]], "truncated": false}
+==========================================================================================
+D08  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was the banking industry's return on assets for the second quarter of 2026?
+Expected: 1.2978
+Answer:   number  1.36  percent
+Why:      Net income in this data is year-to-date, so I took each bank's Q2 2026 standalone income (June YTD minus March YTD), annualized it (x4), and divided by total June 2026 assets across the 4,308 banks matched in both quarters, giving about 1.36%. The asset-weighted average of the reported ROA field is about 1.32%, so the answer is roughly 1.3–1.4%.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, SUM(NETINC) ni, SUM(ASSET) assets, AVG(ROA) avg_roa, SUM(NETINC)*4/SUM(ASSET)*100 agg_roa FROM raw_financials WHERE REPDTE IN (20260630, 20260331) GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "ni", "assets", "avg_roa", "agg_roa"], "rows": [[20260331, 4353, 80991030.0, 26392617027, 1.401462445050095, 1.2274800928933283], [20260630, 4313, 171891779.0, 26753048556, 1.4775778692547552, 2.5700514637080376]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, SUM(ROA*ASSET)/SUM(ASSET) wroa, MEDIAN(ROA) med_roa, MAX(NETINC) maxni, (SELECT NETINC FROM raw_financials r2 WHERE r2.REPDTE=20260630 ORDER BY NETINC DESC LIMIT 1) top_ni, SUM(CASE WHEN ROA IS NULL THEN 1 ELSE 0 END) nulls FROM raw_financials WHERE REPDTE IN (20260331,202606
+     {"columns": ["REPDTE", "wroa", "med_roa", "maxni", "top_ni", "nulls"], "rows": [[20260331, 1.254854952099291, 1.1872006374851671, 13974000.0, 31335000.0, 0], [20260630, 1.3162043944251394, 1.2295153273777881, 31335000.0, 31335000.0, 0]], "truncated": false}
+  -> run_sql: {"sql": "SELECT CERT, ASSET, NETINC, ROA, ROE FROM raw_financials WHERE REPDTE=20260630 ORDER BY NETINC DESC LIMIT 8"}
+     {"columns": ["CERT", "ASSET", "NETINC", "ROA", "ROE"], "rows": [[628, 4091315000, 31335000.0, 1.5851712753913223, 18.55], [3510, 2654645000, 14947000.0, 1.126140493190317, 12.31], [3511, 1907928000, 12808000.0, 1.3764987837774905, 14.88], [7213, 1976180000, 10118000.0, 1.0564825195197276, 11.69], [4
+  -> run_sql: {"sql": "WITH a AS (SELECT CERT, NETINC ni6, ASSET FROM raw_financials WHERE REPDTE=20260630), b AS (SELECT CERT, NETINC ni3 FROM raw_financials WHERE REPDTE=20260331) SELECT COUNT(*) n, SUM(a.ni6-b.ni3)*4/SUM(a.ASSET)*100 q2_annualized_roa, SUM(a.ni6)*2/SUM(a.ASSET)*100 ytd_annualized_roa FROM a JO
+     {"columns": ["n", "q2_annualized_roa", "ytd_annualized_roa"], "rows": [[4308, 1.3601591311640757, 1.2850227604146462]], "truncated": false}
+==========================================================================================
+D12  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was the banking industry's return on equity for full-year 2025?
+Expected: 11.4164
+Answer:   number  11.77  percent
+Why:      Net income for the year (the 20251231 NETINC total of about $297.8B, which is year-to-date cumulative) divided by the average industry equity across the five quarter-ends from 2024Q4 to 2025Q4 (about $2,530B), giving roughly 11.8%. Using only year-end equity would give about 11.4%, so the result depends on the averaging convention.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, SUM(NETINC) ni, SUM(EQ) eq, AVG(ROE) avg_roe, SUM(ASSET) a FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "ni", "eq", "avg_roe", "a"], "rows": [[20240930, 4589, 203022930.0, 2448769632.0, 10.12593510195132, 24435201570], [20241231, 4560, 270340452.0, 2422286890.0, 10.140657546337156, 24361988917], [20250331, 4536, 70851794.0, 2483099399.0, 10.272206208425738, 24777333478], [2
+==========================================================================================
+D12  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was the banking industry's return on equity for full-year 2025?
+Expected: 11.4164
+Answer:   number  11.65  percent
+Why:      Net income for full-year 2025 is the December 2025 year-to-date figure summed across banks ($297.8B, the NETINC column is cumulative YTD). Dividing by the average of the four 2025 quarter-end total equity balances ($2.557T) gives about 11.65%. Using year-end equity instead would give about 11.4%; a simple average of bank-level ROE is about 10.6%, but that is not an aggregate measure.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, SUM(NETINC) ni, SUM(EQ) eq, AVG(ROE) avg_roe, SUM(ASSET) asset FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "ni", "eq", "avg_roe", "asset"], "rows": [[20240930, 4589, 203022930.0, 2448769632.0, 10.12593510195132, 24435201570], [20241231, 4560, 270340452.0, 2422286890.0, 10.140657546337156, 24361988917], [20250331, 4536, 70851794.0, 2483099399.0, 10.272206208425738, 24777333478]
+  -> run_sql: {"sql": "SELECT * FROM raw_financials WHERE REPDTE=20251231 LIMIT 3"}
+     {"columns": ["CERT", "REPDTE", "ASSET", "DEP", "DEPDOM", "LNLSGR", "LNLSNET", "EQ", "INTINC", "EINTEXP", "NIM", "NONII", "NONIX", "ELNATR", "NETINC", "NTLNLS", "NCLNLS", "ROA", "ROE", "NIMY", "EEFFR", "RBC1AAJ"], "rows": [[14, 20251231, 360681000, 280582000, 206672000, 46963000, 46770000, 28919000.0
+==========================================================================================
+D12  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was the banking industry's return on equity for full-year 2025?
+Expected: 11.4164
+Answer:   number  11.6  percent
+Why:      Net income for full-year 2025 (the 20251231 cumulative YTD figure, about $297.8B) divided by the average of the four 2025 quarter-end industry equity balances (about $2,557B) gives roughly 11.6%. Using year-end equity instead gives about 11.4%, so the result depends somewhat on the averaging convention.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, SUM(NETINC) ni, SUM(EQ) eq, AVG(ROE) avg_roe, SUM(ASSET) asset FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "ni", "eq", "avg_roe", "asset"], "rows": [[20240930, 4589, 203022930.0, 2448769632.0, 10.12593510195132, 24435201570], [20241231, 4560, 270340452.0, 2422286890.0, 10.140657546337156, 24361988917], [20250331, 4536, 70851794.0, 2483099399.0, 10.272206208425738, 24777333478]
+==========================================================================================
+D15  Arm A  rep 1  ->  WRONG_VALUE
+Q: By what percentage did industry net income in the second quarter of 2026 exceed net income in the second quarter of 2025?
+Expected: 29.0216
+Answer:   number  22.5  percent
+Why:      Summed NETINC across all banks in the call report data for 2026-06-30 (171,891,779 thousand) and 2025-06-30 (140,324,685 thousand). Each period has one row per bank with no duplicate CERTs. The increase is (171.89 - 140.32) / 140.32 ≈ 22.5%.
+  -> run_sql: {"sql": "SELECT REPDTE, SUM(NETINC) AS total_netinc, COUNT(*) AS n, COUNT(NETINC) AS n_nonnull FROM raw_financials WHERE REPDTE IN (20250630, 20260630) GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "total_netinc", "n", "n_nonnull"], "rows": [[20250630, 140324685.0, 4494, 4477], [20260630, 171891779.0, 4313, 4296]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS certs FROM raw_financials WHERE REPDTE IN (20250630, 20260630) GROUP BY REPDTE"}
+     {"columns": ["REPDTE", "rows_", "certs"], "rows": [[20250630, 4494, 4494], [20260630, 4313, 4313]], "truncated": false}
+==========================================================================================
+D15  Arm A  rep 2  ->  WRONG_VALUE
+Q: By what percentage did industry net income in the second quarter of 2026 exceed net income in the second quarter of 2025?
+Expected: 29.0216
+Answer:   number  22.5  percent
+Why:      Summed NETINC across all banks for 2026Q2 (20260630: 171,891,779) and 2025Q2 (20250630: 140,324,685), each with one row per bank and 17 null values ignored. The change is (171.89M − 140.32M) / 140.32M ≈ 22.5%.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, COUNT(DISTINCT CERT) AS banks, SUM(NETINC) AS ni, SUM(CASE WHEN NETINC IS NULL THEN 1 ELSE 0 END) AS null_ni FROM raw_financials WHERE REPDTE IN (20250630, 20260630) GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "banks", "ni", "null_ni"], "rows": [[20250630, 4494, 4494, 140324685.0, 17], [20260630, 4313, 4313, 171891779.0, 17]], "truncated": false}
+==========================================================================================
+D15  Arm A  rep 3  ->  WRONG_VALUE
+Q: By what percentage did industry net income in the second quarter of 2026 exceed net income in the second quarter of 2025?
+Expected: 29.0216
+Answer:   number  22.5  percent
+Why:      Summed NETINC across all reporting banks for 2026Q2 (20260630: 171,891,779) and 2025Q2 (20250630: 140,324,685), each with one row per bank. The increase is (171,891,779 − 140,324,685) / 140,324,685 ≈ 22.5%.
+  -> run_sql: {"sql": "SELECT REPDTE, SUM(NETINC) AS total_netinc, COUNT(*) AS n, COUNT(NETINC) AS nn FROM raw_financials WHERE REPDTE IN (20250630, 20260630) GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "total_netinc", "n", "nn"], "rows": [[20250630, 140324685.0, 4494, 4477], [20260630, 171891779.0, 4313, 4296]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS certs FROM raw_financials WHERE REPDTE IN (20250630, 20260630) GROUP BY REPDTE"}
+     {"columns": ["REPDTE", "rows_", "certs"], "rows": [[20260630, 4313, 4313], [20250630, 4494, 4494]], "truncated": false}
+==========================================================================================
+D19  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was return on assets for banks with less than $10 billion in assets in the second quarter of 2026?
+Expected: 1.4199
+Answer:   number  1.48  percent
+Why:      For 2026Q2 (REPDTE 20260630), I took the 4,148 banks with total assets under $10 billion (ASSET < 10,000,000 thousands) and averaged their reported ROA field, giving 1.48%. The median is 1.23%. A simple asset-weighted ratio from NETINC×4/ASSET gives about 2.81%, but it does not reconcile with the reported ROA field for individual banks, so I did not use it.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, AVG(ROA) avg_roa, MEDIAN(ROA) med_roa, SUM(NETINC)*4.0/SUM(ASSET)*100 agg_roa_ann, MIN(ASSET), MAX(ASSET) FROM raw_financials WHERE REPDTE=20260630 AND ASSET < 10000000 GROUP BY REPDTE"}
+     {"columns": ["REPDTE", "n", "avg_roa", "med_roa", "agg_roa_ann", "min(ASSET)", "max(ASSET)"], "rows": [[20260630, 4148, 1.4845709790713024, 1.2295335934010012, 2.8103546554195797, 3057, 9935678]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*), COUNT(ROA), COUNT(ASSET), MIN(REPDTE), MAX(REPDTE) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "count_star()", "count(ROA)", "count(ASSET)", "min(REPDTE)", "max(REPDTE)"], "rows": [[20240930, 4589, 4589, 4589, 20240930, 20240930], [20241231, 4560, 4560, 4560, 20241231, 20241231], [20250331, 4536, 4536, 4536, 20250331, 20250331], [20250630, 4494, 4494, 4494, 20250630, 20
+  -> run_sql: {"sql": "SELECT CERT, ASSET, NETINC, ROA, NETINC*4.0/ASSET*100 calc FROM raw_financials WHERE REPDTE=20260630 AND ASSET < 10000000 ORDER BY random() LIMIT 8"}
+     {"columns": ["CERT", "ASSET", "NETINC", "ROA", "calc"], "rows": [[32968, 96958, -1930.0, -4.315871075464385, -7.9622104416345225], [34014, 139101, 267.0, 0.38154666920713554, 0.7677874350292234], [13986, 6475, 11.0, 0.33076074972436603, 0.6795366795366795], [20568, 583492, 2357.0, 0.829691479381797,
+==========================================================================================
+D19  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was return on assets for banks with less than $10 billion in assets in the second quarter of 2026?
+Expected: 1.4199
+Answer:   number  1.48  percent
+Why:      For 2026Q2 (REPDTE 20260630), I took the 4,148 institutions with total assets under $10 billion (ASSET < 10,000,000 thousands) and averaged their reported ROA field, giving 1.48%. The median is 1.23%. The asset-weighted figure (total net income over total assets) is about 0.70% for the quarter, which is not annualized, so it is not comparable to the reported ROA.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, MIN(ASSET), MAX(ASSET), AVG(ROA), SUM(NETINC)*4.0/SUM(ASSET) agg_roa FROM raw_financials WHERE REPDTE IN (20260331,20260630) AND ASSET < 10000000 GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "min(ASSET)", "max(ASSET)", "avg(ROA)", "agg_roa"], "rows": [[20260331, 4193, 3056, 9946447, 1.4088134579810327, 0.013607047476351462], [20260630, 4148, 3057, 9935678, 1.4845709790713024, 0.028103546554195797]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*), COUNT(ROA), SUM(ASSET), MIN(ROA), MAX(ROA), MEDIAN(ROA) FROM raw_financials WHERE REPDTE=20260630 GROUP BY REPDTE"}
+     {"columns": ["REPDTE", "count_star()", "count(ROA)", "sum(ASSET)", "min(ROA)", "max(ROA)", "median(ROA)"], "rows": [[20260630, 4313, 4313, 26753048556, -53.11437984797779, 108.66297096683266, 1.2295153273777881]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) n, AVG(ROA) avg_roa, MEDIAN(ROA) med_roa, SUM(NETINC)/SUM(ASSET)*100 agg_roa_q_pct FROM raw_financials WHERE REPDTE=20260630 AND ASSET < 10000000"}
+     {"columns": ["n", "avg_roa", "med_roa", "agg_roa_q_pct"], "rows": [[4148, 1.4845709790713024, 1.2295335934010012, 0.7025886638548949]], "truncated": false}
+==========================================================================================
+D19  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was return on assets for banks with less than $10 billion in assets in the second quarter of 2026?
+Expected: 1.4199
+Answer:   number  1.48  percent
+Why:      For the 2026Q2 report date (20260630), I took the 4,148 banks with ASSET under $10 billion (10,000,000 in thousands) that report ROA and averaged their reported ROA, giving 1.48%. For reference, the median is 1.23%, and the asset-weighted aggregate (net income annualized over total assets) is about 2.81%, which is much higher because a few large banks in the group dominate the sums.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, MIN(ASSET), MAX(ASSET), AVG(ROA), SUM(NETINC)*1.0/SUM(ASSET)*4 agg_roa FROM raw_financials WHERE REPDTE IN (20260331,20260630) AND ASSET < 10000000 GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "min(ASSET)", "max(ASSET)", "avg(ROA)", "agg_roa"], "rows": [[20260331, 4193, 3056, 9946447, 1.4088134579810327, 0.013607047476351462], [20260630, 4148, 3057, 9935678, 1.4845709790713024, 0.028103546554195797]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "count_star()"], "rows": [[20240930, 4589], [20241231, 4560], [20250331, 4536], [20250630, 4494], [20250930, 4452], [20251231, 4411], [20260331, 4353], [20260630, 4313]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(ROA) n_roa, AVG(ROA) avg_roa, MEDIAN(ROA) med_roa, SUM(NETINC)*400.0/SUM(ASSET) agg_roa_pct FROM raw_financials WHERE REPDTE=20260630 AND ASSET < 10000000"}
+     {"columns": ["n_roa", "avg_roa", "med_roa", "agg_roa_pct"], "rows": [[4148, 1.4845709790713024, 1.2295335934010012, 2.8103546554195797]], "truncated": false}
+==========================================================================================
+D29  Arm A  rep 1  ->  MISSED_DECLINE
+Q: What was the banking industry's net interest margin in the second quarter of 2026?
+Expected: None
+Answer:   number  3.27  percent
+Why:      I used the reported net interest margin (NIMY) for 2026Q2 (REPDTE 20260630) across 4,313 banks, weighted by total assets, which gives about 3.27%. The NIM column holds dollar net interest income rather than a margin, so I did not use it directly. Other summaries differ: the simple average is about 3.92%, the median about 3.85%, and an aggregate NII-to-total-assets ratio about 2.91%, which understates the margin because it uses total rather than earning assets.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) n, AVG(NIM) avg_nim, SUM(INTINC - EINTEXP) / NULLIF(SUM(ASSET),0) * 400 agg_nim_approx, MEDIAN(NIM) med_nim, SUM(NIM*ASSET)/NULLIF(SUM(CASE WHEN NIM IS NOT NULL THEN ASSET END),0) asset_wtd FROM raw_financials WHERE REPDTE BETWEEN 20250101 AND 20260731 GROUP BY REPDT
+     {"columns": ["REPDTE", "n", "avg_nim", "agg_nim_approx", "med_nim", "asset_wtd"], "rows": [[20250331, 4536, 39641.901305598585, 2.89202632977534, 2956.0, 7684291.1410583], [20250630, 4494, 79757.39691757874, 5.661064172428818, 6084.0, 15735226.27501615], [20250930, 4452, 123072.16302142052, 8.605640
+  -> run_sql: {"sql": "SELECT CERT, REPDTE, ASSET, INTINC, EINTEXP, NIM, NIMY, ROA, EEFFR FROM raw_financials WHERE REPDTE IN (20250630, 20260630) AND ASSET > 1000000 ORDER BY ASSET DESC LIMIT 15"}
+     {"columns": ["CERT", "REPDTE", "ASSET", "INTINC", "EINTEXP", "NIM", "NIMY", "ROA", "EEFFR"], "rows": [[628, 20260630, 4091315000, 84603000.0, 33751000.0, 50852000.0, 2.881812914887761, 1.5851712753913223, 54.37789561819704], [628, 20250630, 3788551000, 81910000.0, 34047000.0, 47863000.0, 2.941725103
+  -> run_sql: {"sql": "SELECT COUNT(*) n, AVG(NIMY) avg_nimy, MEDIAN(NIMY) med_nimy, SUM(NIMY*ASSET)/SUM(CASE WHEN NIMY IS NOT NULL THEN ASSET END) asset_wtd_nimy, SUM(NIM)/SUM(ASSET)*400 agg_nim_nii, SUM(INTINC-EINTEXP)/SUM(ASSET)*400 agg_check FROM raw_financials WHERE REPDTE=20260630 AND NIMY IS NOT NULL"}
+     {"columns": ["n", "avg_nimy", "med_nimy", "asset_wtd_nimy", "agg_nim_nii", "agg_check"], "rows": [[4313, 3.919218736903068, 3.851185725013815, 3.272339833026591, 5.8209681664512285, 5.8209681664512285]], "truncated": false}
+==========================================================================================
+D29  Arm A  rep 2  ->  MISSED_DECLINE
+Q: What was the banking industry's net interest margin in the second quarter of 2026?
+Expected: None
+Answer:   number  3.27  percent
+Why:      Using the NIMY field (the reported net interest margin percentage; the NIM field is a dollar amount), I computed the asset-weighted average across the 4,313 banks reporting for 2026Q2 (REPDTE 20260630), giving about 3.27%. The simple average is 3.92% and the median 3.85%, but the simple figures are skewed by outlier banks, so I used the asset-weighted figure as the industry measure.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, AVG(NIM) AS avg_nim, MEDIAN(NIM) AS med_nim, SUM(INTINC - EINTEXP) * 4 / SUM(ASSET) * 100 AS agg_nim_pct, SUM(NIM * ASSET) / SUM(ASSET) AS asset_wtd_nim FROM raw_financials WHERE REPDTE >= 20260101 GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "avg_nim", "med_nim", "agg_nim_pct", "asset_wtd_nim"], "rows": [[20260331, 4353, 44323.990083025834, 3357.5, 2.9127664119611674, 8272068.3732816195], [20260630, 4313, 90624.21089385475, 6899.0, 5.8209681664512285, 16695274.899637274]], "truncated": false}
+  -> run_sql: {"sql": "SELECT CERT, REPDTE, ASSET, INTINC, EINTEXP, NIM, NIMY, ROA, EEFFR FROM raw_financials WHERE REPDTE = 20260630 ORDER BY ASSET DESC LIMIT 12"}
+     {"columns": ["CERT", "REPDTE", "ASSET", "INTINC", "EINTEXP", "NIM", "NIMY", "ROA", "EEFFR"], "rows": [[628, 20260630, 4091315000, 84603000.0, 33751000.0, 50852000.0, 2.881812914887761, 1.5851712753913223, 54.37789561819704], [3510, 20260630, 2654645000, 49582000.0, 19198000.0, 30384000.0, 2.52604309
+  -> run_sql: {"sql": "SELECT COUNT(*) n, AVG(NIMY) simple_avg, MEDIAN(NIMY) med, SUM(NIMY*ASSET)/SUM(ASSET) asset_wtd, SUM(CASE WHEN NIMY IS NULL THEN 1 END) nulls, MIN(NIMY), MAX(NIMY) FROM raw_financials WHERE REPDTE = 20260630"}
+     {"columns": ["n", "simple_avg", "med", "asset_wtd", "nulls", "min(NIMY)", "max(NIMY)"], "rows": [[4313, 3.919218736903068, 3.851185725013815, 3.272339833026591, null, -0.4628051368603046, 91.0611533067105]], "truncated": false}
+==========================================================================================
+D29  Arm A  rep 3  ->  MISSED_DECLINE
+Q: What was the banking industry's net interest margin in the second quarter of 2026?
+Expected: None
+Answer:   number  3.27  percent
+Why:      I used the reported net interest margin field (NIMY, in percent) for all 4,313 banks in the 2026Q2 report date (20260630), weighted by total assets, which gives 3.27%. The NIM column in the table is actually net interest income in thousands, not a margin, so I did not use it. Cross-checks: the simple average of bank NIMY is 3.92%, and a total-assets-based margin built from quarterly net interest income (YTD differences, annualized) is about 2.96%.
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, AVG(NIM) AS avg_nim, SUM(INTINC-EINTEXP)*4.0/SUM(ASSET)*100 AS agg_nim_pct, MEDIAN(NIM) AS med_nim, SUM(NIM*ASSET)/SUM(ASSET) AS asset_wtd_nim FROM raw_financials WHERE REPDTE IN (20260630) GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "avg_nim", "agg_nim_pct", "med_nim", "asset_wtd_nim"], "rows": [[20260630, 4313, 90624.21089385475, 5.8209681664512285, 6899.0, 16695274.899637274]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT CERT, ASSET, INTINC, EINTEXP, NIM, NIMY, ROA, EEFFR FROM raw_financials WHERE REPDTE=20260630 ORDER BY ASSET DESC LIMIT 15"}
+     {"columns": ["CERT", "ASSET", "INTINC", "EINTEXP", "NIM", "NIMY", "ROA", "EEFFR"], "rows": [[628, 4091315000, 84603000.0, 33751000.0, 50852000.0, 2.881812914887761, 1.5851712753913223, 54.37789561819704], [3510, 2654645000, 49582000.0, 19198000.0, 30384000.0, 2.5260430991970466, 1.126140493190317, 5
+  -> run_sql: {"sql": "SELECT COUNT(*) n, AVG(NIMY) simple_avg, MEDIAN(NIMY) med, SUM(NIMY*ASSET)/SUM(ASSET) asset_wtd, SUM(NIMY*ASSET)/SUM(CASE WHEN NIMY IS NOT NULL THEN ASSET END) wtd2, COUNT(NIMY) nn FROM raw_financials WHERE REPDTE=20260630"}
+     {"columns": ["n", "simple_avg", "med", "asset_wtd", "wtd2", "nn"], "rows": [[4313, 3.919218736903068, 3.851185725013815, 3.272339833026591, 3.272339833026591, 4313]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, ASSET, INTINC, EINTEXP, NIMY, (INTINC-EINTEXP)/ASSET*100 AS raw_ratio FROM raw_financials WHERE CERT=628 ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "ASSET", "INTINC", "EINTEXP", "NIMY", "raw_ratio"], "rows": [[20240930, 3584105000, 127918000.0, 56800000.0, 3.024369064923224, 1.9842610637802187], [20241231, 3459261000, 169911000.0, 74797000.0, 3.042332738710401, 2.7495467962666016], [20250331, 3643099000, 40624000.0, 16656
+  -> run_sql: {"sql": "WITH q AS (\nSELECT a.CERT, a.ASSET, (a.INTINC-a.EINTEXP) - (b.INTINC-b.EINTEXP) AS nii_q, a.NIMY\nFROM raw_financials a JOIN raw_financials b ON a.CERT=b.CERT AND b.REPDTE=20260331\nWHERE a.REPDTE=20260630)\nSELECT COUNT(*) n, SUM(nii_q)*4/SUM(ASSET)*100 agg_q_nim, SUM(NIMY*ASSET)/SUM(ASSE
+     {"columns": ["n", "agg_q_nim", "asset_wtd_nimy"], "rows": [[4308, 2.95617310331751, 3.2723583438092825]], "truncated": false}
+==========================================================================================
+Run: 20261103_225348_final-hard-dev
+
+==========================================================================================
+HD01  Arm A  rep 1  ->  WRONG_VALUE
+Q: By what percentage did net income at FDIC-designated community banks in the Kansas City region change in the fourth quarter of 2025 compared with the fourth quarter of 2024?
+Expected: 29.8886
+Answer:   number  21.5  percent
+Why:      Filtering to community banks (CB=1) in the Kansas City FDIC region, summed quarterly net income (NETINC, in thousands) was $5,078,579K for 2024Q4 (1,092 banks) and $6,171,403K for 2025Q4 (1,060 banks), an increase of about 21.5%. The bank count differs between the two quarters, so this is the aggregate change rather than a same-bank comparison.
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN, COUNT(*) FROM raw_institutions GROUP BY 1 ORDER BY 1;"}
+     {"columns": ["FDICREGN", "count_star()"], "rows": [["Atlanta", 510], ["Chicago", 975], ["Dallas", 1022], ["Kansas City", 1154], ["New York", 549], ["San Francisco", 340]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1;"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) n, SUM(f.NETINC) ni, COUNT(f.NETINC) nn FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Kansas City' AND i.CB=1 AND f.REPDTE IN (20241231,20251231) GROUP BY 1 ORDER BY 1;"}
+     {"columns": ["REPDTE", "n", "ni", "nn"], "rows": [[20241231, 1092, 5078579.0, 1092], [20251231, 1060, 6171403.0, 1060]], "truncated": false}
+  -> run_sql: {"sql": "SELECT CB, COUNT(*) FROM raw_institutions GROUP BY 1; SELECT CERT, COUNT(*) c FROM raw_institutions GROUP BY 1 HAVING c>1 LIMIT 5; SELECT CERT, REPDTE, COUNT(*) c FROM raw_financials GROUP BY 1,2 HAVING c>1 LIMIT 5;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT CB, COUNT(*) FROM raw_institutions GROUP BY 1;"}
+     {"columns": ["CB", "count_star()"], "rows": [[null, 19], [0, 460], [1, 4071]], "truncated": false}
+  -> run_sql: {"sql": "SELECT CERT, REPDTE, COUNT(*) c FROM raw_financials GROUP BY 1,2 HAVING c>1 LIMIT 5;"}
+     {"columns": ["CERT", "REPDTE", "c"], "rows": [], "truncated": false}
+==========================================================================================
+HD01  Arm A  rep 2  ->  WRONG_VALUE
+Q: By what percentage did net income at FDIC-designated community banks in the Kansas City region change in the fourth quarter of 2025 compared with the fourth quarter of 2024?
+Expected: 29.8886
+Answer:   number  21.5  percent
+Why:      I summed quarterly net income (NETINC, in thousands) for community banks (CB=1) in the Kansas City FDIC region: $5,078,579K in Q4 2024 (1,092 banks) versus $6,171,403K in Q4 2025 (1,060 banks), a 21.5% increase. Restricting to the 2,120 bank-quarter pairs that reported in both periods gives a larger increase of about 23.8%, so the answer depends on whether the comparison uses all reporting banks or a matched panel.
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN, COUNT(*) FROM raw_institutions WHERE CB=1 GROUP BY 1 ORDER BY 1;\nSELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT FDICREGN, COUNT(*) AS n FROM raw_institutions WHERE CB=1 GROUP BY 1 ORDER BY 1"}
+     {"columns": ["FDICREGN", "n"], "rows": [["Atlanta", 453], ["Chicago", 893], ["Dallas", 932], ["Kansas City", 1104], ["New York", 440], ["San Francisco", 249]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) AS n, COUNT(f.NETINC) AS n_ni, SUM(f.NETINC) AS ni, SUM(CASE WHEN f.NETINC<0 THEN 1 ELSE 0 END) AS neg\nFROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT\nWHERE i.CB=1 AND i.FDICREGN='Kansas City' AND f.REPDTE IN (20241231,20251231) GROUP BY 1 ORDER BY
+     {"columns": ["REPDTE", "n", "n_ni", "ni", "neg"], "rows": [[20241231, 1092, 1092, 5078579.0, 37], [20251231, 1060, 1060, 6171403.0, 25]], "truncated": false}
+  -> run_sql: {"sql": "SELECT (SELECT COUNT(*) FROM raw_institutions WHERE CB=1 AND FDICREGN='Kansas City') AS inst_rows,\n(SELECT COUNT(DISTINCT CERT) FROM raw_institutions WHERE CB=1 AND FDICREGN='Kansas City') AS inst_certs,\n(SELECT COUNT(*) FROM raw_financials WHERE REPDTE=20241231) AS f24_rows,\n(SELECT COU
+     {"columns": ["inst_rows", "inst_certs", "f24_rows", "f24_certs", "f25_rows", "f25_certs"], "rows": [[1104, 1104, 4560, 4560, 4411, 4411]], "truncated": false}
+  -> run_sql: {"sql": "SELECT SUM(CASE WHEN f.REPDTE=20251231 THEN f.NETINC END) AS ni25, SUM(CASE WHEN f.REPDTE=20241231 THEN f.NETINC END) AS ni24, COUNT(*) AS n\nFROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT\nWHERE i.CB=1 AND i.FDICREGN='Kansas City' AND f.REPDTE IN (20241231,20251231)\nAND f.
+     {"columns": ["ni25", "ni24", "n"], "rows": [[6171403.0, 4985670.0, 2120]], "truncated": false}
+==========================================================================================
+HD01  Arm A  rep 3  ->  WRONG_VALUE
+Q: By what percentage did net income at FDIC-designated community banks in the Kansas City region change in the fourth quarter of 2025 compared with the fourth quarter of 2024?
+Expected: 29.8886
+Answer:   number  21.5  percent
+Why:      I filtered to community banks (CB=1) in the Kansas City FDIC region and summed quarterly NETINC for the 2024Q4 (20241231) and 2025Q4 (20251231) report dates. Net income rose from 5,078,579 to 6,171,403 (thousands), a change of about +21.5%. The aggregate covers 1,092 banks in 2024Q4 and 1,060 in 2025Q4, so the change includes effects from banks that appear in only one period.
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN, COUNT(*) FROM raw_institutions GROUP BY 1 ORDER BY 1;"}
+     {"columns": ["FDICREGN", "count_star()"], "rows": [["Atlanta", 510], ["Chicago", 975], ["Dallas", 1022], ["Kansas City", 1154], ["New York", 549], ["San Francisco", 340]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1;"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT CB, COUNT(*) FROM raw_institutions GROUP BY 1;"}
+     {"columns": ["CB", "count_star()"], "rows": [[null, 19], [0, 460], [1, 4071]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) n, COUNT(DISTINCT f.CERT) certs, COUNT(f.NETINC) nn, SUM(f.NETINC) ni, SUM(CASE WHEN f.NETINC<0 THEN 1 ELSE 0 END) neg\nFROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT\nWHERE i.FDICREGN='Kansas City' AND i.CB=1 AND f.REPDTE IN (20241231,20251231)\nGR
+     {"columns": ["REPDTE", "n", "certs", "nn", "ni", "neg"], "rows": [[20241231, 1092, 1092, 1092, 5078579.0, 37], [20251231, 1060, 1060, 1060, 6171403.0, 25]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*), COUNT(DISTINCT CERT) FROM raw_institutions;"}
+     {"columns": ["count_star()", "count(DISTINCT CERT)"], "rows": [[4550, 4550]], "truncated": false}
+==========================================================================================
+HD01  Arm B  rep 1  ->  FALSE_DECLINE
+Q: By what percentage did net income at FDIC-designated community banks in the Kansas City region change in the fourth quarter of 2025 compared with the fourth quarter of 2024?
+Expected: 29.8886
+Answer:   decline  None  none
+Why:      The comparison needs fourth-quarter 2024 net income, but the data covers only 2024Q3 through 2026Q2, so 2024Q4 is outside the available periods and the year-over-year change cannot be computed. The 2025Q4 figure alone does not answer a change question.
+==========================================================================================
+HD02  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was return on assets in the third quarter of 2025 for banks with $10 billion to $100 billion in assets whose primary federal regulator is the OCC?
+Expected: 1.006
+Answer:   number  1.04  percent
+Why:      For 2025Q3 (REPDTE 20250930), I took the 37 banks with OCC as primary regulator and total assets between $10B and $100B, and averaged their reported ROA field: 1.04%. The median is 0.96%, and the aggregate (total net income / total assets) is 0.73%. The reported ROA field does not match NETINC/ASSET for many banks, so it likely uses average assets; I used the reported field as the ROA figure.
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE; SELECT REGAGNT, COUNT(*) FROM raw_institutions GROUP BY 1 ORDER BY 2 DESC;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REGAGNT, COUNT(*) FROM raw_institutions GROUP BY 1 ORDER BY 2 DESC"}
+     {"columns": ["REGAGNT", "count_star()"], "rows": [["FDIC", 2860], ["OCC", 941], ["FED", 744], ["STATE", 5]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) AS n, COUNT(DISTINCT f.CERT) AS certs, AVG(f.ROA) AS avg_roa, MEDIAN(f.ROA) AS med_roa, SUM(f.NETINC)*100.0/SUM(f.ASSET) AS agg_roa_pct, SUM(f.NETINC) AS ni, SUM(f.ASSET) AS asset FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE f.REPDTE=20250930 AND i.RE
+     {"columns": ["n", "certs", "avg_roa", "med_roa", "agg_roa_pct", "ni", "asset"], "rows": [[37, 37, 1.0375716269322386, 0.9600300456506082, 0.733823579280727, 10809276.0, 1473007451]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.CERT, f.ROA, f.NETINC*100.0/f.ASSET AS calc_roa, f.NETINC, f.ASSET FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE f.REPDTE=20250930 AND i.REGAGNT='OCC' AND f.ASSET BETWEEN 10000000 AND 100000000 ORDER BY ABS(f.ROA - f.NETINC*100.0/f.ASSET) DESC LIMIT 8"}
+     {"columns": ["CERT", "ROA", "calc_roa", "NETINC", "ASSET"], "rows": [[58303, 3.0958779491224604, 2.2956792876167813, 557782.0, 24297035], [26881, 2.009846075887246, 1.2925269213917132, 533171.0, 41250282], [35546, 1.6492212889968747, 1.1289504173852603, 297427.0, 26345444], [33555, 1.325475444914143
+==========================================================================================
+HD02  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was return on assets in the third quarter of 2025 for banks with $10 billion to $100 billion in assets whose primary federal regulator is the OCC?
+Expected: 1.006
+Answer:   number  1.04  percent
+Why:      For 2025Q3 (REPDTE 20250930), I filtered to 37 banks with OCC as primary regulator (REGAGNT) and total assets between $10B and $100B (ASSET in thousands), then averaged their reported ROA values, giving 1.04%. The median is 0.96%, and all 37 banks have non-null ROA.
+  -> run_sql: {"sql": "SELECT f.REPDTE, COUNT(*) n, AVG(f.ROA) avg_roa, SUM(f.NETINC)*4.0/SUM(f.ASSET) agg_roa FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.REGAGNT='OCC' AND f.ASSET BETWEEN 10000000 AND 100000000 AND f.REPDTE=20250930 GROUP BY f.REPDTE"}
+     {"columns": ["REPDTE", "n", "avg_roa", "agg_roa"], "rows": [[20250930, 37, 1.0375716269322386, 0.02935294317122908]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) rows_, COUNT(DISTINCT f.CERT) certs, COUNT(f.ROA) roa_nonnull, MEDIAN(f.ROA) med, MIN(f.ROA) mn, MAX(f.ROA) mx, (SELECT COUNT(*) FROM raw_institutions GROUP BY CERT HAVING COUNT(*)>1 LIMIT 1) dupe_inst FROM raw_financials f JOIN (SELECT DISTINCT CERT, REGAGNT FROM raw_instit
+     {"columns": ["rows_", "certs", "roa_nonnull", "med", "mn", "mx", "dupe_inst"], "rows": [[37, 37, 37, 0.9600300456506082, -0.2222776684597512, 3.0958779491224604, null]], "truncated": false}
+==========================================================================================
+HD02  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was return on assets in the third quarter of 2025 for banks with $10 billion to $100 billion in assets whose primary federal regulator is the OCC?
+Expected: 1.006
+Answer:   number  1.04  percent
+Why:      For 2025Q3 (REPDTE 20250930), I took the 37 banks with REGAGNT = OCC and total assets between $10B and $100B (ASSET in thousands) and averaged their reported ROA field, giving 1.04%. The range runs from -0.22% to 3.10%. NETINC appears to be year-to-date, so I used the reported ROA rather than recomputing it from net income.
+  -> run_sql: {"sql": "SELECT r.REPDTE, COUNT(*) n, AVG(r.ROA) avg_roa, MIN(r.ROA), MAX(r.ROA), SUM(r.NETINC)*4.0/SUM(r.ASSET)*100 agg_roa FROM raw_financials r JOIN raw_institutions i ON r.CERT=i.CERT WHERE i.REGAGNT='OCC' AND r.ASSET BETWEEN 10000000 AND 100000000 AND r.REPDTE=20250930 GROUP BY 1; SELECT DISTIN
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT r.REPDTE, COUNT(*) n, AVG(r.ROA) avg_roa, MIN(r.ROA), MAX(r.ROA), SUM(r.NETINC)*4.0/SUM(r.ASSET)*100 agg_roa FROM raw_financials r JOIN raw_institutions i ON r.CERT=i.CERT WHERE i.REGAGNT='OCC' AND r.ASSET BETWEEN 10000000 AND 100000000 AND r.REPDTE=20250930 GROUP BY 1"}
+     {"columns": ["REPDTE", "n", "avg_roa", "min(r.ROA)", "max(r.ROA)", "agg_roa"], "rows": [[20250930, 37, 1.0375716269322386, -0.2222776684597512, 3.0958779491224604, 2.935294317122908]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REGAGNT, COUNT(*) FROM raw_institutions GROUP BY 1"}
+     {"columns": ["REGAGNT", "count_star()"], "rows": [["STATE", 5], ["FED", 744], ["FDIC", 2860], ["OCC", 941]], "truncated": false}
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT r.CERT, r.ASSET, r.NETINC, r.ROA, r.NETINC*4.0/r.ASSET*100 implied_roa FROM raw_financials r JOIN raw_institutions i ON r.CERT=i.CERT WHERE i.REGAGNT='OCC' AND r.ASSET BETWEEN 10000000 AND 100000000 AND r.REPDTE=20250930 ORDER BY r.ASSET DESC LIMIT 12"}
+     {"columns": ["CERT", "ASSET", "NETINC", "ROA", "implied_roa"], "rows": [[29950, 97745560, 874278.0, 1.1418197340077132, 3.577770693625368], [17281, 96473902, 637142.0, 0.9036684255389692, 2.641717549685095], [32541, 91593478, -158977.0, -0.2222776684597512, -0.6942721402063148], [2270, 88533079, 635
+==========================================================================================
+HD03  Arm C  rep 1  ->  FALSE_DECLINE
+Q: How many banks that filed a call report for the third quarter of 2024 did not file one for the second quarter of 2026?
+Expected: 294
+Answer:   decline  None  none
+Why:      The question needs a set difference: banks that filed in 2024Q3 minus those that also filed in 2026Q2. The tools only return aggregate counts or row lists capped at 50 rows with no paging, so I cannot match the roughly 4,589 CERTs across the two quarters. The count of filers fell from 4,589 to 4,313 (a net drop of 276), but that net figure includes banks that entered after 2024Q3, so it is not the answer.
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["period"]}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2024Q4", "bank_count": 4560}, {"period": "2025Q1", "bank_count": 4536}, {"period": "2025Q2", "bank_count": 4494}, {"period": "2025Q3", "bank_count": 4452}, {"period": "2025Q4", "bank_count": 4411}, {"period": "2026Q1", "bank_count": 435
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3", "compare_to": "2026Q2"}
+     {"rows": [{"metric": "bank_count", "unit": "count", "2024Q3": 4589, "2026Q2": 4313, "change": 276, "change_pct": 6.3993}], "units": {"bank_count": "count"}, "notes": ["Compared 2024Q3 with 2026Q2. Each period uses all banks that filed that quarter."], "semantic_model_version": "0.1.1"}
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["bank", "period"], "limit": 5}
+     {"rows": [{"bank": 14, "period": "2024Q3", "bank_count": 1}, {"bank": 81, "period": "2024Q3", "bank_count": 1}, {"bank": 93, "period": "2024Q3", "bank_count": 1}, {"bank": 254, "period": "2024Q3", "bank_count": 1}, {"bank": 292, "period": "2024Q3", "bank_count": 1}], "units": {"bank_count": "count"}
+==========================================================================================
+HD03  Arm C  rep 2  ->  WRONG_VALUE
+Q: How many banks that filed a call report for the third quarter of 2024 did not file one for the second quarter of 2026?
+Expected: 294
+Answer:   number  292  count
+Why:      4,589 banks filed in 2024Q3 and 4,313 in 2026Q2. The tools cannot do a direct set difference, so I used ACTIVE status: all 342 inactive banks filed in 2024Q3, and only 51 inactive banks filed in 2026Q2, leaving 291 inactive exits. I also checked the 57 no-record CERTs by CERT list and found one that filed in 2024Q3 but not 2026Q2. Active banks were assumed to all continue filing, which is consistent with the monotone active counts. Total: 291 + 1 = 292.
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["period"]}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2024Q4", "bank_count": 4560}, {"period": "2025Q1", "bank_count": 4536}, {"period": "2025Q2", "bank_count": 4494}, {"period": "2025Q3", "bank_count": 4452}, {"period": "2025Q4", "bank_count": 4411}, {"period": "2026Q1", "bank_count": 435
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["bank"], "limit": 5}
+     {"rows": [{"period": "2024Q3", "bank": 39, "bank_count": 1}, {"period": "2024Q3", "bank": 88, "bank_count": 1}, {"period": "2024Q3", "bank": 228, "bank_count": 1}, {"period": "2024Q3", "bank": 267, "bank_count": 1}, {"period": "2024Q3", "bank": 303, "bank_count": 1}], "units": {"bank_count": "count"
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "filters": {"period": ["2024Q3", "2026Q2"]}}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2026Q2", "bank_count": 4313}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3", "dimensions": ["bank"], "filters": {"bank": [39, 88, 228, 267, 303]}}
+     {"rows": [{"bank": 39, "bank_count": 1}, {"bank": 88, "bank_count": 1}, {"bank": 228, "bank_count": 1}, {"bank": 267, "bank_count": 1}, {"bank": 303, "bank_count": 1}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3", "dimensions": ["active_today"]}
+     {"rows": [{"active_today": "Unknown", "bank_count": 54}, {"active_today": "Active", "bank_count": 4193}, {"active_today": "Inactive", "bank_count": 342}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2026Q2", "dimensions": ["active_today"]}
+     {"rows": [{"active_today": "Unknown", "bank_count": 56}, {"active_today": "Inactive", "bank_count": 51}, {"active_today": "Active", "bank_count": 4206}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["active_today"]}
+     {"rows": [{"period": "2024Q3", "active_today": "Unknown", "bank_count": 54}, {"period": "2024Q3", "active_today": "Active", "bank_count": 4193}, {"period": "2024Q3", "active_today": "Inactive", "bank_count": 342}, {"period": "2024Q4", "active_today": "Active", "bank_count": 4197}, {"period": "2024Q4
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3", "dimensions": ["bank"], "filters": {"state": "Unknown"}, "limit": 50}
+     {"rows": [{"bank": 27102, "bank_count": 1}, {"bank": 34056, "bank_count": 1}, {"bank": 34813, "bank_count": 1}, {"bank": 58927, "bank_count": 1}, {"bank": 59047, "bank_count": 1}, {"bank": 25824, "bank_count": 1}, {"bank": 33879, "bank_count": 1}, {"bank": 59069, "bank_count": 1}, {"bank": 18342, "b
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2026Q2", "dimensions": ["bank"], "filters": {"state": "Unknown"}, "limit": 50}
+     {"rows": [{"bank": 18342, "bank_count": 1}, {"bank": 57288, "bank_count": 1}, {"bank": 59025, "bank_count": 1}, {"bank": 59346, "bank_count": 1}, {"bank": 59366, "bank_count": 1}, {"bank": 58011, "bank_count": 1}, {"bank": 57418, "bank_count": 1}, {"bank": 58339, "bank_count": 1}, {"bank": 25824, "b
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3", "dimensions": ["bank"], "filters": {"state": "Unknown", "bank": [27102, 34056, 34813, 58927, 59047, 25824, 33879, 59069, 18342, 57288, 59025, 59346, 26622, 90544, 33239, 33962, 34629, 57337, 59337, 59357, 26732, 27479, 35317, 59255, 59276, 59344, 59046
+     {"rows": [{"bank": 57418, "bank_count": 1}, {"bank": 58339, "bank_count": 1}, {"bank": 35248, "bank_count": 1}, {"bank": 57304, "bank_count": 1}, {"bank": 58011, "bank_count": 1}, {"bank": 27102, "bank_count": 1}, {"bank": 34056, "bank_count": 1}, {"bank": 34813, "bank_count": 1}, {"bank": 58927, "b
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2026Q2", "dimensions": ["bank"], "filters": {"bank": [57304, 58999, 59363, 26474]}}
+     {"rows": [{"bank": 57304, "bank_count": 1}, {"bank": 58999, "bank_count": 1}, {"bank": 59363, "bank_count": 1}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+==========================================================================================
+HD03  Arm C  rep 3  ->  FALSE_DECLINE
+Q: How many banks that filed a call report for the third quarter of 2024 did not file one for the second quarter of 2026?
+Expected: 294
+Answer:   decline  None  none
+Why:      The question needs a set difference: banks (CERTs) that filed in 2024Q3 minus those that also filed in 2026Q2. The tools only return aggregate counts per period (4,589 banks in 2024Q3 and 4,313 in 2026Q2), and I cannot list or match individual CERTs across the two quarters to find the overlap. The net change of 276 fewer banks is not the same as the number that did not file in 2026Q2, because banks that entered in the interval also affect that net figure. The ACTIVE flag cannot be used as a substitute for past filing status.
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3:2026Q2", "dimensions": ["period"]}
+     {"rows": [{"period": "2024Q3", "bank_count": 4589}, {"period": "2024Q4", "bank_count": 4560}, {"period": "2025Q1", "bank_count": 4536}, {"period": "2025Q2", "bank_count": 4494}, {"period": "2025Q3", "bank_count": 4452}, {"period": "2025Q4", "bank_count": 4411}, {"period": "2026Q1", "bank_count": 435
+  -> query_metrics: {"metrics": ["bank_count"], "period": "2024Q3", "dimensions": ["active_today"]}
+     {"rows": [{"active_today": "Unknown", "bank_count": 54}, {"active_today": "Active", "bank_count": 4193}, {"active_today": "Inactive", "bank_count": 342}], "units": {"bank_count": "count"}, "notes": [], "semantic_model_version": "0.1.1"}
+  -> list_values: {"dimension": "period"}
+     {"dimension": "period", "description": "Quarter, YYYYQn", "values": [{"value": "2026Q2", "banks": 4313}], "note": "Values as of the latest quarter. Up to 25 shown."}
+==========================================================================================
+HD04  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was the full-year 2025 efficiency ratio for banks in the FDIC's Atlanta region with less than $10 billion in assets?
+Expected: 61.5172
+Answer:   number  70.5  percent
+Why:      I took Atlanta-region banks (FDICREGN = Atlanta) with assets under $10 billion (ASSET < 10,000,000 thousand) and averaged the reported efficiency ratio (EEFFR) across their 2025 quarterly filings. The quarterly averages were 74.1, 69.5, 68.6 and 69.7, giving about 70.5%. Averaging each bank's own 2025 mean instead gives 70.3%, and the median bank is around 65%, so the result depends on the weighting.
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN FROM raw_institutions; SELECT REPDTE, COUNT(*), AVG(EEFFR), MIN(ASSET), MAX(ASSET) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN FROM raw_institutions"}
+     {"columns": ["FDICREGN"], "rows": [["New York"], ["Kansas City"], ["San Francisco"], ["Dallas"], ["Atlanta"], ["Chicago"]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS n, AVG(EEFFR) AS avg_eff, COUNT(EEFFR) AS n_eff, MIN(ASSET), MAX(ASSET) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "n", "avg_eff", "n_eff", "min(ASSET)", "max(ASSET)"], "rows": [[20240930, 4589, 70.27430291005938, 4589, 3050, 3584105000], [20241231, 4560, 71.83163695145682, 4560, 3051, 3459261000], [20250331, 4536, 70.20795878593154, 4536, 3053, 3643099000], [20250630, 4494, 68.75015395814
+  -> run_sql: {"sql": "WITH inst AS (SELECT CERT FROM raw_institutions WHERE FDICREGN='Atlanta' GROUP BY CERT HAVING COUNT(*)=1)\nSELECT f.REPDTE, COUNT(*) AS n, AVG(f.EEFFR) AS avg_eff, MEDIAN(f.EEFFR) AS med_eff, COUNT(f.EEFFR) AS n_eff\nFROM raw_financials f JOIN inst i ON f.CERT=i.CERT\nWHERE f.ASSET < 100000
+     {"columns": ["REPDTE", "n", "avg_eff", "med_eff", "n_eff"], "rows": [[20250331, 481, 74.12238284820751, 65.70811810962918, 481], [20250630, 478, 69.5396395279893, 64.64547611260384, 478], [20250930, 475, 68.61166869070199, 63.917225298746715, 475], [20251231, 469, 69.69926189809944, 64.5102671270216
+  -> run_sql: {"sql": "WITH inst AS (SELECT CERT FROM raw_institutions WHERE FDICREGN='Atlanta' GROUP BY CERT HAVING COUNT(*)=1),\nf AS (SELECT f.CERT, f.REPDTE, f.EEFFR, f.ASSET FROM raw_financials f JOIN inst i ON f.CERT=i.CERT WHERE f.REPDTE BETWEEN 20250101 AND 20251231)\nSELECT COUNT(*) AS banks, AVG(avg_eff
+     {"columns": ["banks", "mean_of_bank_avgs", "median_bank_avg"], "rows": [[468, 70.32635092580037, 64.87813149261527]], "truncated": false}
+==========================================================================================
+HD04  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was the full-year 2025 efficiency ratio for banks in the FDIC's Atlanta region with less than $10 billion in assets?
+Expected: 61.5172
+Answer:   number  61.7  percent
+Why:      I took the FDIC Atlanta-region banks under $10B in assets (ASSET < 10,000,000 thousand) with all four 2025 quarters (467 banks). I pooled them: total 2025 noninterest expense (NONIX) divided by total 2025 net interest income (NIM) plus noninterest income (NONII), giving 61.7%. The simple average of the quarterly EEFFR values is about 70.3%, and the median bank-level ratio is about 64.8%, but I used the pooled aggregate as the group's full-year ratio.
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN FROM raw_institutions; SELECT REPDTE, COUNT(*), AVG(EEFFR), MIN(EEFFR), MAX(EEFFR) FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT f.REPDTE, f.CERT, f.ASSET, f.EEFFR, f.NONIX, f.NIM, f.NONII, f.INTINC, f.EINTEXP FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Atlanta' AND f.REPDTE BETWEEN 20250101 AND 20251231 LIMIT 20;"}
+     {"columns": ["REPDTE", "CERT", "ASSET", "EEFFR", "NONIX", "NIM", "NONII", "INTINC", "EINTEXP"], "rows": [[20250331, 35, 996268, 74.69523931733607, 5821.0, 7056.0, 737.0, 9873.0, 2817.0], [20250331, 39, 474020, 49.70106075216972, 2577.0, 4539.0, 646.0, 5922.0, 1383.0], [20250331, 41, 321186, 68.06891
+  -> run_sql: {"sql": "SELECT DISTINCT FDICREGN FROM raw_institutions"}
+     {"columns": ["FDICREGN"], "rows": [["New York"], ["Atlanta"], ["Kansas City"], ["San Francisco"], ["Chicago"], ["Dallas"]], "truncated": false}
+  -> run_sql: {"sql": "WITH b AS (SELECT f.CERT, COUNT(*) n, SUM(f.NONIX) nonix, SUM(f.NIM+f.NONII) rev, AVG(f.ASSET) avg_asset, AVG(f.EEFFR) avg_eeffr FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.FDICREGN='Atlanta' AND f.REPDTE BETWEEN 20250101 AND 20251231 AND f.ASSET < 10000000 GROUP 
+     {"columns": ["banks", "full4", "pooled_eff", "avg_of_eeffr", "median_bank"], "rows": [[467, 467, 61.70009925795309, 70.33388950416891, 64.83129512302932]], "truncated": false}
+==========================================================================================
+HD07  Arm A  rep 1  ->  WRONG_VALUE
+Q: What was the combined net income of all banks owned by Wintrust Financial Corp in the second quarter of 2026?
+Expected: 0.305
+Answer:   number  595402  usd_thousands
+Why:      I matched the 16 active institutions whose holding company is Wintrust Financial Corp and summed their NETINC for the 2026-06-30 report date (2026Q2). The total is 595,402 thousand dollars, about $595.4 million.
+  -> run_sql: {"sql": "SELECT i.CERT, i.NAME, i.NAMEHCR, i.ACTIVE, f.REPDTE, f.NETINC FROM raw_institutions i LEFT JOIN raw_financials f ON i.CERT = f.CERT AND f.REPDTE = 20260630 WHERE i.NAMEHCR ILIKE '%wintrust%' OR i.NAME ILIKE '%wintrust%'"}
+     {"columns": ["CERT", "NAME", "NAMEHCR", "ACTIVE", "REPDTE", "NETINC"], "rows": [[5744, "State Bank of the Lakes, National Association", "WINTRUST FINANCIAL CORP", 1, 20260630, 19030.0], [27052, "St. Charles Bank & Trust Company, National Association", "WINTRUST FINANCIAL CORP", 1, 20260630, 25574.0]
+==========================================================================================
+HD07  Arm A  rep 2  ->  WRONG_VALUE
+Q: What was the combined net income of all banks owned by Wintrust Financial Corp in the second quarter of 2026?
+Expected: 0.305
+Answer:   number  595402  usd_thousands
+Why:      I matched the 16 active banks whose holding company is Wintrust Financial Corp (via NAMEHCR) and summed their NETINC for the 2026-06-30 report date. The total is 595,402 thousand USD, about $595.4 million.
+  -> run_sql: {"sql": "SELECT i.CERT, i.NAME, i.NAMEHCR, i.ACTIVE, f.REPDTE, f.NETINC, f.ASSET FROM raw_institutions i JOIN raw_financials f ON i.CERT = f.CERT WHERE i.NAMEHCR ILIKE '%wintrust%' AND f.REPDTE = 20260630 ORDER BY i.CERT"}
+     {"columns": ["CERT", "NAME", "NAMEHCR", "ACTIVE", "REPDTE", "NETINC", "ASSET"], "rows": [[5744, "State Bank of the Lakes, National Association", "WINTRUST FINANCIAL CORP", 1, 20260630, 19030.0, 2811675], [27052, "St. Charles Bank & Trust Company, National Association", "WINTRUST FINANCIAL CORP", 1, 
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+==========================================================================================
+HD07  Arm A  rep 3  ->  WRONG_VALUE
+Q: What was the combined net income of all banks owned by Wintrust Financial Corp in the second quarter of 2026?
+Expected: 0.305
+Answer:   number  595402  usd_thousands
+Why:      I matched 16 institutions with NAMEHCR = 'WINTRUST FINANCIAL CORP' in raw_institutions and summed their NETINC for the 2026Q2 report date (20260630). All 16 have non-null values, totaling 595,402 thousand dollars (about $595.4 million).
+  -> run_sql: {"sql": "SELECT CERT, NAME, CITY, STALP, ACTIVE, NAMEHCR, RSSDHCR FROM raw_institutions WHERE NAMEHCR ILIKE '%wintrust%' OR NAME ILIKE '%wintrust%'"}
+     {"columns": ["CERT", "NAME", "CITY", "STALP", "ACTIVE", "NAMEHCR", "RSSDHCR"], "rows": [[5744, "State Bank of the Lakes, National Association", "Antioch", "IL", 1, "WINTRUST FINANCIAL CORP", 2260406], [27052, "St. Charles Bank & Trust Company, National Association", "Saint Charles", "IL", 1, "WINTRU
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY REPDTE"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT f.CERT, i.NAME, f.REPDTE, f.NETINC, f.ASSET FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.NAMEHCR='WINTRUST FINANCIAL CORP' AND f.REPDTE=20260630 ORDER BY f.CERT"}
+     {"columns": ["CERT", "NAME", "REPDTE", "NETINC", "ASSET"], "rows": [[5744, "State Bank of the Lakes, National Association", 20260630, 19030.0, 2811675], [27052, "St. Charles Bank & Trust Company, National Association", 20260630, 25574.0, 3686173], [27589, "Lake Forest Bank & Trust Company, National 
+  -> run_sql: {"sql": "SELECT SUM(f.NETINC) AS total_netinc, COUNT(*) AS n, COUNT(f.NETINC) AS n_nonnull FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE i.NAMEHCR='WINTRUST FINANCIAL CORP' AND f.REPDTE=20260630"}
+     {"columns": ["total_netinc", "n", "n_nonnull"], "rows": [[595402.0, 16, 16]], "truncated": false}
+==========================================================================================
+HD08  Arm A  rep 1  ->  MISSED_DECLINE
+Q: What was net income at FDIC-designated community banks in the third quarter of 2024?
+Expected: None
+Answer:   number  19252620  usd_thousands
+Why:      I summed NETINC for the 4,059 institutions flagged as community banks (CB = 1 in raw_institutions) in the 2024-09-30 report date, which gives 19,252,620 thousand dollars, about $19.25 billion. Call report amounts are in thousands, so this is the reported figure in that unit. Each of the 4,059 banks has one row with non-null net income.
+  -> run_sql: {"sql": "SELECT f.REPDTE, i.CB, COUNT(*) AS n, SUM(f.NETINC) AS netinc_sum, MIN(f.REPDTE) mn, MAX(f.REPDTE) mx FROM raw_financials f LEFT JOIN raw_institutions i ON f.CERT=i.CERT WHERE f.REPDTE BETWEEN 20240101 AND 20241231 GROUP BY 1,2 ORDER BY 1,2"}
+     {"columns": ["REPDTE", "CB", "n", "netinc_sum", "mn", "mx"], "rows": [[20240930, 0, 457, 182179092.0, 20240930, 20240930], [20240930, 1, 4059, 19252620.0, 20240930, 20240930], [20240930, null, 73, 1591218.0, 20240930, 20240930], [20241231, 0, 456, 242694928.0, 20241231, 20241231], [20241231, 1, 4030
+  -> run_sql: {"sql": "SELECT DISTINCT REPDTE FROM raw_financials ORDER BY 1"}
+     {"columns": ["REPDTE"], "rows": [[20240930], [20241231], [20250331], [20250630], [20250930], [20251231], [20260331], [20260630]], "truncated": false}
+  -> run_sql: {"sql": "SELECT COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS certs, SUM(CASE WHEN NETINC IS NULL THEN 1 ELSE 0 END) AS null_ni FROM raw_financials WHERE REPDTE=20240930 AND CERT IN (SELECT CERT FROM raw_institutions WHERE CB=1)"}
+     {"columns": ["rows_", "certs", "null_ni"], "rows": [[4059, 4059, 0]], "truncated": false}
+==========================================================================================
+HD08  Arm A  rep 2  ->  MISSED_DECLINE
+Q: What was net income at FDIC-designated community banks in the third quarter of 2024?
+Expected: None
+Answer:   number  19252620  usd_thousands
+Why:      I summed NETINC for the 2024Q3 report date (20240930) across the 4,059 banks flagged as community banks (CB = 1) in raw_institutions and found in the financials table. The total is 19,252,620 thousand dollars, or about $19.3 billion.
+  -> run_sql: {"sql": "SELECT CB, COUNT(*) AS n, COUNT(DISTINCT CERT) AS banks FROM raw_institutions GROUP BY CB;\nSELECT REPDTE, COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS banks, SUM(NETINC) AS total_netinc FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE;"}
+     ERROR ERROR: run one statement at a time.
+  -> run_sql: {"sql": "SELECT CB, COUNT(*) AS n, COUNT(DISTINCT CERT) AS banks FROM raw_institutions GROUP BY CB"}
+     {"columns": ["CB", "n", "banks"], "rows": [[null, 19, 19], [0, 460, 460], [1, 4071, 4071]], "truncated": false}
+  -> run_sql: {"sql": "SELECT REPDTE, COUNT(*) AS rows_, COUNT(DISTINCT CERT) AS banks, SUM(NETINC) AS total_netinc FROM raw_financials GROUP BY REPDTE ORDER BY REPDTE"}
+     {"columns": ["REPDTE", "rows_", "banks", "total_netinc"], "rows": [[20240930, 4589, 4589, 203022930.0], [20241231, 4560, 4560, 270340452.0], [20250331, 4536, 4536, 70851794.0], [20250630, 4494, 4494, 140324685.0], [20250930, 4452, 4452, 220028886.0], [20251231, 4411, 4411, 297818656.0], [20260331, 4
+  -> run_sql: {"sql": "SELECT i.CB, COUNT(*) AS banks, SUM(f.NETINC) AS netinc_thousands FROM raw_financials f JOIN raw_institutions i ON f.CERT = i.CERT WHERE f.REPDTE = 20240930 GROUP BY i.CB"}
+     {"columns": ["CB", "banks", "netinc_thousands"], "rows": [[null, 19, 40496.0], [0, 457, 182179092.0], [1, 4059, 19252620.0]], "truncated": false}
+==========================================================================================
+HD08  Arm A  rep 3  ->  MISSED_DECLINE
+Q: What was net income at FDIC-designated community banks in the third quarter of 2024?
+Expected: None
+Answer:   number  19252620  usd_thousands
+Why:      Summed NETINC for the 4,059 banks flagged as community banks (CB=1 in raw_institutions) for the 2024-09-30 report date, with no duplicate CERT or report rows. The total is about $19.25 billion, reported in thousands per the call report convention.
+  -> run_sql: {"sql": "SELECT f.REPDTE, i.CB, COUNT(*) n, SUM(f.NETINC) netinc_sum, MIN(f.NETINC), MAX(f.NETINC) FROM raw_financials f LEFT JOIN raw_institutions i ON f.CERT=i.CERT WHERE f.REPDTE BETWEEN 20240101 AND 20241231 GROUP BY 1,2 ORDER BY 1,2"}
+     {"columns": ["REPDTE", "CB", "n", "netinc_sum", "min(f.NETINC)", "max(f.NETINC)"], "rows": [[20240930, 0, 457, 182179092.0, -935711.0, 40057000.0], [20240930, 1, 4059, 19252620.0, -142653.0, 278606.0], [20240930, null, 73, 1591218.0, -3181.0, 481311.0], [20241231, 0, 456, 242694928.0, -1360632.0, 52
+  -> run_sql: {"sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT CERT) FROM raw_institutions) inst_dups, (SELECT COUNT(*) - COUNT(DISTINCT (CERT, REPDTE)) FROM raw_financials WHERE REPDTE=20240930) fin_dups, (SELECT COUNT(*) FROM raw_financials f JOIN raw_institutions i ON f.CERT=i.CERT WHERE f.REPDTE=20240930 AND
+     {"columns": ["inst_dups", "fin_dups", "cb_rows"], "rows": [[0, 0, 4059]], "truncated": false}
+==========================================================================================
