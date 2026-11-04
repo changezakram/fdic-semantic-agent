@@ -3,14 +3,14 @@
     streamlit run app.py
 
 Recorded mode (default) shows the frozen final runs from runs/*_final-*/ — the same answers
-the article's numbers come from. Live mode runs a new question through all three setups and
-is enabled only when the app has an API key and a passcode in its secrets.
+the article's numbers come from. Live mode runs a chosen experiment question through setup C
+and grades it; it is on only when the app has ANTHROPIC_API_KEY in its secrets. Limits: 5 live
+runs per visitor session, MAX_LIVE_PER_DAY (default 200) across all visitors.
 """
 from __future__ import annotations
 
 import json
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import streamlit as st
@@ -138,7 +138,7 @@ for col, (arm, (name, desc)) in zip(cols, ARMS.items()):
     col.metric(f"{arm}. {name}", pct(sum(r["correct"] for r in rs), len(rs)), help=desc)
     col.caption(f"Correct on {len(rs)} in-scope attempts")
 
-tab_compare, tab_results, tab_live, tab_about = st.tabs(["Compare answers", "Results", "Ask your own question", "About"])
+tab_compare, tab_results, tab_live, tab_about = st.tabs(["Compare answers", "Results", "Run it live", "About"])
 
 # ----------------------------------------------------------------------------- compare
 with tab_compare:
@@ -239,52 +239,88 @@ with tab_results:
                f" · grader v{cfg.get('grader_version', '?')} · code {cfg.get('git_commit', '?')}")
 
 # ----------------------------------------------------------------------------- live
+@st.cache_resource
+def live_counter():
+    """Shared across all visitors of this app instance: live runs per day."""
+    import threading
+    return {"day": None, "count": 0, "lock": threading.Lock()}
+
+
+@st.cache_data
+def all_questions():
+    """Every question with its answer key, grouped by set: {display label: (set_label, question, key)}."""
+    out = {}
+    for label, (set_name, qset) in SETS.items():
+        qs = yaml.safe_load((ROOT / f"questions_{qset}.yaml").read_text())["questions"]
+        keys = {a["id"]: a for a in json.loads((ROOT / f"answer_key_{qset}.json").read_text())["answers"]}
+        for q in qs:
+            out[f"{set_name}  ·  {q['id']}  ·  {q['question']}"] = (label, q, keys[q["id"]])
+    return out
+
+
 with tab_live:
     try:
-        key, passcode = st.secrets.get("ANTHROPIC_API_KEY"), st.secrets.get("DEMO_PASSCODE")
+        key = st.secrets.get("ANTHROPIC_API_KEY")
+        daily_cap = int(st.secrets.get("MAX_LIVE_PER_DAY", 200))
     except Exception:  # no secrets file: live mode stays off
-        key = passcode = None
-    if not key or not passcode:
-        st.info("Live answering is turned off on this copy of the demo. The recorded answers in the first tab "
+        key, daily_cap = None, 0
+    session_cap = 5
+
+    st.markdown(f"Pick a question and run it now through **C. {ARMS['C'][0]}**: the AI model can only call governed "
+                "metrics, and code writes the SQL. The answer is graded against the same hand-checked key as the experiment.")
+    if not key:
+        st.info("Live runs are turned off on this copy of the demo. The recorded answers in the first tab "
                 "are the ones the results come from.")
     else:
-        st.markdown("Ask a question about FDIC-insured banks, 2024Q3 to 2026Q2. All three setups answer it now. "
-                    "There is no answer key for new questions, so nothing here is graded.")
-        entered = st.text_input("Passcode", type="password", key="live_pass")
-        question = st.text_area("Your question", placeholder="e.g. What was net income for banks in Texas in the first quarter of 2026?",
-                                key="live_q")
-        if st.button("Ask all three", type="primary", disabled=not (question and entered)):
-            if entered != passcode:
-                st.error("That passcode is not right.")
+        catalog = all_questions()
+        choice = st.selectbox("Question", list(catalog), key="live_choice")
+        used = st.session_state.get("live_used", 0)
+        left = st.empty()
+        if st.button("Run it live", type="primary", disabled=used >= session_cap):
+            from datetime import date
+            counter = live_counter()
+            with counter["lock"]:
+                if counter["day"] != date.today():
+                    counter["day"], counter["count"] = date.today(), 0
+                allowed = counter["count"] < daily_cap
+                if allowed:
+                    counter["count"] += 1
+            if not allowed:
+                st.warning("The demo has reached today's limit for live runs. Try again tomorrow, or browse the "
+                           "recorded answers in the first tab.")
             else:
+                st.session_state["live_used"] = used + 1
                 import anthropic
                 import prompts
-                from agent import RawDatabase, Tools, run_question
+                from agent import Tools, run_question
+                from grader import grade
                 from semantic_layer import SemanticLayer
 
-                client = anthropic.Anthropic(api_key=key, max_retries=4)
+                set_label, qdef, akey = catalog[choice]
                 model = next(iter(runs.values()))["config"]["model"]
-
-                def ask(arm):
-                    tools = Tools(arm, semantic=SemanticLayer()) if arm == "C" else Tools(arm, raw_db=RawDatabase())
-                    return arm, run_question(client, model, prompts.build(arm), tools, question)
-
-                with st.spinner("Asking all three setups…"):
-                    with ThreadPoolExecutor(3) as pool:
-                        results = dict(pool.map(ask, ARMS))
-                cols = st.columns(3)
-                for col, arm in zip(cols, ARMS):
-                    r = results[arm]
-                    with col, st.container(border=True):
-                        st.markdown(f"**{arm}. {ARMS[arm][0]}**")
-                        st.markdown(f"### {fmt_value(r['final_answer'])}")
-                        st.write((r["final_answer"] or {}).get("explanation") or r.get("error") or "")
-                        st.caption(f"{r['tool_calls']} tool calls · {r['latency_s']:.1f}s")
-                        with st.expander("What it ran"):
-                            for s in r["steps"]:
-                                if s["type"] == "tool":
-                                    st.code(s["input"].get("sql") or json.dumps(s["input"], indent=2),
-                                            language="sql" if s["name"] == "run_sql" else "json")
+                client = anthropic.Anthropic(api_key=key, max_retries=4)
+                with st.spinner("Running through the semantic layer…"):
+                    r = run_question(client, model, prompts.build("C"), Tools("C", semantic=SemanticLayer()), qdef["question"])
+                g = grade(r["final_answer"], akey)
+                label, color = OUTCOME_LABEL.get(g["outcome"], (g["outcome"], "gray"))
+                with st.container(border=True):
+                    st.markdown(f"**C. {ARMS['C'][0]}** · :{color}-background[{label}]")
+                    st.markdown(f"### {fmt_value(r['final_answer'])}")
+                    st.markdown(f"**Correct answer:** {fmt_expected(qdef, akey['expected'])}")
+                    st.write((r["final_answer"] or {}).get("explanation") or r.get("error") or "")
+                    st.caption(f"{r['tool_calls']} tool calls · {r['latency_s']:.1f}s")
+                    steps = [s for s in r["steps"] if s["type"] == "tool"]
+                    with st.expander(f"What it ran ({len(steps)})"):
+                        for i, s in enumerate(steps, 1):
+                            st.markdown(f"**{i}. {s['name']}**" + ("  :red[error]" if s.get("error") else ""))
+                            st.code(json.dumps(s["input"], indent=2), language="json")
+                            st.caption(s["output"][:600] + ("…" if len(s["output"]) > 600 else ""))
+                recorded = [x for x in runs.get(set_label, {}).get("rows", []) if x["id"] == qdef["id"]]
+                if recorded:
+                    st.caption("In the recorded final run, this question scored: " + " · ".join(
+                        f"{a}. {sum(x['correct'] for x in recorded if x['arm'] == a)}/"
+                        f"{sum(1 for x in recorded if x['arm'] == a)}" for a in ARMS))
+        left.caption(f"{session_cap - st.session_state.get('live_used', 0)} of {session_cap} live runs left in this session.")
 
 # ----------------------------------------------------------------------------- about
 with tab_about:
