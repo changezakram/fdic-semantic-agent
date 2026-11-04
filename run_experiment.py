@@ -63,7 +63,7 @@ def check_heldout_lock(path: Path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--set", default="dev", choices=["dev", "heldout"])
+    ap.add_argument("--set", default="dev", help="dev, heldout, hard_dev or hard_heldout")
     ap.add_argument("--final", action="store_true", help="required to run the held-out set")
     ap.add_argument("--arms", default="A,B,C")
     ap.add_argument("--reps", type=int, default=3)
@@ -78,7 +78,9 @@ def main():
     if not os.environ.get("ANTHROPIC_API_KEY"):
         sys.exit("ANTHROPIC_API_KEY is not set. Run: read -s ANTHROPIC_API_KEY && export ANTHROPIC_API_KEY")
     qfile = ROOT / f"questions_{args.set}.yaml"
-    if args.set == "heldout":
+    if not qfile.exists():
+        sys.exit(f"No question file {qfile.name}.")
+    if "heldout" in args.set:
         if not args.final:
             sys.exit("The held-out set is locked. Use --final only for the final run.")
         check_heldout_lock(qfile)
@@ -149,7 +151,8 @@ def summarize(results, config, elapsed):
         L.append(f"{label:16}" + "".join(f"{fn(by[a]):>12}" for a in arms))
     pct = lambda rs, f=lambda r: r["correct"]: f"{100 * sum(map(f, rs)) / len(rs):.0f}%" if rs else "-"
     row("Accuracy", pct)
-    cats = sorted({r["category"] for r in results}, key=["ytd", "units", "ratio", "growth", "population", "ontology", "out_of_scope"].index)
+    order = ["ytd", "units", "ratio", "growth", "population", "ontology", "multi_rule", "beyond_layer", "out_of_scope"]
+    cats = sorted({r["category"] for r in results}, key=lambda c: order.index(c) if c in order else len(order))
     for c in cats:
         row(f"  {c}", lambda rs, c=c: pct([r for r in rs if r["category"] == c]))
 

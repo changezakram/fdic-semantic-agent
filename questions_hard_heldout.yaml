@@ -1,0 +1,83 @@
+# HARD HELD-OUT set. LOCKED: do not run, read answers from, or tune against this set until
+# the final run. Fingerprint recorded in DECISIONS.md. Written 2026-11-03 together with
+# questions_hard_dev.yaml, before any tuning. Same structure as the hard dev set.
+version: 1
+semantic_model_version: 0.1.1
+questions:
+
+- id: HH01
+  category: multi_rule
+  question: "By what percentage did net income at banks in the FDIC's Atlanta region that are not FDIC-designated community banks change in the second quarter of 2026 compared with the second quarter of 2025?"
+  type: growth_pct
+  sql: |
+    WITH q AS (
+      SELECT c.REPDTE, SUM(c.NETINC - COALESCE(p.NETINC, 0)) AS ni_q
+      FROM raw_financials c
+      JOIN raw_institutions i ON i.CERT = c.CERT
+      LEFT JOIN raw_financials p ON p.CERT = c.CERT
+           AND p.REPDTE = CASE c.REPDTE WHEN 20260630 THEN 20260331 WHEN 20250630 THEN 20250331 END
+      WHERE c.REPDTE IN (20250630, 20260630) AND i.CB = 0 AND i.FDICREGN = 'Atlanta'
+      GROUP BY c.REPDTE)
+    SELECT (MAX(ni_q) FILTER (WHERE REPDTE = 20260630) / MAX(ni_q) FILTER (WHERE REPDTE = 20250630) - 1) * 100 FROM q
+
+- id: HH02
+  category: multi_rule
+  question: "What was return on equity in the first quarter of 2026 for banks with less than $10 billion in assets whose primary federal regulator is the FDIC?"
+  type: ratio_pct
+  sql: |
+    SELECT SUM(f.NETINC * 4.0) / SUM(CASE WHEN f.NETINC IS NOT NULL THEN f.EQ END) * 100
+    FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260331 AND f.ASSET < 10000000 AND i.REGAGNT = 'FDIC'
+
+- id: HH03
+  category: beyond_layer
+  question: "How many banks that filed a call report for the second quarter of 2026 had not filed one for the third quarter of 2024?"
+  type: count
+  sql: |
+    SELECT COUNT(*) FROM raw_financials a
+    WHERE a.REPDTE = 20260630
+      AND NOT EXISTS (SELECT 1 FROM raw_financials b WHERE b.CERT = a.CERT AND b.REPDTE = 20240930)
+
+- id: HH04
+  category: multi_rule
+  question: "What was the noncurrent loan rate at the end of 2025 for banks in the FDIC's San Francisco region with $10 billion to $100 billion in assets?"
+  type: ratio_pct
+  sql: |
+    SELECT SUM(f.NCLNLS) / SUM(f.LNLSGR) * 100
+    FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20251231 AND f.ASSET >= 10000000 AND f.ASSET < 100000000 AND i.FDICREGN = 'San Francisco'
+
+- id: HH05
+  category: multi_rule
+  question: "What share of total industry assets at the end of the second quarter of 2025 was held by savings institutions?"
+  type: ratio_pct
+  sql: |
+    SELECT SUM(CASE WHEN i.BKCLASS IN ('SB', 'SI', 'SL') THEN f.ASSET END) * 100.0 / SUM(f.ASSET)
+    FROM raw_financials f LEFT JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20250630
+
+- id: HH06
+  category: multi_rule
+  question: "By how many percentage points did the average bank's return on assets exceed the banking industry's return on assets in the first quarter of 2026?"
+  type: pp_change
+  sql: |
+    SELECT AVG(ROA) - SUM(NETINC * 4.0) / SUM(CASE WHEN NETINC IS NOT NULL THEN ASSET END) * 100
+    FROM raw_financials WHERE REPDTE = 20260331
+
+- id: HH07
+  category: multi_rule
+  question: "What was the combined net income of all banks owned by Wells Fargo & Company in the third quarter of 2025?"
+  type: dollars_bn
+  sql: |
+    SELECT SUM(c.NETINC - COALESCE(p.NETINC, 0)) / 1e6
+    FROM raw_financials c
+    JOIN raw_institutions i ON i.CERT = c.CERT
+    LEFT JOIN raw_financials p ON p.CERT = c.CERT AND p.REPDTE = 20250630
+    WHERE c.REPDTE = 20250930 AND i.RSSDHCR = 1120754
+
+- id: HH08
+  category: out_of_scope
+  subtype: governed_decline
+  question: "What was net income for banks headquartered in Texas in the third quarter of 2024?"
+  type: decline
+  reason: "Quarterly income for 2024Q3 is not available (needs 2024Q2 YTD)."

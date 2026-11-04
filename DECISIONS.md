@@ -21,3 +21,5 @@
 - 2026-11-03: Smoke test (D01, D08, D21, D29; 1 rep): A 1/4, B 4/4, C 4/4. Harness verified end to end
 - 2026-11-03: Smoke test (D01, D08, D21, D29; 1 rep): A 1/4, B 4/4, C 4/4. Harness verified end to end
 - 2026-11-03: Grader v2 (rounding-aware numbers, normalized org names, missing_value outcome). Fixes 2 false negatives found in baseline review (D09 Arm A x3, D25 Arm B x1); baseline re-graded, originals kept
+- 2026-11-03: Added hard question sets (8 dev + 8 held-out, multi-rule, incl. 1 beyond-layer and 1 decline each), written after baseline showed B = C, before any tuning. Answers cross-checked via semantic layer (0 mismatches)
+- questions_hard_heldout.yaml sha256: 543ac2688d1837acb25be6141434fe102aafdfad20cfa1822e413c1348b3008d

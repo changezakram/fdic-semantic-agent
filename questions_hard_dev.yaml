@@ -1,0 +1,94 @@
+# Hard dev set: each question combines 2-3 governed rules. Written 2026-11-03 AFTER the
+# baseline showed Arms B and C tied on questions_dev.yaml (disclosed in DECISIONS.md),
+# and BEFORE any tuning. Same answer types, tolerances and SQL conventions as questions_dev.yaml.
+#
+# Category beyond_layer: a fair question the semantic layer was not designed to answer
+# (it needs a set comparison across quarters). It measures the cost of a constrained layer.
+version: 1
+semantic_model_version: 0.1.1
+questions:
+
+- id: HD01
+  category: multi_rule
+  question: "By what percentage did net income at FDIC-designated community banks in the Kansas City region change in the fourth quarter of 2025 compared with the fourth quarter of 2024?"
+  rules: [community bank = CB flag, region, quarterly basis (Q4 YTD minus Q3 YTD), year-over-year growth]
+  type: growth_pct
+  sql: |
+    WITH q AS (
+      SELECT c.REPDTE, SUM(c.NETINC - COALESCE(p.NETINC, 0)) AS ni_q
+      FROM raw_financials c
+      JOIN raw_institutions i ON i.CERT = c.CERT
+      LEFT JOIN raw_financials p ON p.CERT = c.CERT
+           AND p.REPDTE = CASE c.REPDTE WHEN 20251231 THEN 20250930 WHEN 20241231 THEN 20240930 END
+      WHERE c.REPDTE IN (20241231, 20251231) AND i.CB = 1 AND i.FDICREGN = 'Kansas City'
+      GROUP BY c.REPDTE)
+    SELECT (MAX(ni_q) FILTER (WHERE REPDTE = 20251231) / MAX(ni_q) FILTER (WHERE REPDTE = 20241231) - 1) * 100 FROM q
+
+- id: HD02
+  category: multi_rule
+  question: "What was return on assets in the third quarter of 2025 for banks with $10 billion to $100 billion in assets whose primary federal regulator is the OCC?"
+  rules: [size class in $ thousands, regulator, annualize Q3 YTD by 4/3, aggregate ratio, income reporters only]
+  type: ratio_pct
+  sql: |
+    SELECT SUM(f.NETINC * 4.0 / 3) / SUM(CASE WHEN f.NETINC IS NOT NULL THEN f.ASSET END) * 100
+    FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20250930 AND f.ASSET >= 10000000 AND f.ASSET < 100000000 AND i.REGAGNT = 'OCC'
+
+- id: HD03
+  category: beyond_layer
+  question: "How many banks that filed a call report for the third quarter of 2024 did not file one for the second quarter of 2026?"
+  rules: [population = filers, set difference across quarters]
+  note: "Not the same as the drop in bank count (276), because some banks entered."
+  type: count
+  sql: |
+    SELECT COUNT(*) FROM raw_financials a
+    WHERE a.REPDTE = 20240930
+      AND NOT EXISTS (SELECT 1 FROM raw_financials b WHERE b.CERT = a.CERT AND b.REPDTE = 20260630)
+
+- id: HD04
+  category: multi_rule
+  question: "What was the full-year 2025 efficiency ratio for banks in the FDIC's Atlanta region with less than $10 billion in assets?"
+  rules: [full year = Q4 YTD, region, size class at 2025Q4, aggregate ratio]
+  type: ratio_pct
+  sql: |
+    SELECT SUM(f.NONIX) / SUM(f.NIM + f.NONII) * 100
+    FROM raw_financials f JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20251231 AND f.ASSET < 10000000 AND i.FDICREGN = 'Atlanta'
+
+- id: HD05
+  category: multi_rule
+  question: "What share of total industry assets at the end of the second quarter of 2026 was held by banks in the FDIC's New York region whose primary federal regulator is the Federal Reserve?"
+  rules: [region, regulator, share of the WHOLE industry (denominator unfiltered, includes banks with no record)]
+  type: ratio_pct
+  sql: |
+    SELECT SUM(CASE WHEN i.FDICREGN = 'New York' AND i.REGAGNT = 'FED' THEN f.ASSET END) * 100.0 / SUM(f.ASSET)
+    FROM raw_financials f LEFT JOIN raw_institutions i USING (CERT)
+    WHERE f.REPDTE = 20260630
+
+- id: HD06
+  category: multi_rule
+  question: "By how many percentage points was the banking industry's return on assets higher than the median bank's return on assets in full-year 2025?"
+  rules: [aggregate ratio vs bank-distribution statistic, full year = Q4]
+  type: pp_change
+  sql: |
+    SELECT SUM(NETINC) / SUM(CASE WHEN NETINC IS NOT NULL THEN ASSET END) * 100 - MEDIAN(ROA)
+    FROM raw_financials WHERE REPDTE = 20251231
+
+- id: HD07
+  category: multi_rule
+  question: "What was the combined net income of all banks owned by Wintrust Financial Corp in the second quarter of 2026?"
+  rules: [holding-company roll-up, quarterly basis per bank]
+  type: dollars_bn
+  sql: |
+    SELECT SUM(c.NETINC - COALESCE(p.NETINC, 0)) / 1e6
+    FROM raw_financials c
+    JOIN raw_institutions i ON i.CERT = c.CERT
+    LEFT JOIN raw_financials p ON p.CERT = c.CERT AND p.REPDTE = 20260331
+    WHERE c.REPDTE = 20260630 AND i.RSSDHCR = 2260406
+
+- id: HD08
+  category: out_of_scope
+  subtype: governed_decline
+  question: "What was net income at FDIC-designated community banks in the third quarter of 2024?"
+  type: decline
+  reason: "Quarterly income for 2024Q3 needs 2024Q2 year-to-date figures, which are outside the snapshot. The 2024Q3 value in the data is nine months, not the quarter."

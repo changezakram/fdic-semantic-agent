@@ -1,0 +1,86 @@
+{
+  "set": "hard_dev",
+  "questions_file": "questions_hard_dev.yaml",
+  "questions_sha256": "be1f14dcf857892409a80c4b5b6b36737544909f6bf4b361aecb0053a9babe09",
+  "snapshot": "data/snapshot_2026Q2",
+  "answers": [
+    {
+      "id": "HD01",
+      "category": "multi_rule",
+      "type": "growth_pct",
+      "expected": 29.8886,
+      "tolerance": {
+        "absolute": 0.05
+      },
+      "display": 29.89
+    },
+    {
+      "id": "HD02",
+      "category": "multi_rule",
+      "type": "ratio_pct",
+      "expected": 1.006,
+      "tolerance": {
+        "absolute": 0.02
+      },
+      "display": 1.01
+    },
+    {
+      "id": "HD03",
+      "category": "beyond_layer",
+      "type": "count",
+      "expected": 294,
+      "tolerance": {
+        "exact": true
+      }
+    },
+    {
+      "id": "HD04",
+      "category": "multi_rule",
+      "type": "ratio_pct",
+      "expected": 61.5172,
+      "tolerance": {
+        "absolute": 0.02
+      },
+      "display": 61.52
+    },
+    {
+      "id": "HD05",
+      "category": "multi_rule",
+      "type": "ratio_pct",
+      "expected": 8.0741,
+      "tolerance": {
+        "absolute": 0.02
+      },
+      "display": 8.07
+    },
+    {
+      "id": "HD06",
+      "category": "multi_rule",
+      "type": "pp_change",
+      "expected": 0.0721,
+      "tolerance": {
+        "absolute": 0.02
+      },
+      "display": 0.07
+    },
+    {
+      "id": "HD07",
+      "category": "multi_rule",
+      "type": "dollars_bn",
+      "expected": 0.305,
+      "tolerance": {
+        "relative": 0.005
+      },
+      "display": 0.3
+    },
+    {
+      "id": "HD08",
+      "category": "out_of_scope",
+      "type": "decline",
+      "expected": null,
+      "tolerance": {
+        "must_decline": true
+      }
+    }
+  ]
+}
