@@ -1,0 +1,34 @@
+Run 20261103_224556_final-heldout  model=claude-haiku-5-5  prompts v1  semantic model v0.1.1  grader v3  (1.6 min)
+
+                       Arm A       Arm B       Arm C
+Accuracy                 83%         97%        100%
+  ytd                    67%        100%        100%
+  units                 100%        100%        100%
+  ratio                  50%        100%        100%
+  growth                100%        100%        100%
+  population             83%        100%        100%
+  ontology              100%         83%        100%
+  out_of_scope          100%        100%        100%
+Same result x3           83%         92%        100%
+Avg tool calls           2.0         1.1         1.2
+Avg tokens in          4,516      15,061      16,860
+Avg tokens out           835         660         432
+Avg seconds              4.7         3.4         2.7
+
+Outcomes
+  correct                 30          35          36
+  wrong_value              6           1           0
+
+Per question (correct / attempts)
+  H01                    1/3         3/3         3/3
+  H02                    3/3         3/3         3/3
+  H03                    3/3         3/3         3/3
+  H04                    3/3         3/3         3/3
+  H05                    0/3         3/3         3/3
+  H06                    3/3         3/3         3/3
+  H07                    3/3         3/3         3/3
+  H08                    3/3         3/3         3/3
+  H09                    3/3         2/3         3/3
+  H10                    2/3         3/3         3/3
+  H11                    3/3         3/3         3/3
+  H12                    3/3         3/3         3/3

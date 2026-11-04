@@ -1,0 +1,28 @@
+Run 20261103_224735_final-hard-heldout  model=claude-haiku-5-5  prompts v1  semantic model v0.1.1  grader v3  (1.8 min)
+
+                       Arm A       Arm B       Arm C
+Accuracy                 50%         92%         88%
+  multi_rule             50%         89%        100%
+  beyond_layer          100%        100%          0%
+  out_of_scope            0%        100%        100%
+Same result x3          100%         88%        100%
+Avg tool calls           3.4         1.4         1.7
+Avg tokens in          7,232      18,070      19,660
+Avg tokens out         1,329         977         880
+Avg seconds              6.7         4.8         4.7
+
+Outcomes
+  correct                 12          22          21
+  wrong_value              9           2           0
+  false_decline            0           0           3
+  missed_decline           3           0           0
+
+Per question (correct / attempts)
+  HH01                   0/3         1/3         3/3
+  HH02                   0/3         3/3         3/3
+  HH03                   3/3         3/3         0/3
+  HH04                   3/3         3/3         3/3
+  HH05                   3/3         3/3         3/3
+  HH06                   3/3         3/3         3/3
+  HH07                   0/3         3/3         3/3
+  HH08                   0/3         3/3         3/3

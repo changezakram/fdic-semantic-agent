@@ -1,0 +1,39 @@
+{
+  "run_id": "20261103_224556_final-heldout",
+  "started": "2026-11-03T22:45:56",
+  "model": "claude-haiku-5-5",
+  "temperature": null,
+  "max_turns": 12,
+  "question_set": "heldout",
+  "questions_sha256": "967a5e19ff85ee7b8e6e54f5c53f785b6894ca5efd357b664a6c3bfb748f7cd1",
+  "question_ids": [
+    "H01",
+    "H02",
+    "H03",
+    "H04",
+    "H05",
+    "H06",
+    "H07",
+    "H08",
+    "H09",
+    "H10",
+    "H11",
+    "H12"
+  ],
+  "arms": [
+    "A",
+    "B",
+    "C"
+  ],
+  "reps": 3,
+  "prompt_version": "1",
+  "grader_version": 3,
+  "semantic_model_version": "0.1.1",
+  "prompt_sha256": {
+    "A": "b5998cefa5405a74b17dfb81d245dd3379fb67162925e21f3d71a9504440a9fb",
+    "B": "6956ab16b43612539c3a7950f7e67050f159f2dfacca78c0e8d07d0d4f8617d3",
+    "C": "d5eab400a45ccc25d57c41f46ebd7a056f59e2dd0a1cf0d67145c655a8abdeb0"
+  },
+  "git_commit": "3a8bf9b",
+  "anthropic_sdk": "2.4.0"
+}
