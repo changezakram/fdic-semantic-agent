@@ -314,12 +314,16 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                         on_step(f"Looked up {tu.input.get('dimension')} values")
                 else:
                     content, is_err = f"ERROR: unknown tool {tu.name}", True
-            except QueryError as e:
-                content, is_err = f"ERROR: {e}", True
-                if on_step:
-                    on_step("A request was outside the governed metrics; adjusting")
-            except TypeError as e:
-                content, is_err = f"ERROR: bad arguments: {e}", True
+            except Exception as e:  # noqa: BLE001 - every tool failure goes back to the model, never crashes the app
+                if type(e).__name__ == "QueryError":          # by name: survives a code reload mid-session
+                    content = f"ERROR: {e}"
+                    if on_step:
+                        on_step("A request was outside the governed metrics; adjusting")
+                elif isinstance(e, TypeError):
+                    content = f"ERROR: bad arguments for {tu.name}: {e}"
+                else:
+                    content = f"ERROR: the request failed ({type(e).__name__}). Try a simpler request."
+                is_err = True
             steps.append({"tool": tu.name, "input": tu.input, "error": is_err})
             out.append({"type": "tool_result", "tool_use_id": tu.id, "content": content, "is_error": is_err})
         messages.append({"role": "user", "content": out})

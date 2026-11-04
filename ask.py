@@ -69,7 +69,7 @@ def draw_chart(chart: dict, result: dict):
 def render_turn(turn: dict, idx: int, last: bool = False):
     a, results = turn.get("answer"), turn.get("results", {})
     if turn.get("error") and not a:
-        st.error(f"Something went wrong: {turn['error']}. Try rephrasing the question.")
+        st.error("Something went wrong answering that. Please try again, or rephrase the question.")
         return
     if a.get("answer_type") == "decline":
         st.markdown(f"**{md(a.get('headline', 'This data cannot answer that question.'))}**")
@@ -184,14 +184,21 @@ if question:
             st.warning("The app has reached today's question limit. Please try again tomorrow.")
             st.stop()
         st.session_state["asked"] = used + 1
-        if "layer" not in st.session_state:
-            st.session_state["layer"] = SemanticLayer()
+        layer_key = (id(SemanticLayer), SemanticLayer.__module__)      # rebuilt if the code was reloaded
+        if st.session_state.get("layer_key") != layer_key:
+            st.session_state["layer"], st.session_state["layer_key"] = SemanticLayer(), layer_key
         import anthropic
         client = anthropic.Anthropic(api_key=key, max_retries=4)
         with st.status("Working on it…", expanded=False) as status:
-            turn = analyst.run(client, secret("MODEL", "claude-haiku-5-5"), st.session_state["layer"], question,
-                               history, on_step=lambda m: status.write(m))
-            status.update(label="Done", state="complete")
+            try:
+                turn = analyst.run(client, secret("MODEL", "claude-haiku-5-5"), st.session_state["layer"], question,
+                                   history, on_step=lambda m: status.write(m))
+                status.update(label="Done", state="complete")
+            except Exception:  # noqa: BLE001 - never show a traceback to visitors
+                import logging
+                logging.exception("Ask page failed on question: %s", question)
+                turn = {"answer": None, "results": {}, "error": "unexpected"}
+                status.update(label="Something went wrong", state="error")
         turn["question"] = question
         history.append(turn)
         st.rerun()   # redraw from history: clean layout, samples hidden, counter current

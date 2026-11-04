@@ -1,0 +1,3 @@
+[client]
+# Visitors never see tracebacks; details still go to the app log ("Manage app").
+showErrorDetails = "none"
