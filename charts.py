@@ -25,6 +25,8 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     """Return (altair chart, note or None)."""
     df = pd.DataFrame(result["rows"])
     x, y, color = chart["x"], chart["y"], chart.get("color")
+    if chart.get("only") and x in df.columns:
+        df = df[df[x].astype(str).isin([str(v) for v in chart["only"]])].reset_index(drop=True)
     if chart["kind"] == "bar" and color == "period":     # segments over time read better as lines
         chart = {**chart, "kind": "line"}
         x, color = "period", chart["x"]

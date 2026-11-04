@@ -21,6 +21,12 @@ ANALYST_RULES = """You are a bank data analyst answering questions about FDIC-in
 
 How to work:
 - Get every number from query_metrics. Never invent data.
+- Never rank in your head. Every "highest", "lowest", "leads", "best", "worst" or "second"
+  claim must match the "ranking" block that comes with grouped results (computed by code).
+  Remember which direction is better: a LOWER efficiency ratio, noncurrent loan rate or
+  charge-off rate is better.
+- For peer groups of holding companies by size, use the dimension organization_size_class
+  (total assets of the whole organization), not size_class (each bank charter separately).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
   (a multiple such as "1.7 times", a difference, a share, a percent change) must come from the
   calculate tool. For change over time, prefer query_metrics with compare_to.
@@ -36,7 +42,8 @@ How to work:
 - A chart plots every row of its result. Before presenting, make sure some result contains exactly
   the items your answer discusses. If you narrowed a broad result down in your reasoning (for example
   to four peer banks), run one more query_metrics filtered to those items, e.g.
-  filters {"holding_company": ["NAME 1", "NAME 2"]}, and chart that result.
+  filters {"holding_company": ["NAME 1", "NAME 2"]}, and chart that result, or set the chart's
+  "only" list to exactly those items. A chart must never show items your answer excluded.
 - If the data cannot answer the question, call present_answer with answer_type "decline" and
   explain what the data does cover.
 - Answer the business question; do not ask the user follow-up questions.
@@ -99,6 +106,8 @@ PRESENT_TOOL = {
                         "y": {"type": "string", "description": "A metric in that result."},
                         "color": {"type": "string", "description": "Optional second dimension in that result."},
                         "title": {"type": "string"},
+                        "only": {"type": "array", "items": {"type": "string"},
+                                 "description": "Optional: the x values to show, if the result has rows your answer excluded."},
                     },
                     "required": ["result_id", "kind", "x", "y", "title"],
                 },
@@ -110,6 +119,28 @@ PRESENT_TOOL = {
         "required": ["answer_type", "headline"],
     },
 }
+
+
+def rankings(res: dict, request: dict) -> dict | None:
+    """Highest/lowest per metric, computed in code, for results grouped by one non-period dimension."""
+    rows = res.get("rows") or []
+    dims = [d for d in request.get("dimensions") or [] if rows and d in rows[0]]
+    if len(rows) < 2 or len(dims) != 1 or dims[0] == "period":
+        return None
+    if any("Only the first" in n for n in res.get("notes", [])):
+        return {"warning": "This result was cut off at the row limit, so it does not contain every group. "
+                           "Do not rank from it. Narrow the query with filters (e.g. organization_size_class) "
+                           "or use order_by with a limit, then rank."}
+    d, out = dims[0], {}
+    for m in request.get("metrics") or []:
+        vals = [(r[d], r[m]) for r in rows if isinstance(r.get(m), (int, float))]
+        if len(vals) < 2:
+            continue
+        ordered = sorted(vals, key=lambda t: t[1], reverse=True)
+        out[m] = {"highest": [{d: k, m: round(v, 4)} for k, v in ordered[:3]],
+                  "lowest": [{d: k, m: round(v, 4)} for k, v in ordered[-3:][::-1]],
+                  "rank_order_high_to_low": [k for k, _ in ordered][:25], "of": len(ordered)}
+    return out or None
 
 
 def build_spec() -> dict:
@@ -186,6 +217,9 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                     rid = f"q{len(results) + 1}"
                     results[rid] = {"request": tu.input, **res}
                     shown = {"result_id": rid, **{k: v for k, v in res.items() if k != "sql"}}
+                    ranks = rankings(res, tu.input)
+                    if ranks:
+                        shown["ranking"] = ranks
                     content, is_err = json.dumps(shown, default=str)[:MAX_RESULT_CHARS], False
                     if on_step:
                         on_step(f"Queried {', '.join(tu.input.get('metrics', []))}"
@@ -260,7 +294,12 @@ def chart_problems(answer: dict, results: dict) -> list[str]:
             v = c.get(field)
             if v and v not in cols:
                 probs.append(f"Chart {i}: {field} '{v}' is not a column in {c['result_id']}; its columns are {cols}.")
-        if c.get("kind") == "bar" and not c.get("color") and len(r["rows"]) > 20:
+        if c.get("only") and c.get("x") in cols:
+            present = {str(row[c["x"]]) for row in r["rows"]}
+            missing = [v for v in c["only"] if str(v) not in present]
+            if missing:
+                probs.append(f"Chart {i}: 'only' values {missing} are not in column {c['x']} of {c['result_id']}.")
+        if c.get("kind") == "bar" and not c.get("color") and len(r["rows"]) > 20 and not c.get("only"):
             probs.append(f"Chart {i}: {c['result_id']} has {len(r['rows'])} rows, too many for a bar chart. "
                          "Run a narrower query_metrics filtered to the items you discuss, and chart that result.")
     chartable = [rid for rid, r in results.items()
