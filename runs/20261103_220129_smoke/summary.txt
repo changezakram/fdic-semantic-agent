@@ -1,0 +1,23 @@
+Run 20261103_220129_smoke  model=claude-haiku-5-5  prompts v1  semantic model v0.1.1  (0.2 min)
+
+                       Arm A       Arm B       Arm C
+Accuracy                 25%        100%        100%
+  ytd                     0%        100%        100%
+  ratio                   0%        100%        100%
+  ontology              100%        100%        100%
+  out_of_scope            0%        100%        100%
+Avg tool calls           3.2         1.0         1.0
+Avg tokens in          7,542      13,987      17,021
+Avg tokens out         1,239         826         412
+Avg seconds              6.7         4.1         2.8
+
+Outcomes
+  correct                  1           4           4
+  wrong_value              2           0           0
+  missed_decline           1           0           0
+
+Per question (correct / attempts)
+  D01                    0/1         1/1         1/1
+  D08                    0/1         1/1         1/1
+  D21                    1/1         1/1         1/1
+  D29                    0/1         1/1         1/1

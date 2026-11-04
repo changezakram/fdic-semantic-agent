@@ -18,3 +18,4 @@
 - questions_heldout.yaml sha256: 967a5e19ff85ee7b8e6e54f5c53f785b6894ca5efd357b664a6c3bfb748f7cd1
 - 2026-11-03: Arm C compiler (semantic_layer.py) passes 25/25 dev answers and 7/7 refusals; tools: query_metrics + list_values
 - 2026-11-03: Semantic model v0.1.1 (added derived_terms glossary text). Prompts v1: A = schema; B = schema + glossary; C = same glossary + query_metrics/list_values. All arms end with structured final_answer
+- 2026-11-03: Smoke test (D01, D08, D21, D29; 1 rep): A 1/4, B 4/4, C 4/4. Harness verified end to end
