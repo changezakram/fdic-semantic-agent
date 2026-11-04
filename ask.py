@@ -96,6 +96,8 @@ def render_turn(turn: dict, idx: int, last: bool = False):
                    "profitability and asset-quality ratios, by bank, holding company, state, region, regulator and size.")
         follow_up_buttons(a, idx, last)
         return
+    if a.get("correction"):
+        st.warning(md(a["correction"]), icon=":material/edit_note:")
     st.markdown(f"#### {md(a.get('headline', ''))}")
     for ins in a.get("insights") or []:
         st.markdown(f"- {md(ins)}")

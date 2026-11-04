@@ -6,7 +6,9 @@ Every number comes from the semantic layer; charts are drawn by the app from tho
 """
 from __future__ import annotations
 
+import ast
 import json
+import operator
 import time
 
 import prompts
@@ -18,8 +20,10 @@ MAX_RESULT_CHARS = 8000
 ANALYST_RULES = """You are a bank data analyst answering questions about FDIC-insured banks for business users.
 
 How to work:
-- Get every number from query_metrics. Never compute figures in your head beyond simple
-  differences or ratios of numbers you retrieved, and never invent data.
+- Get every number from query_metrics. Never invent data.
+- Never do arithmetic in your head. Any number you state that query_metrics did not return
+  (a multiple such as "1.7 times", a difference, a share, a percent change) must come from the
+  calculate tool. For change over time, prefer query_metrics with compare_to.
 - For trends, query a period range with dimension "period". Ratios (ROA, ROE, efficiency,
   noncurrent loan rate, etc.), balances (assets, deposits, loans) and counts cover every quarter
   from 2024Q3 to 2026Q2, so use 2024Q3:2026Q2 for them. Only quarterly income AMOUNTS (net income,
@@ -32,6 +36,8 @@ How to work:
 - If the data cannot answer the question, call present_answer with answer_type "decline" and
   explain what the data does cover.
 - Answer the business question; do not ask the user follow-up questions.
+- Answer only the current question in headline and insights. If you notice an error in an
+  earlier answer, put it in "correction", not in the insights.
 
 When done, call present_answer exactly once:
 - headline: one sentence that answers the question, with the key number and its unit.
@@ -42,6 +48,32 @@ When done, call present_answer exactly once:
   y is one metric from that result; color is an optional second dimension in that result.
 - follow_ups: 2 or 3 short, natural next questions this data can answer (a breakdown, a
   trend, a comparison), each under 70 characters."""
+
+CALC_TOOL = {
+    "name": "calculate",
+    "description": ("Evaluate arithmetic on numbers you retrieved: + - * / and parentheses, e.g. "
+                    "'25.9 / 15.3' or '(91.0 - 67.4) / 67.4 * 100'. Use it for every multiple, difference, "
+                    "share or percent change you state that query_metrics did not return."),
+    "input_schema": {"type": "object", "properties": {"expression": {"type": "string"}}, "required": ["expression"]},
+}
+_OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
+        ast.USub: operator.neg, ast.UAdd: operator.pos}
+
+
+def calculate(expression: str) -> float:
+    """Safe arithmetic: numbers and + - * / ( ) only."""
+    def ev(n):
+        if isinstance(n, ast.Constant) and isinstance(n.value, (int, float)):
+            return n.value
+        if isinstance(n, ast.BinOp) and type(n.op) in _OPS:
+            return _OPS[type(n.op)](ev(n.left), ev(n.right))
+        if isinstance(n, ast.UnaryOp) and type(n.op) in _OPS:
+            return _OPS[type(n.op)](ev(n.operand))
+        raise ValueError("only numbers and + - * / ( ) are allowed")
+    if len(expression) > 200:
+        raise ValueError("expression too long")
+    return round(ev(ast.parse(expression.replace(",", ""), mode="eval").body), 6)
+
 
 PRESENT_TOOL = {
     "name": "present_answer",
@@ -69,6 +101,7 @@ PRESENT_TOOL = {
             },
             "decline_reason": {"type": "string"},
             "follow_ups": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
+            "correction": {"type": "string", "description": "Optional: a correction to an earlier answer in this conversation."},
         },
         "required": ["answer_type", "headline"],
     },
@@ -79,7 +112,7 @@ def build_spec() -> dict:
     """System prompt and tools: analyst rules + the same governed glossary as Setup C."""
     c = prompts.build("C")
     system = f"{ANALYST_RULES}\n\nThe data covers 2024Q3 through 2026Q2.\n\n{prompts.render_glossary()}"
-    tools = [t for t in c["tools"] if t["name"] in ("query_metrics", "list_values")] + [PRESENT_TOOL]
+    tools = [t for t in c["tools"] if t["name"] in ("query_metrics", "list_values")] + [CALC_TOOL, PRESENT_TOOL]
     return {"system": system, "tools": tools}
 
 
@@ -138,6 +171,14 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                         on_step(f"Queried {', '.join(tu.input.get('metrics', []))}"
                                 + (f" by {', '.join(tu.input['dimensions'])}" if tu.input.get("dimensions") else "")
                                 + f" for {tu.input.get('period')}")
+                elif tu.name == "calculate":
+                    try:
+                        content, is_err = json.dumps({"expression": tu.input.get("expression"),
+                                                      "result": calculate(tu.input.get("expression", ""))}), False
+                    except (ValueError, SyntaxError, ZeroDivisionError, TypeError) as e:
+                        content, is_err = f"ERROR: {e}", True
+                    if on_step:
+                        on_step(f"Calculated {tu.input.get('expression')}")
                 elif tu.name == "list_values":
                     content, is_err = json.dumps(layer.list_values(**tu.input), default=str)[:MAX_RESULT_CHARS], False
                     if on_step:
@@ -162,8 +203,26 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
             "latency_s": round(time.time() - t0, 1), "error": error}
 
 
+def auto_chart(results: dict) -> dict | None:
+    """A sensible chart when the model gave none: the last result with 1-2 dimensions and a metric."""
+    for rid, r in reversed(list(results.items())):
+        rows, req = r.get("rows") or [], r.get("request", {})
+        dims = [d for d in req.get("dimensions") or [] if rows and d in rows[0]]
+        metrics = [m for m in req.get("metrics") or [] if rows and m in rows[0]]
+        if not dims or not metrics or len(rows) < 2:
+            continue
+        if "period" in dims:
+            other = [d for d in dims if d != "period"]
+            return {"result_id": rid, "kind": "line", "x": "period", "y": metrics[0],
+                    "color": other[0] if other else None, "title": metrics[0].replace("_", " ").capitalize()}
+        return {"result_id": rid, "kind": "bar", "x": dims[0], "y": metrics[0],
+                "color": dims[1] if len(dims) > 1 else None,
+                "title": f"{metrics[0].replace('_', ' ').capitalize()} by {dims[0].replace('_', ' ')}"}
+    return None
+
+
 def valid_charts(answer: dict, results: dict) -> list[dict]:
-    """Keep only chart specs whose result, x, y and color exist in the data."""
+    """Chart specs whose result, x, y and color exist in the data; a fallback if none qualify."""
     good = []
     for c in (answer or {}).get("charts") or []:
         r = results.get(c.get("result_id"))
@@ -172,4 +231,8 @@ def valid_charts(answer: dict, results: dict) -> list[dict]:
         cols = set(r["rows"][0])
         if c.get("x") in cols and c.get("y") in cols and (not c.get("color") or c["color"] in cols):
             good.append(c)
+    if not good and (answer or {}).get("answer_type") == "answer":
+        fallback = auto_chart(results)
+        if fallback:
+            good.append(fallback)
     return good
