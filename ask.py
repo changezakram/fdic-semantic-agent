@@ -51,6 +51,11 @@ def take_daily_slot(cap: int) -> bool:
         return True
 
 
+def md(text: str) -> str:
+    """Escape $ so Streamlit does not read dollar amounts as math."""
+    return str(text).replace("$", "\\$")
+
+
 def label(name: str) -> str:
     return name.replace("_", " ").capitalize()
 
@@ -78,21 +83,22 @@ def draw_chart(chart: dict, result: dict):
     st.altair_chart(ch.properties(title=chart.get("title", ""), height=320), width="stretch")
 
 
-def render_turn(turn: dict, idx: int):
+def render_turn(turn: dict, idx: int, last: bool = False):
     a, results = turn.get("answer"), turn.get("results", {})
     if turn.get("error") and not a:
         st.error(f"Something went wrong: {turn['error']}. Try rephrasing the question.")
         return
     if a.get("answer_type") == "decline":
-        st.markdown(f"**{a.get('headline', 'This data cannot answer that question.')}**")
+        st.markdown(f"**{md(a.get('headline', 'This data cannot answer that question.'))}**")
         if a.get("decline_reason"):
-            st.write(a["decline_reason"])
+            st.markdown(md(a["decline_reason"]))
         st.caption("This app covers FDIC call-report data for 2024Q3 to 2026Q2: balance sheets, income, "
                    "profitability and asset-quality ratios, by bank, holding company, state, region, regulator and size.")
+        follow_up_buttons(a, idx, last)
         return
-    st.markdown(f"#### {a.get('headline', '')}")
+    st.markdown(f"#### {md(a.get('headline', ''))}")
     for ins in a.get("insights") or []:
-        st.markdown(f"- {ins}")
+        st.markdown(f"- {md(ins)}")
     charts = analyst.valid_charts(a, results)
     if charts:
         cols = st.columns(len(charts)) if len(charts) > 1 else [st.container()]
@@ -116,6 +122,18 @@ def render_turn(turn: dict, idx: int):
                 st.code(r.get("sql", ""), language="sql")
     st.caption(f"Semantic model v{next(iter(results.values()))['semantic_model_version'] if results else '?'}"
                f" · {turn.get('latency_s', 0):.0f}s")
+    follow_up_buttons(a, idx, last)
+
+
+def follow_up_buttons(a: dict, idx: int, last: bool):
+    ups = (a or {}).get("follow_ups") or []
+    if not (last and ups):
+        return
+    st.markdown("**Ask next:**")
+    cols = st.columns(len(ups))
+    for j, (col, q) in enumerate(zip(cols, ups)):
+        if col.button(q, key=f"fu_{idx}_{j}", width="stretch"):
+            st.session_state["pending_q"] = q
 
 
 # ----------------------------------------------------------------------------- page
@@ -132,14 +150,23 @@ if not key:
 history = st.session_state.setdefault("history", [])
 used = st.session_state.setdefault("asked", 0)
 
+with st.sidebar:
+    st.markdown("**Sample questions**")
+    for i, s in enumerate(SAMPLES):
+        if st.button(s, key=f"side_{i}", width="stretch"):
+            st.session_state["pending_q"] = s
+    if history and st.button("New conversation", icon=":material/refresh:", width="stretch"):
+        st.session_state["history"] = []
+        st.rerun()
+
 for i, turn in enumerate(history):
     with st.chat_message("user"):
         st.write(turn["question"])
     with st.chat_message("assistant"):
-        render_turn(turn, i)
+        render_turn(turn, i, last=(i == len(history) - 1))
 
-question = None
-if not history:
+question = st.session_state.pop("pending_q", None)
+if not history and not question:
     st.markdown("**Try one:**")
     cols = st.columns(3)
     for i, s in enumerate(SAMPLES):
@@ -148,6 +175,8 @@ if not history:
 
 typed = st.chat_input("Ask a question about U.S. banks", disabled=used >= SESSION_CAP)
 question = typed or question
+if question and used >= SESSION_CAP:
+    question = None
 if used >= SESSION_CAP:
     st.caption(f"You've used all {SESSION_CAP} questions for this session.")
 elif history:

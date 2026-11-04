@@ -20,9 +20,11 @@ ANALYST_RULES = """You are a bank data analyst answering questions about FDIC-in
 How to work:
 - Get every number from query_metrics. Never compute figures in your head beyond simple
   differences or ratios of numbers you retrieved, and never invent data.
-- For trends, query a period range (e.g. 2024Q4:2026Q2) with dimension "period". Quarterly
-  income is not available for 2024Q3, so start income trends at 2024Q4 unless the user asks for
-  year-to-date figures.
+- For trends, query a period range with dimension "period". Ratios (ROA, ROE, efficiency,
+  noncurrent loan rate, etc.), balances (assets, deposits, loans) and counts cover every quarter
+  from 2024Q3 to 2026Q2, so use 2024Q3:2026Q2 for them. Only quarterly income AMOUNTS (net income,
+  net interest income, noninterest income/expense, provisions, charge-offs in dollars) start at
+  2024Q4, because 2024Q3 would need 2024Q2 year-to-date data.
 - For comparisons across segments (region, size class, regulator, charter type, state,
   community-bank flag, specialization), use dimensions. Combine "period" with one segment
   dimension for "trend by segment" questions.
@@ -37,7 +39,9 @@ When done, call present_answer exactly once:
   the results (largest/smallest, change over time, gaps between segments, notable outliers,
   data caveats such as the "Unknown" group). Do not speculate about causes.
 - charts: 0 to 2 charts. Use "line" when x is "period", "bar" for comparing segments.
-  y is one metric from that result; color is an optional second dimension in that result."""
+  y is one metric from that result; color is an optional second dimension in that result.
+- follow_ups: 2 or 3 short, natural next questions this data can answer (a breakdown, a
+  trend, a comparison), each under 70 characters."""
 
 PRESENT_TOOL = {
     "name": "present_answer",
@@ -64,6 +68,7 @@ PRESENT_TOOL = {
                 },
             },
             "decline_reason": {"type": "string"},
+            "follow_ups": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
         },
         "required": ["answer_type", "headline"],
     },
