@@ -17,3 +17,4 @@
 - Answer key: hand-written SQL on raw tables, cross-checked against the semantic base view (0 mismatches)
 - questions_heldout.yaml sha256: 967a5e19ff85ee7b8e6e54f5c53f785b6894ca5efd357b664a6c3bfb748f7cd1
 - 2026-11-03: Arm C compiler (semantic_layer.py) passes 25/25 dev answers and 7/7 refusals; tools: query_metrics + list_values
+- 2026-11-03: Semantic model v0.1.1 (added derived_terms glossary text). Prompts v1: A = schema; B = schema + glossary; C = same glossary + query_metrics/list_values. All arms end with structured final_answer

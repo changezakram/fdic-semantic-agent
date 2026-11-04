@@ -8,7 +8,7 @@
 # and raw_institutions (i), plus the governed base view defined in `base_view`.
 # Change log lives in DECISIONS.md. Bump `version` on every edit.
 # =====================================================================
-version: 0.1.0
+version: 0.1.1   # 0.1.1: added derived_terms (glossary text only; no definition changed)
 model: fdic_call_reports
 snapshot:
   path: data/snapshot_2026Q2/
@@ -134,6 +134,22 @@ ontology:
     Kansas City: [IA, KS, MN, MO, ND, NE, SD]
     New York: [CT, DC, DE, MA, MD, ME, NH, NJ, NY, PA, PR, RI, VI, VT]
     San Francisco: [AK, AZ, CA, FM, GU, HI, ID, MT, NV, OR, UT, WA, WY]
+
+# ---------------------------------------------------------------------
+# 2b. Derived terms used in the formulas below (plain-language definitions;
+#     the base view implements them for Arm C)
+# ---------------------------------------------------------------------
+derived_terms:
+  period: "Quarter label YYYYQn from REPDTE: year = REPDTE // 10000; quarter = month // 3 (03->1, 06->2, 09->3, 12->4)."
+  year: "REPDTE // 10000"
+  annualize_factor: "4 / quarter number: Q1 = 4, Q2 = 2, Q3 = 4/3, Q4 = 1. Multiply a year-to-date income amount by it to annualize."
+  NETINC_Q: >
+    Net income earned in the quarter alone: this quarter's NETINC minus the same bank's NETINC for the prior
+    quarter of the same calendar year (0 if the bank did not file that prior quarter; Q1 needs no subtraction).
+    Not available for 2024Q3. NIM_Q, NONII_Q, NONIX_Q, ELNATR_Q and NTLNLS_Q are defined the same way.
+  hc_name: "Canonical holding-company name: one name per RSSDHCR, preferring the name on an active bank."
+  has_bank_record: "TRUE if the CERT has a row in raw_institutions. FALSE for the 57 CERTs with no FDIC bank record."
+  joins: "raw_financials joins raw_institutions on CERT with a LEFT JOIN, so banks with no bank record are kept."
 
 # ---------------------------------------------------------------------
 # 3. Governed base view (one row per bank per quarter). Arm C compiles against this.

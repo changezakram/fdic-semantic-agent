@@ -4,3 +4,4 @@ fdic.duckdb
 !data/snapshot_*/*.csv
 .env
 .DS_Store
+__pycache__/
