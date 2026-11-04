@@ -63,6 +63,9 @@ def label(name: str) -> str:
 def draw_chart(chart: dict, result: dict):
     df = pd.DataFrame(result["rows"])
     x, y, color = chart["x"], chart["y"], chart.get("color")
+    note = None
+    if chart["kind"] == "bar" and not color and len(df) > 15:
+        df, note = df.nlargest(15, y), f"Showing the top 15 of {len(df)}. The full table is under How I got this."
     unit = result.get("units", {}).get(y, "")
     y_title = f"{label(y)} {UNIT_SUFFIX.get(unit, '')}".strip()
     tooltip = [alt.Tooltip(x, title=label(x)), alt.Tooltip(y, title=y_title, format=",.2f")]
@@ -75,12 +78,16 @@ def draw_chart(chart: dict, result: dict):
         base = alt.Chart(df).encode(**enc)
         ch = base.mark_line(strokeWidth=2.5) + base.mark_circle(size=60)
     else:
-        enc = dict(y=alt.Y(f"{x}:N", title=None, sort="-x"), x=alt.X(f"{y}:Q", title=y_title), tooltip=tooltip)
+        enc = dict(y=alt.Y(f"{x}:N", title=None, sort="-x", axis=alt.Axis(labelLimit=260)),
+                   x=alt.X(f"{y}:Q", title=y_title), tooltip=tooltip)
         if color:
             enc["color"] = alt.Color(f"{color}:N", title=label(color))
             enc["yOffset"] = alt.YOffset(f"{color}:N")
         ch = alt.Chart(df).mark_bar(cornerRadiusEnd=3).encode(**enc)
-    st.altair_chart(ch.properties(title=chart.get("title", ""), height=320), width="stretch")
+    height = max(220, 28 * df[x].nunique()) if chart["kind"] == "bar" else 320
+    st.altair_chart(ch.properties(title=chart.get("title", ""), height=min(height, 520)), width="stretch")
+    if note:
+        st.caption(note)
 
 
 def render_turn(turn: dict, idx: int, last: bool = False):

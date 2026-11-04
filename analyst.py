@@ -137,6 +137,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
     tools[-1] = {**tools[-1], "cache_control": {"type": "ephemeral"}}
     messages = history_messages(history or []) + [{"role": "user", "content": question}]
     results, steps, answer, error = {}, [], None, None
+    chart_retries = 0
     usage = {"input": 0, "output": 0, "cache_read": 0}
     t0 = time.time()
 
@@ -157,6 +158,14 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
         out = []
         for tu in uses:
             if tu.name == "present_answer":
+                probs = chart_problems(tu.input, results) if tu.input.get("answer_type") == "answer" else []
+                if probs and chart_retries < 2:
+                    chart_retries += 1
+                    out.append({"type": "tool_result", "tool_use_id": tu.id, "is_error": True,
+                                "content": "Not shown yet. Fix the charts and call present_answer again: " + " ".join(probs)})
+                    if on_step:
+                        on_step("Fixing the chart")
+                    continue
                 answer = tu.input
                 out.append({"type": "tool_result", "tool_use_id": tu.id, "content": "Shown to the user."})
                 continue
@@ -205,12 +214,16 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
 
 def auto_chart(results: dict) -> dict | None:
     """A sensible chart when the model gave none: the last result with 1-2 dimensions and a metric."""
-    for rid, r in reversed(list(results.items())):
+    candidates = []
+    for order, (rid, r) in enumerate(results.items()):
         rows, req = r.get("rows") or [], r.get("request", {})
         dims = [d for d in req.get("dimensions") or [] if rows and d in rows[0]]
         metrics = [m for m in req.get("metrics") or [] if rows and m in rows[0]]
-        if not dims or not metrics or len(rows) < 2:
-            continue
+        if dims and metrics and 2 <= len(rows) <= 25:
+            candidates.append((len(metrics), order, rid, r, dims, metrics))
+    for _, _, rid, r, dims, metrics in sorted(candidates, reverse=True):
+        ratios = [m for m in metrics if r.get("units", {}).get(m) == "percent"]
+        metrics = ratios + [m for m in metrics if m not in ratios]   # a scorecard charts its ratio first
         if "period" in dims:
             other = [d for d in dims if d != "period"]
             return {"result_id": rid, "kind": "line", "x": "period", "y": metrics[0],
@@ -219,6 +232,26 @@ def auto_chart(results: dict) -> dict | None:
                 "color": dims[1] if len(dims) > 1 else None,
                 "title": f"{metrics[0].replace('_', ' ').capitalize()} by {dims[0].replace('_', ' ')}"}
     return None
+
+
+def chart_problems(answer: dict, results: dict) -> list[str]:
+    """Specific, fixable problems with the model's chart specs (checked before the answer is accepted)."""
+    probs = []
+    for i, c in enumerate((answer or {}).get("charts") or [], 1):
+        r = results.get(c.get("result_id"))
+        if not r:
+            probs.append(f"Chart {i}: result_id '{c.get('result_id')}' does not exist; use one of {list(results)}.")
+            continue
+        cols = list(r["rows"][0]) if r["rows"] else []
+        for field in ("x", "y", "color"):
+            v = c.get(field)
+            if v and v not in cols:
+                probs.append(f"Chart {i}: {field} '{v}' is not a column in {c['result_id']}; its columns are {cols}.")
+    chartable = [rid for rid, r in results.items()
+                 if r.get("request", {}).get("dimensions") and 2 <= len(r.get("rows") or []) <= 25]
+    if (answer or {}).get("answer_type") == "answer" and not (answer or {}).get("charts") and chartable:
+        probs.append(f"Add at least one chart. Results that can be charted: {chartable}.")
+    return probs
 
 
 def valid_charts(answer: dict, results: dict) -> list[dict]:
