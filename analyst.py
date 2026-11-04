@@ -29,6 +29,10 @@ How to work:
   "better" direction: say highest or lowest, not best or worst.
 - For peer groups of holding companies by size, use the dimension organization_size_class
   (total assets of the whole organization), not size_class (each bank charter separately).
+- For rankings or comparisons "by state", filter geography_type = "State or DC" unless the user asks
+  about territories. Treat "Unknown" (banks with no institution record) as a data caveat, never as a peer.
+- If a result has a "concentration" block, one bank drives that group's figure. Say so in an insight,
+  name the bank, and give the group's rate without it (both numbers are in the block).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
   (a multiple such as "1.7 times", a difference, a share, a percent change) must come from the
   calculate tool. For change over time, prefer query_metrics with compare_to.
@@ -123,26 +127,87 @@ PRESENT_TOOL = {
 }
 
 
+NON_PEER = {"Unknown", "PR", "VI", "GU", "FM", "AS", "MP", "MH", "PW"}
+
+
 def rankings(res: dict, request: dict) -> dict | None:
-    """Highest/lowest per metric, computed in code, for results grouped by one non-period dimension."""
+    """Highest/lowest per metric, computed in code, for results grouped by one non-period dimension.
+    'Unknown' (and territories, when grouped by state) are listed separately, never ranked as peers."""
     rows = res.get("rows") or []
     dims = [d for d in request.get("dimensions") or [] if rows and d in rows[0]]
     if len(rows) < 2 or len(dims) != 1 or dims[0] == "period":
         return None
-    if any("Only the first" in n for n in res.get("notes", [])):
-        return {"warning": "This result was cut off at the row limit, so it does not contain every group. "
-                           "Do not rank from it. Narrow the query with filters (e.g. organization_size_class) "
-                           "or use order_by with a limit, then rank."}
     d, out = dims[0], {}
+    skip = NON_PEER if d == "state" else {"Unknown"}
+    excluded = sorted({str(r[d]) for r in rows if str(r[d]) in skip})
+    truncated = any("Only the first" in n for n in res.get("notes", []))
+    if truncated:
+        ob = (request.get("order_by") or "").split()
+        if not ob or ob[0] not in (request.get("metrics") or []):
+            return {"warning": "This result was cut off at the row limit, so it does not contain every group. "
+                               "Do not rank from it. Narrow the query with filters (e.g. organization_size_class, "
+                               "geography_type) or use order_by with a limit, then rank."}
     for m in request.get("metrics") or []:
-        vals = [(r[d], r[m]) for r in rows if isinstance(r.get(m), (int, float))]
+        vals = [(r[d], r[m]) for r in rows if isinstance(r.get(m), (int, float)) and str(r[d]) not in skip]
         if len(vals) < 2:
             continue
         ordered = sorted(vals, key=lambda t: t[1], reverse=True)
-        out[m] = {"highest": [{d: k, m: round(v, 4)} for k, v in ordered[:3]],
-                  "lowest": [{d: k, m: round(v, 4)} for k, v in ordered[-3:][::-1]],
-                  "rank_order_high_to_low": [k for k, _ in ordered][:25], "of": len(ordered)}
+        entry = {"highest": [{d: k, m: round(v, 4)} for k, v in ordered[:3]],
+                 "lowest": [{d: k, m: round(v, 4)} for k, v in ordered[-3:][::-1]],
+                 "rank_order_high_to_low": [k for k, _ in ordered][:25], "of": len(ordered)}
+        if truncated:                      # ordered and cut off: only the sorted end is complete
+            ob = request["order_by"].split()
+            if ob[0] != m:
+                continue
+            keep = "lowest" if len(ob) > 1 and ob[1].lower() == "asc" else "highest"
+            entry = {keep: entry[keep], "note": f"Sorted by {m} and cut off: only the {keep} end is complete."}
+        out[m] = entry
+    if out and excluded:
+        out["excluded_from_ranking"] = {"groups": excluded,
+                                        "why": "Unknown = banks with no institution record"
+                                               + ("; the others are U.S. territories, not states" if d == "state" else "")}
     return out or None
+
+
+CONCENTRATION = {"noncurrent_loan_rate": "noncurrent_loans", "net_charge_off_rate": "net_charge_offs"}
+DRILL_DIMS = {"state", "region", "regulator", "size_class", "organization_size_class", "specialization",
+              "charter_type", "fdic_community_bank", "geography_type"}
+
+
+def concentration(layer, res: dict, request: dict, ranks: dict | None):
+    """For credit-rate rankings, check in code whether one bank drives the top group's rate.
+    Returns (drill request, drill result, block) or None."""
+    dims = request.get("dimensions") or []
+    if not ranks or len(dims) != 1 or dims[0] not in DRILL_DIMS or not isinstance(request.get("period"), str) \
+            or ":" in request["period"]:
+        return None
+    d = dims[0]
+    for rate, amount in CONCENTRATION.items():
+        top = (ranks.get(rate) or {}).get("highest")
+        if not top:
+            continue
+        group = top[0][d]
+        filters = {**(request.get("filters") or {}), d: group}
+        req = {"metrics": [rate, amount, "gross_loans"], "period": request["period"], "dimensions": ["bank_name"],
+               "filters": filters, "order_by": f"{amount} desc", "limit": 3}
+        tot = layer.query_metrics(metrics=[rate, amount, "gross_loans"], period=request["period"], filters=filters)
+        drill = layer.query_metrics(**req)
+        if not tot["rows"] or not drill["rows"]:
+            continue
+        g, b = tot["rows"][0], drill["rows"][0]
+        if not g.get(amount) or g[amount] <= 0 or len(drill["rows"]) < 2:
+            continue
+        share = b[amount] / g[amount] * 100
+        if share < 40:
+            continue
+        rest_loans = g["gross_loans"] - b["gross_loans"]
+        rest = (g[rate] * g["gross_loans"] - b[rate] * b["gross_loans"]) / rest_loans if rest_loans > 0 else None
+        block = {"group": f"{d} = {group}", "metric": rate, "group_rate": round(g[rate], 4),
+                 "driver_bank": b["bank_name"], "driver_bank_rate": round(b[rate], 4),
+                 "driver_share_of_group_" + amount + "_pct": round(share, 1),
+                 "group_rate_without_driver": round(rest, 4) if rest is not None else None}
+        return req, drill, block
+    return None
 
 
 LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio"}
@@ -295,6 +360,17 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                     ranks = rankings(res, tu.input)
                     if ranks:
                         shown["ranking"] = ranks
+                    try:
+                        conc = concentration(layer, res, tu.input, ranks)
+                    except Exception:  # noqa: BLE001 - a failed check never blocks the answer
+                        conc = None
+                    if conc:
+                        dreq, dres, block = conc
+                        did = f"q{len(results) + 1}"
+                        results[did] = {"request": dreq, **dres, "auto": True}
+                        shown["concentration"] = {**block, "detail_result_id": did}
+                        if on_step:
+                            on_step(f"Checked concentration: {block['driver_bank']} drives {block['group']}")
                     content, is_err = json.dumps(shown, default=str)[:MAX_RESULT_CHARS], False
                     if on_step:
                         on_step(f"Queried {', '.join(tu.input.get('metrics', []))}"

@@ -8,7 +8,7 @@
 # and raw_institutions (i), plus the governed base view defined in `base_view`.
 # Change log lives in DECISIONS.md. Bump `version` on every edit.
 # =====================================================================
-version: 0.1.3   # 0.1.2: unique holding-company names; 0.1.3: organization_size_class (both after the frozen experiment, which used 0.1.1)
+version: 0.1.4   # 0.1.2: unique holding-company names; 0.1.3: organization_size_class; 0.1.4: geography_type (all after the frozen experiment, which used 0.1.1)
 model: fdic_call_reports
 snapshot:
   path: data/snapshot_2026Q2/
@@ -217,6 +217,14 @@ dimensions:
   bank_name:       {sql: "COALESCE(NAME, 'Unknown')", description: "Display only. Not unique; filter by CERT"}
   state:           {sql: "COALESCE(STALP, 'Unknown')"}
   state_name:      {sql: "COALESCE(STNAME, 'Unknown')"}
+  geography_type:
+    sql: |
+      CASE WHEN STALP IS NULL THEN 'Unknown'
+           WHEN STALP IN ('PR','VI','GU','FM','AS','MP','MH','PW') THEN 'U.S. territory'
+           ELSE 'State or DC' END
+    description: >
+      Whether the bank's headquarters is in one of the 50 states or DC, a U.S. territory, or unknown
+      (no institution record). Rankings "by state" mean State or DC unless territories are asked for.
   region:          {sql: "COALESCE(FDICREGN, 'Unknown')", description: "FDIC supervisory region (6 regions)"}
   regulator:       {sql: "COALESCE(REGAGNT, 'Unknown')", description: "Primary federal regulator: OCC, FED, FDIC (STATE for 5 foreign-bank branches)"}
   charter_class:   {sql: "COALESCE(BKCLASS, 'Unknown')", description: "FDIC charter class code: N, SM, NM, SB, SI, SL, OI, NC"}
