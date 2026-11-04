@@ -14,3 +14,11 @@ pages = st.navigation([
     st.Page("experiment.py", title="The experiment", icon=":material/science:"),
 ])
 pages.run()
+
+with st.sidebar:
+    st.divider()
+    st.markdown("Built by **Changez Akram**  \n"
+                "[changezakram.github.io](https://changezakram.github.io) · "
+                "[Code on GitHub](https://github.com/changezakram/fdic-semantic-agent)")
+    st.caption("A personal project using public FDIC call-report data. Not affiliated with any employer "
+               "or with the FDIC. Views are my own. For research and illustration, not investment advice.")
