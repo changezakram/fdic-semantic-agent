@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import operator
 import time
 
@@ -24,7 +25,8 @@ How to work:
 - Never rank in your head. Every "highest", "lowest", "leads", "best", "worst" or "second"
   claim must match the "ranking" block that comes with grouped results (computed by code).
   Remember which direction is better: a LOWER efficiency ratio, noncurrent loan rate or
-  charge-off rate is better.
+  charge-off rate is better. Size, deposits, loans and the loan-to-deposit ratio have no
+  "better" direction: say highest or lowest, not best or worst.
 - For peer groups of holding companies by size, use the dimension organization_size_class
   (total assets of the whole organization), not size_class (each bank charter separately).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
@@ -143,6 +145,78 @@ def rankings(res: dict, request: dict) -> dict | None:
     return out or None
 
 
+LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio"}
+HIGHER_IS_BETTER = {"return_on_assets", "return_on_equity", "equity_to_assets", "mean_bank_roa", "median_bank_roa",
+                    "median_bank_nim", "median_bank_leverage_ratio", "reported_roa", "reported_roe", "reported_nim",
+                    "reported_leverage_ratio"}
+_SUPER = re.compile(r"\b(second[- ]highest|second[- ]lowest|second[- ]best|highest|lowest|best|worst|"
+                    r"led|leads|leading|strongest|weakest|largest|smallest|top|bottom)\b", re.I)
+_NUM = re.compile(r"-?\d[\d,]*\.?\d*")
+
+
+def _direction(word: str, metric: str):
+    """('max' or 'min', rank) for a superlative word applied to a metric; None if it has no clear direction."""
+    w = word.lower().replace("-", " ")
+    rank = 2 if w.startswith("second") else 1
+    w = w.replace("second ", "")
+    if w in ("highest", "largest", "top"):
+        return "max", rank
+    if w in ("lowest", "smallest", "bottom"):
+        return "min", rank
+    if metric not in LOWER_IS_BETTER and metric not in HIGHER_IS_BETTER:
+        return None                                        # e.g. "best loan-to-deposit ratio": no governed direction
+    better_low = metric in LOWER_IS_BETTER
+    if w in ("best", "led", "leads", "leading", "strongest"):
+        return ("min" if better_low else "max"), rank
+    return ("max" if better_low else "min"), rank          # worst, weakest
+
+
+def check_claims(answer: dict, results: dict) -> list[str]:
+    """Check 'highest / lowest / best / led ...' claims against code-computed rankings."""
+    index = []          # (value, entity, metric, result)
+    for r in results.values():
+        req, rows = r.get("request", {}), r.get("rows") or []
+        dims = [d for d in req.get("dimensions") or [] if rows and d in rows[0]]
+        if len(rows) < 2 or len(dims) != 1 or dims[0] == "period" or any("Only the first" in n for n in r.get("notes", [])):
+            continue
+        for m in req.get("metrics") or []:
+            vals = [(row[dims[0]], row[m]) for row in rows if isinstance(row.get(m), (int, float))]
+            for ent, v in vals:
+                index.append((v, ent, m, vals))
+    if not index:
+        return []
+    texts = [(answer or {}).get("headline", "")] + list((answer or {}).get("insights") or [])
+    problems = []
+    for text in texts:
+        for sm in _SUPER.finditer(text):
+            window = text[sm.end(): sm.end() + 70]
+            nm = _NUM.search(window)
+            if not nm:
+                continue
+            try:
+                n = float(nm.group().replace(",", ""))
+            except ValueError:
+                continue
+            decimals = len(nm.group().split(".")[1]) if "." in nm.group() else 0
+            hits = [(v, ent, m, vals) for v, ent, m, vals in index if abs(round(v, decimals) - n) < 1e-9]
+            if len({(ent, m) for _, ent, m, _ in hits}) != 1:
+                continue                                     # no match or ambiguous: skip
+            v, ent, m, vals = hits[0]
+            d = _direction(sm.group(), m)
+            if d is None:
+                continue
+            how, rank = d
+            ordered = sorted(vals, key=lambda t: t[1], reverse=(how == "max"))
+            if len(ordered) < rank:
+                continue
+            true_ent, true_v = ordered[rank - 1]
+            if true_ent != ent:
+                problems.append(f'You wrote "{sm.group()} ... {nm.group()}" for {m} ({ent}), but the '
+                                f'{"second " if rank == 2 else ""}{"highest" if how == "max" else "lowest"} {m} is '
+                                f"{true_v:.2f} ({true_ent}). Fix this claim.")
+    return problems
+
+
 def build_spec() -> dict:
     """System prompt and tools: analyst rules + the same governed glossary as Setup C."""
     c = prompts.build("C")
@@ -200,13 +274,14 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
         out = []
         for tu in uses:
             if tu.name == "present_answer":
-                probs = chart_problems(tu.input, results) if tu.input.get("answer_type") == "answer" else []
+                probs = (chart_problems(tu.input, results) + check_claims(tu.input, results)
+                         if tu.input.get("answer_type") == "answer" else [])
                 if probs and chart_retries < 2:
                     chart_retries += 1
                     out.append({"type": "tool_result", "tool_use_id": tu.id, "is_error": True,
-                                "content": "Not shown yet. Fix the charts and call present_answer again: " + " ".join(probs)})
+                                "content": "Not shown yet. Fix these and call present_answer again: " + " ".join(probs)})
                     if on_step:
-                        on_step("Fixing the chart")
+                        on_step("Correcting: " + "; ".join(p.split(". ")[0][:90] for p in probs))
                     continue
                 answer = tu.input
                 out.append({"type": "tool_result", "tool_use_id": tu.id, "content": "Shown to the user."})

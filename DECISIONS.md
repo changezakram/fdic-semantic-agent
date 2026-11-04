@@ -28,3 +28,4 @@
 - 2026-11-03: FROZEN for final run: model claude-haiku-5-5, prompts v1, semantic model v0.1.1, grader v3, max 12 turns, API default temperature, 3 reps. Ablations deferred to a follow-up (asymmetric degradation of B rejected as biased)
 - 2026-11-04: Semantic model v0.1.2 for the analytics app: holding-company names shared by different companies get a state suffix (e.g. INDEPENDENT BANK CORP (MA) vs (MI)). Experiment results remain on v0.1.1 (tag final-v1)
 - 2026-11-04: Semantic model v0.1.3: organization_size_class (holding-company total assets). App: rankings computed in code and attached to grouped results; no rankings from cut-off results; charts can list items to show. Found in benchmarking tests: model mis-ranked ROA; chart showed excluded peers
+- 2026-11-04: App: code checks ranking claims (highest/lowest/best/led) against computed rankings before an answer is shown; code-computed scorecard with best values highlighted for directional metrics only

@@ -84,10 +84,16 @@ def render_turn(turn: dict, idx: int, last: bool = False):
     st.markdown(f"#### {md(a.get('headline', ''))}")
     for ins in a.get("insights") or []:
         st.markdown(f"- {md(ins)}")
-    charts = analyst.valid_charts(a, results)
-    if charts:
-        cols = st.columns(len(charts)) if len(charts) > 1 else [st.container()]
-        for col, ch in zip(cols, charts):
+    for rid, r in results.items():                       # code-computed scorecard for comparisons
+        table = charts.scorecard(r, r["request"], analyst.LOWER_IS_BETTER, analyst.HIGHER_IS_BETTER)
+        if table is not None:
+            st.markdown("**Scorecard** (best value highlighted where higher or lower is clearly better)")
+            st.dataframe(table, hide_index=True, width="stretch")
+            break
+    chart_specs = analyst.valid_charts(a, results)
+    if chart_specs:
+        cols = st.columns(len(chart_specs)) if len(chart_specs) > 1 else [st.container()]
+        for col, ch in zip(cols, chart_specs):
             with col:
                 draw_chart(ch, results[ch["result_id"]])
     if results:

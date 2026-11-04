@@ -77,3 +77,31 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     bars = base.mark_bar(cornerRadiusEnd=3, color=BAR, height={"band": 0.7})
     text = base.mark_text(align="right", dx=-8, fontSize=12, fontWeight="bold", color="white").encode(text="_label:N")
     return (bars + text).properties(title=chart.get("title", ""), height=alt.Step(38)), note
+
+
+def scorecard(result: dict, request: dict, lower_is_better: set, higher_is_better: set):
+    """A pandas Styler: one row per group, one column per metric, best value per column highlighted.
+    Returns None unless the result is a small comparison of 2+ metrics across one dimension."""
+    rows = result.get("rows") or []
+    dims = [d for d in request.get("dimensions") or [] if rows and d in rows[0]]
+    metrics = [m for m in request.get("metrics") or [] if rows and m in rows[0]]
+    if len(dims) != 1 or dims[0] == "period" or len(metrics) < 2 or not 2 <= len(rows) <= 15:
+        return None
+    df = pd.DataFrame(rows)[[dims[0]] + metrics]
+    units = result.get("units", {})
+    fmt = {m: ("{:,.2f}%" if units.get(m) == "percent" else "${:,.1f}B" if units.get(m) == "$ billions" else "{:,.0f}")
+           for m in metrics}
+
+    names = {c: label(c) for c in df.columns}
+    directional = {names[m]: ("min" if m in lower_is_better else "max")
+                   for m in metrics if m in lower_is_better or m in higher_is_better}
+
+    def best(col):
+        how = directional.get(col.name)
+        if how is None or col.isna().all():
+            return [""] * len(col)
+        target = col.min() if how == "min" else col.max()
+        return ["font-weight: 700; background-color: rgba(91,155,213,0.28)" if v == target else "" for v in col]
+
+    df = df.sort_values(metrics[0], ascending=metrics[0] in lower_is_better).rename(columns=names)
+    return df.style.format({names[m]: f for m, f in fmt.items()}, na_rep="—").apply(best).hide(axis="index")
