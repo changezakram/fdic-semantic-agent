@@ -13,12 +13,15 @@ Outcomes:
 Grader v2 (2026-11-03): numbers rounded by the agent count as correct when they equal the
 expected value rounded to the same decimals and keep at least 3 significant figures;
 list names are compared after normalizing punctuation and abbreviations.
+Grader v3 (2026-11-03): a dollar answer that follows the governed answer format
+($ billions to 1 decimal, or $ trillions to 2 decimals) counts as correct when it equals the
+expected value rounded that way (found in review: Arm C reported $0.305B as "$0.3B" per the format).
 """
 from __future__ import annotations
 
 import re
 
-GRADER_VERSION = 2
+GRADER_VERSION = 3
 
 TO_BILLIONS = {"usd": 1e-9, "usd_thousands": 1e-6, "usd_millions": 1e-3, "usd_billions": 1.0, "usd_trillions": 1e3}
 PERIOD_RE = re.compile(r"(\d{4})\D{0,3}q([1-4])|q([1-4])\D{0,5}(\d{4})", re.I)
@@ -92,7 +95,9 @@ def grade(answer: dict | None, key: dict) -> dict:
             return {"outcome": "wrong_type", "correct": False}
         got_bn = got * TO_BILLIONS[unit]
         exp_bn = exp if t == "dollars_bn" else exp * 1000
-        if _within(got_bn, exp_bn, tol):
+        governed = (unit == "usd_billions" and abs(got - round(exp_bn, 1)) < 1e-9) or \
+                   (unit == "usd_trillions" and abs(got - round(exp_bn / 1000, 2)) < 1e-9)
+        if _within(got_bn, exp_bn, tol) or governed:
             return {"outcome": "correct", "correct": True, "normalized": got_bn}
         for factor in (1e3, 1e-3, 1e6, 1e-6):          # right digits, wrong unit
             if _within(got_bn * factor, exp_bn, tol):
