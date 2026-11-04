@@ -394,5 +394,5 @@ data_facts:
   banks_filing:      {2024Q3: 4589, 2024Q4: 4560, 2025Q1: 4536, 2025Q2: 4494, 2025Q3: 4452, 2025Q4: 4411, 2026Q1: 4353, 2026Q2: 4313}
   missing_bank_records: "57 CERTs (56 in 2026Q2; $30.3B; 0.11% of assets; largest $11.0B)"
   null_income_filers: "17 per quarter, all U.S. branches of foreign banks (classes OI/NC)"
-  holding_company_renamed: "RSSDHCR 2333663 appears as both BERKSHIRE HILLS BCORP INC and BEACON FINANCIAL CORP"
+  holding_company_renamed: "One holding company (one RSSDHCR) appears under two names after a rename; group by RSSDHCR, not by name"
   duplicate_bank_names: "e.g. State Bank of India appears under two CERTs"
