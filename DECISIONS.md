@@ -20,3 +20,4 @@
 - 2026-11-03: Semantic model v0.1.1 (added derived_terms glossary text). Prompts v1: A = schema; B = schema + glossary; C = same glossary + query_metrics/list_values. All arms end with structured final_answer
 - 2026-11-03: Smoke test (D01, D08, D21, D29; 1 rep): A 1/4, B 4/4, C 4/4. Harness verified end to end
 - 2026-11-03: Smoke test (D01, D08, D21, D29; 1 rep): A 1/4, B 4/4, C 4/4. Harness verified end to end
+- 2026-11-03: Grader v2 (rounding-aware numbers, normalized org names, missing_value outcome). Fixes 2 false negatives found in baseline review (D09 Arm A x3, D25 Arm B x1); baseline re-graded, originals kept

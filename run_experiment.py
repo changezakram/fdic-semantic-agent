@@ -27,7 +27,7 @@ import yaml
 
 import prompts
 from agent import RawDatabase, Tools, run_question
-from grader import grade
+from grader import GRADER_VERSION, grade
 from semantic_layer import SemanticLayer
 
 ROOT = Path(__file__).parent
@@ -99,7 +99,7 @@ def main():
         "model": args.model, "temperature": args.temperature, "max_turns": args.max_turns,
         "question_set": args.set, "questions_sha256": hashlib.sha256(qfile.read_bytes()).hexdigest(),
         "question_ids": [q["id"] for q in questions], "arms": arms, "reps": args.reps,
-        "prompt_version": prompts.PROMPT_VERSION, "semantic_model_version": prompts.MODEL["version"],
+        "prompt_version": prompts.PROMPT_VERSION, "grader_version": GRADER_VERSION, "semantic_model_version": prompts.MODEL["version"],
         "prompt_sha256": {a: s["prompt_sha256"] for a, s in specs.items()},
         "git_commit": git_commit(), "anthropic_sdk": anthropic.__version__,
     }
@@ -137,7 +137,8 @@ def main():
 
 def summarize(results, config, elapsed):
     L = [f"Run {config['run_id']}  model={config['model']}  prompts v{config['prompt_version']}  "
-         f"semantic model v{config['semantic_model_version']}  ({elapsed / 60:.1f} min)", ""]
+         f"semantic model v{config['semantic_model_version']}  grader v{config.get('grader_version', 1)}"
+         + (f"  ({elapsed / 60:.1f} min)" if elapsed else ""), ""]
     arms = config["arms"]
     by = defaultdict(list)
     for r in results:
@@ -167,7 +168,7 @@ def summarize(results, config, elapsed):
 
     L.append("")
     L.append("Outcomes")
-    outcomes = ["correct", "wrong_value", "wrong_units", "wrong_type", "false_decline", "missed_decline", "no_answer"]
+    outcomes = ["correct", "wrong_value", "wrong_units", "wrong_type", "missing_value", "false_decline", "missed_decline", "no_answer"]
     for o in outcomes:
         if any(r["outcome"] == o for r in results):
             row(f"  {o}", lambda rs, o=o: str(sum(r["outcome"] == o for r in rs)))

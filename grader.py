@@ -7,11 +7,18 @@ Outcomes:
   wrong_type     a non-number for a number question, or a number in a non-matching unit
   false_decline  declined an answerable question
   missed_decline answered a question it should have declined
+  missing_value  answer_type given but the value field left empty
   no_answer      never called final_answer (or the API failed)
+
+Grader v2 (2026-11-03): numbers rounded by the agent count as correct when they equal the
+expected value rounded to the same decimals and keep at least 3 significant figures;
+list names are compared after normalizing punctuation and abbreviations.
 """
 from __future__ import annotations
 
 import re
+
+GRADER_VERSION = 2
 
 TO_BILLIONS = {"usd": 1e-9, "usd_thousands": 1e-6, "usd_millions": 1e-3, "usd_billions": 1.0, "usd_trillions": 1e3}
 PERIOD_RE = re.compile(r"(\d{4})\D{0,3}q([1-4])|q([1-4])\D{0,5}(\d{4})", re.I)
@@ -40,10 +47,28 @@ def _period(s):
     return f"{m.group(1)}Q{m.group(2)}" if m.group(1) else f"{m.group(4)}Q{m.group(3)}"
 
 
+def _decimals(x):
+    s = repr(float(x))
+    return 0 if "e" in s else len(s.split(".")[1].rstrip("0"))
+
+
+def _sig_figs(x):
+    digits = re.sub(r"[^0-9]", "", f"{abs(float(x)):.10f}".rstrip("0").rstrip(".")).lstrip("0")
+    return len(digits)
+
+
 def _within(got, exp, tol):
-    if "relative" in tol:
-        return abs(got - exp) <= tol["relative"] * abs(exp)
-    return abs(got - exp) <= tol["absolute"]
+    if "relative" in tol and abs(got - exp) <= tol["relative"] * abs(exp):
+        return True
+    if "absolute" in tol and abs(got - exp) <= tol["absolute"]:
+        return True
+    d = _decimals(got)                     # the agent rounded: accept if it is exp rounded the same way
+    return _sig_figs(got) >= 3 and abs(round(exp, d) - got) < 1e-9
+
+
+def _norm(name):
+    s = str(name).lower().replace("bcorp", "bancorp").replace("finl", "financial")
+    return re.sub(r"[^a-z0-9]", "", s)
 
 
 def grade(answer: dict | None, key: dict) -> dict:
@@ -58,6 +83,8 @@ def grade(answer: dict | None, key: dict) -> dict:
         return {"outcome": "false_decline", "correct": False}
 
     exp, tol, value, unit = key["expected"], key["tolerance"], answer.get("value"), answer.get("unit", "none")
+    if value is None or value == "" or value == []:
+        return {"outcome": "missing_value", "correct": False}
 
     if t in ("dollars_bn", "dollars_tn"):
         got = _num(value)
@@ -100,11 +127,11 @@ def grade(answer: dict | None, key: dict) -> dict:
 
     if t == "list":
         items = value if isinstance(value, list) else re.split(r"[;\n]|,(?=\s*[A-Z])", str(value))
-        items = [str(i).lower().strip() for i in items if str(i).strip()]
+        items = [_norm(i) for i in items if str(i).strip()]
         aliases = key.get("aliases", {})
 
         def matches(item, name):
-            return name.lower() in item or any(a.lower() in item for a in aliases.get(name, []))
+            return _norm(name) in item or any(_norm(a) in item for a in aliases.get(name, []))
 
         found = all(any(matches(i, name) for i in items) for name in exp)
         ok = found and len(items) == len(exp)
