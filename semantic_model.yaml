@@ -8,7 +8,7 @@
 # and raw_institutions (i), plus the governed base view defined in `base_view`.
 # Change log lives in DECISIONS.md. Bump `version` on every edit.
 # =====================================================================
-version: 0.1.1   # 0.1.1: added derived_terms (glossary text only; no definition changed)
+version: 0.1.2   # 0.1.2: holding-company names shared by different companies get a state suffix (after the frozen experiment, which used 0.1.1)
 model: fdic_call_reports
 snapshot:
   path: data/snapshot_2026Q2/
@@ -147,7 +147,7 @@ derived_terms:
     Net income earned in the quarter alone: this quarter's NETINC minus the same bank's NETINC for the prior
     quarter of the same calendar year (0 if the bank did not file that prior quarter; Q1 needs no subtraction).
     Not available for 2024Q3. NIM_Q, NONII_Q, NONIX_Q, ELNATR_Q and NTLNLS_Q are defined the same way.
-  hc_name: "Canonical holding-company name: one name per RSSDHCR, preferring the name on an active bank."
+  hc_name: "Canonical holding-company name: one name per RSSDHCR, preferring the name on an active bank. When different holding companies share a name, the state of their banks is appended, e.g. INDEPENDENT BANK CORP (MA) and INDEPENDENT BANK CORP (MI)."
   has_bank_record: "TRUE if the CERT has a row in raw_institutions. FALSE for the 57 CERTs with no FDIC bank record."
   joins: "raw_financials joins raw_institutions on CERT with a LEFT JOIN, so banks with no bank record are kept."
 
@@ -157,10 +157,20 @@ derived_terms:
 base_view:
   name: bank_quarter
   sql: |
-    WITH hc AS (            -- one canonical name per holding company (prefer active banks, then A-Z)
+    WITH hc_base AS (       -- one canonical name per holding company (prefer active banks, then A-Z)
       SELECT RSSDHCR,
-             COALESCE(MAX(NAMEHCR) FILTER (WHERE ACTIVE = 1), MAX(NAMEHCR)) AS hc_name
+             COALESCE(MAX(NAMEHCR) FILTER (WHERE ACTIVE = 1), MAX(NAMEHCR)) AS base_name,
+             MODE(STALP) AS hc_state
       FROM raw_institutions WHERE RSSDHCR IS NOT NULL GROUP BY 1
+    ),
+    hc AS (                 -- names shared by different holding companies get their state appended
+      SELECT RSSDHCR,
+             CASE WHEN COUNT(*) OVER (PARTITION BY base_name, hc_state) > 1
+                    THEN base_name || ' (' || hc_state || ', RSSD ' || CAST(RSSDHCR AS VARCHAR) || ')'
+                  WHEN COUNT(*) OVER (PARTITION BY base_name) > 1
+                    THEN base_name || ' (' || hc_state || ')'
+                  ELSE base_name END AS hc_name
+      FROM hc_base
     ),
     f AS (
       SELECT *,

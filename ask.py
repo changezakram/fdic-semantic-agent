@@ -78,13 +78,14 @@ def draw_chart(chart: dict, result: dict):
         base = alt.Chart(df).encode(**enc)
         ch = base.mark_line(strokeWidth=2.5) + base.mark_circle(size=60)
     else:
-        enc = dict(y=alt.Y(f"{x}:N", title=None, sort="-x", axis=alt.Axis(labelLimit=260)),
+        enc = dict(y=alt.Y(f"{x}:N", title=None, sort="-x", axis=alt.Axis(labelLimit=260, labelOverlap=False)),
                    x=alt.X(f"{y}:Q", title=y_title), tooltip=tooltip)
         if color:
             enc["color"] = alt.Color(f"{color}:N", title=label(color))
             enc["yOffset"] = alt.YOffset(f"{color}:N")
         ch = alt.Chart(df).mark_bar(cornerRadiusEnd=3).encode(**enc)
-    height = max(220, 28 * df[x].nunique()) if chart["kind"] == "bar" else 320
+    bars = df[x].nunique() * (df[color].nunique() if color and chart["kind"] == "bar" else 1)
+    height = max(140, 34 * bars) if chart["kind"] == "bar" else 320
     st.altair_chart(ch.properties(title=chart.get("title", ""), height=min(height, 520)), width="stretch")
     if note:
         st.caption(note)
@@ -118,6 +119,9 @@ def render_turn(turn: dict, idx: int, last: bool = False):
         with st.expander("How I got this"):
             st.caption("Every number comes from governed metrics in the semantic layer. The AI model chose the "
                        "queries; code wrote and ran the SQL.")
+            if turn.get("log"):
+                st.markdown("**Steps**")
+                st.markdown("\n".join(f"{n}. {md(m)}" for n, m in enumerate(turn["log"], 1)))
             for rid, r in results.items():
                 st.markdown(f"**{rid}** · `{', '.join(r['request'].get('metrics', []))}`"
                             + (f" by `{', '.join(r['request']['dimensions'])}`" if r["request"].get("dimensions") else "")

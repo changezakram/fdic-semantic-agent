@@ -26,3 +26,4 @@
 - 2026-11-03: Hard dev baseline (8 q x 3 x 3): A 50%, B 100%, C 83% (C: HD03 beyond-layer 0/3 with 2 declines, HD07 2/3)
 - 2026-11-03: Grader v3: dollar answers in the governed format ($B 1 decimal, $T 2 decimals) accepted when equal to expected rounded that way. Found in review: Arm C reported $0.305B as $0.3B per the glossary. Both runs re-graded
 - 2026-11-03: FROZEN for final run: model claude-haiku-5-5, prompts v1, semantic model v0.1.1, grader v3, max 12 turns, API default temperature, 3 reps. Ablations deferred to a follow-up (asymmetric degradation of B rejected as biased)
+- 2026-11-04: Semantic model v0.1.2 for the analytics app: holding-company names shared by different companies get a state suffix (e.g. INDEPENDENT BANK CORP (MA) vs (MI)). Experiment results remain on v0.1.1 (tag final-v1)

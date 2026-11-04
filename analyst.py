@@ -33,6 +33,10 @@ How to work:
   community-bank flag, specialization), use dimensions. Combine "period" with one segment
   dimension for "trend by segment" questions.
 - Each query_metrics result carries a result_id (q1, q2, ...). Charts must point at one of them.
+- A chart plots every row of its result. Before presenting, make sure some result contains exactly
+  the items your answer discusses. If you narrowed a broad result down in your reasoning (for example
+  to four peer banks), run one more query_metrics filtered to those items, e.g.
+  filters {"holding_company": ["NAME 1", "NAME 2"]}, and chart that result.
 - If the data cannot answer the question, call present_answer with answer_type "decline" and
   explain what the data does cover.
 - Answer the business question; do not ask the user follow-up questions.
@@ -138,6 +142,13 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
     messages = history_messages(history or []) + [{"role": "user", "content": question}]
     results, steps, answer, error = {}, [], None, None
     chart_retries = 0
+    log = []
+    user_step = on_step
+
+    def on_step(msg):
+        log.append(msg)
+        if user_step:
+            user_step(msg)
     usage = {"input": 0, "output": 0, "cache_read": 0}
     t0 = time.time()
 
@@ -208,7 +219,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
 
     if answer is None and error is None:
         error = "The model did not finish an answer."
-    return {"answer": answer, "results": results, "steps": steps, "usage": usage,
+    return {"answer": answer, "results": results, "steps": steps, "usage": usage, "log": log,
             "latency_s": round(time.time() - t0, 1), "error": error}
 
 
@@ -221,7 +232,9 @@ def auto_chart(results: dict) -> dict | None:
         metrics = [m for m in req.get("metrics") or [] if rows and m in rows[0]]
         if dims and metrics and 2 <= len(rows) <= 25:
             candidates.append((len(metrics), order, rid, r, dims, metrics))
-    for _, _, rid, r, dims, metrics in sorted(candidates, reverse=True):
+    if len(candidates) != 1:          # never guess between several results
+        return None
+    for _, _, rid, r, dims, metrics in candidates:
         ratios = [m for m in metrics if r.get("units", {}).get(m) == "percent"]
         metrics = ratios + [m for m in metrics if m not in ratios]   # a scorecard charts its ratio first
         if "period" in dims:
@@ -247,6 +260,9 @@ def chart_problems(answer: dict, results: dict) -> list[str]:
             v = c.get(field)
             if v and v not in cols:
                 probs.append(f"Chart {i}: {field} '{v}' is not a column in {c['result_id']}; its columns are {cols}.")
+        if c.get("kind") == "bar" and not c.get("color") and len(r["rows"]) > 20:
+            probs.append(f"Chart {i}: {c['result_id']} has {len(r['rows'])} rows, too many for a bar chart. "
+                         "Run a narrower query_metrics filtered to the items you discuss, and chart that result.")
     chartable = [rid for rid, r in results.items()
                  if r.get("request", {}).get("dimensions") and 2 <= len(r.get("rows") or []) <= 25]
     if (answer or {}).get("answer_type") == "answer" and not (answer or {}).get("charts") and chartable:
