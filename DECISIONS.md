@@ -23,3 +23,4 @@
 - 2026-11-03: Grader v2 (rounding-aware numbers, normalized org names, missing_value outcome). Fixes 2 false negatives found in baseline review (D09 Arm A x3, D25 Arm B x1); baseline re-graded, originals kept
 - 2026-11-03: Added hard question sets (8 dev + 8 held-out, multi-rule, incl. 1 beyond-layer and 1 decline each), written after baseline showed B = C, before any tuning. Answers cross-checked via semantic layer (0 mismatches)
 - questions_hard_heldout.yaml sha256: 543ac2688d1837acb25be6141434fe102aafdfad20cfa1822e413c1348b3008d
+- 2026-11-03: Hard dev baseline (8 q x 3 x 3): A 50%, B 100%, C 83% (C: HD03 beyond-layer 0/3 with 2 declines, HD07 2/3)

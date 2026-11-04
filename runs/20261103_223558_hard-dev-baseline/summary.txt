@@ -1,0 +1,28 @@
+Run 20261103_223558_hard-dev-baseline  model=claude-haiku-5-5  prompts v1  semantic model v0.1.1  grader v2  (2.0 min)
+
+                       Arm A       Arm B       Arm C
+Accuracy                 50%        100%         83%
+  multi_rule             50%        100%         94%
+  beyond_layer          100%        100%          0%
+  out_of_scope            0%        100%        100%
+Same result x3          100%        100%         88%
+Avg tool calls           3.8         1.8         1.9
+Avg tokens in          9,770      21,474      20,764
+Avg tokens out         1,496       1,149       1,063
+Avg seconds              7.9         5.5         5.7
+
+Outcomes
+  correct                 12          24          20
+  wrong_value              9           0           2
+  false_decline            0           0           2
+  missed_decline           3           0           0
+
+Per question (correct / attempts)
+  HD01                   0/3         3/3         3/3
+  HD02                   0/3         3/3         3/3
+  HD03                   3/3         3/3         0/3
+  HD04                   3/3         3/3         3/3
+  HD05                   3/3         3/3         3/3
+  HD06                   3/3         3/3         3/3
+  HD07                   0/3         3/3         2/3
+  HD08                   0/3         3/3         3/3
