@@ -544,8 +544,10 @@ def auto_chart(results: dict) -> dict | None:
         metrics = ratios + [m for m in metrics if m not in ratios]   # a scorecard charts its ratio first
         if "period" in dims:
             other = [d for d in dims if d != "period"]
+            per = str(r.get("request", {}).get("period", "")).replace(":", " to ")
+            title = metrics[0].replace("_", " ").capitalize() + (f" by {other[0].replace('_', ' ')}" if other else "")
             return {"result_id": rid, "kind": "line", "x": "period", "y": metrics[0],
-                    "color": other[0] if other else None, "title": metrics[0].replace("_", " ").capitalize()}
+                    "color": other[0] if other else None, "title": f"{title}, {per}" if per else title}
         return {"result_id": rid, "kind": "bar", "x": dims[0], "y": metrics[0],
                 "color": dims[1] if len(dims) > 1 else None,
                 "title": f"{metrics[0].replace('_', ' ').capitalize()} by {dims[0].replace('_', ' ')}"}
