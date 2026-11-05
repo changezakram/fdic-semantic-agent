@@ -35,7 +35,7 @@ def value_format(unit: str) -> tuple[str, str]:
     return ",.0f", ""
 
 
-def build(chart: dict, result: dict, max_bars: int = 15):
+def build(chart: dict, result: dict, max_bars: int = 20):
     """Return (altair chart, note or None)."""
     df = pd.DataFrame(result["rows"])
     x, y, color = chart["x"], chart["y"], chart.get("color")

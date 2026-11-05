@@ -152,10 +152,46 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                            compare_to="prior_quarter")["rows"]
     top, bottom = rows[0], rows[-1]
     Q.append(dict(id="E16", topic="gainers and losers",
-                  question="Which New England banking organizations with $5B-$50B in assets gained and lost the most "
-                           "deposits in percentage terms from 2026Q1 to 2026Q2?",
+                  question="Show the top 5 deposit gainers and the top 5 decliners among New England banking "
+                           "organizations with $5B-$50B in assets, by percent change from 2026Q1 to 2026Q2.",
                   expect="answer", headline=[[top["organization"].split()[0]], [bottom["organization"].split()[0]]],
                   numbers=[top["change_pct"], bottom["change_pct"]], chart=True, key=rows))
+
+    # E17 loan-to-deposit ratio, peer group by place and size (no "better" direction)
+    band = {"us_region": "New England", "organization_asset_band": ["$5B-$10B", "$10B-$50B"]}
+    rows = L.query_metrics(metrics=["loan_to_deposit_ratio"], period="2026Q2", dimensions=["organization"],
+                           filters=band, order_by="loan_to_deposit_ratio desc")["rows"]
+    Q.append(dict(id="E17", topic="peer ratio, no direction",
+                  question="Loan-to-deposit ratio for New England banking organizations with $5B-$50B in assets, 2026Q2",
+                  expect="answer", headline=[[rows[0]["organization"].split()[0]]],
+                  numbers=[rows[0]["loan_to_deposit_ratio"]], not_text=["best loan-to-deposit", "worst loan-to-deposit"],
+                  chart=True, key=rows))
+
+    # E18 loan gainers and losers
+    rows = L.query_metrics(metrics=["gross_loans"], period="2026Q2", dimensions=["organization"], filters=band,
+                           compare_to="prior_quarter")["rows"]
+    Q.append(dict(id="E18", topic="gainers and losers (loans)",
+                  question="Show the top 5 loan gainers and the top 5 decliners among New England banking organizations "
+                           "with $5B-$50B in assets, by percent change from 2026Q1 to 2026Q2.",
+                  expect="answer", headline=[[rows[0]["organization"].split()[0]]],
+                  numbers=[rows[0]["change_pct"], rows[-1]["change_pct"]], chart=True, key=rows))
+
+    # E19 top 10 by noncurrent rate, peer group
+    rows = L.query_metrics(metrics=["noncurrent_loan_rate"], period="2026Q2", dimensions=["organization"],
+                           filters=band, order_by="noncurrent_loan_rate desc", limit=10)["rows"]
+    Q.append(dict(id="E19", topic="top 10, credit, peer group",
+                  question="Top 10 New England banking organizations with $5B-$50B in assets by noncurrent loan rate, "
+                           "highest first, 2026Q2",
+                  expect="answer", headline=[[rows[0]["organization"].split()[0]]],
+                  numbers=[rows[0]["noncurrent_loan_rate"]], chart=True, key=rows))
+
+    # E20 New England states, concentration (Rhode Island = Citizens)
+    rows = L.query_metrics(metrics=["noncurrent_loan_rate"], period="2026Q2", dimensions=["state"],
+                           filters={"us_region": "New England"}, order_by="noncurrent_loan_rate desc")["rows"]
+    Q.append(dict(id="E20", topic="states + concentration",
+                  question="Noncurrent loan rate by New England state, 2026Q2",
+                  expect="answer", headline=[["Rhode Island", "RI"]], numbers=[rows[0]["noncurrent_loan_rate"], 1.07],
+                  must_text=[["Citizens"]], chart=True, key=rows))
 
     # E13-E15 out of scope: must decline, not estimate
     Q.append(dict(id="E13", topic="decline", question="What's the cost of deposits for $10B-$100B banks?",

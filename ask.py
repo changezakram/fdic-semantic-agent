@@ -18,21 +18,23 @@ import charts
 from semantic_layer import SemanticLayer
 
 SESSION_CAP = 10
-SAMPLES = [   # (button label, full question); each question is in exec_questions.py and passes the benchmark
-    ("Highest noncurrent loan rates by state",
-     "Which states have the highest noncurrent loan rates in 2026Q2?"),
-    ("Regions that improved ROA most, and was it efficiency?",
-     "Which FDIC regions improved ROA the most from 2025Q2 to 2026Q2, and did their efficiency ratios improve too?"),
-    ("Peer scorecard: M&T, Citizens, KeyCorp, Huntington",
-     "Compare ROA, efficiency ratio and noncurrent loan rate for M&T, Citizens Financial Group, KeyCorp and "
-     "Huntington in 2026Q2. Who leads on profitability?"),
-    ("Credit trend by organization size since 2024",
-     "How has the noncurrent loan rate trended by organization size since 2024, and which group has deteriorated the most?"),
+SAMPLES = [   # (button label, full question). Balance-sheet and credit measures that reconcile to FDIC call
+              # reports; each is in exec_questions.py. Income ratios (ROA, efficiency) are left out because
+              # their governed definitions differ from the quarterly ratios banks publish.
     ("Deposit gainers and losers, New England peers",
-     "Which New England banking organizations with $5B-$50B in assets gained and lost the most deposits in "
-     "percentage terms from 2026Q1 to 2026Q2?"),
-    ("Median ROA: community banks vs. others",
-     "Median ROA for community banks vs. other banks, 2026Q2"),
+     "Show the top 5 deposit gainers and the top 5 decliners among New England banking organizations with "
+     "$5B-$50B in assets, by percent change from 2026Q1 to 2026Q2."),
+    ("Loan gainers and losers, New England peers",
+     "Show the top 5 loan gainers and the top 5 decliners among New England banking organizations with "
+     "$5B-$50B in assets, by percent change from 2026Q1 to 2026Q2."),
+    ("Loan-to-deposit ratio, New England peers",
+     "Loan-to-deposit ratio for New England banking organizations with $5B-$50B in assets, 2026Q2"),
+    ("Highest noncurrent loan rates, New England peers",
+     "Top 10 New England banking organizations with $5B-$50B in assets by noncurrent loan rate, highest first, 2026Q2"),
+    ("Credit quality by New England state",
+     "Noncurrent loan rate by New England state, 2026Q2"),
+    # Held until merger history is loaded (acquired banks are missing from early quarters):
+    # "Loan-to-deposit ratio trend for New England banking organizations with $10B-$50B in assets since 2024"
 ]
 
 
