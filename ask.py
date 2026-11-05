@@ -17,13 +17,20 @@ import charts
 from semantic_layer import SemanticLayer
 
 SESSION_CAP = 10
-SAMPLES = [
-    "How has industry ROA trended since 2024?",
-    "Net income by FDIC region in 2026Q2",
-    "Noncurrent loan rate by size class, last year",
-    "Deposit growth by regulator, year over year",
-    "Top 10 banking organizations by assets",
-    "Community banks vs. others: net income trend",
+SAMPLES = [   # (button label, full question); each question is in exec_questions.py and passes the benchmark
+    ("Highest noncurrent loan rates by state",
+     "Which states have the highest noncurrent loan rates in 2026Q2?"),
+    ("Regions that improved ROA most, and was it efficiency?",
+     "Which FDIC regions improved ROA the most from 2025Q2 to 2026Q2, and did their efficiency ratios improve too?"),
+    ("Peer scorecard: M&T, Citizens, KeyCorp, Huntington",
+     "Compare ROA, efficiency ratio and noncurrent loan rate for M&T, Citizens Financial Group, KeyCorp and "
+     "Huntington in 2026Q2. Who leads on profitability?"),
+    ("Credit trend by organization size since 2024",
+     "How has the noncurrent loan rate trended by organization size since 2024, and which group has deteriorated the most?"),
+    ("Deposit growth by regulator, year over year",
+     "Deposit growth by regulator, year over year"),
+    ("Median ROA: community banks vs. others",
+     "Median ROA for community banks vs. other banks, 2026Q2"),
 ]
 
 
@@ -145,10 +152,11 @@ history = st.session_state.setdefault("history", [])
 used = st.session_state.setdefault("asked", 0)
 
 with st.sidebar:
-    st.markdown("**Sample questions**")
-    for i, s in enumerate(SAMPLES):
-        if st.button(s, key=f"side_{i}", width="stretch"):
-            st.session_state["pending_q"] = s
+    if history:      # on the start screen the samples are in the page itself; here they stay reachable
+        st.markdown("**Sample questions**")
+        for i, (lbl, q) in enumerate(SAMPLES):
+            if st.button(lbl, key=f"side_{i}", help=q, width="stretch"):
+                st.session_state["pending_q"] = q
     if history and st.button("New conversation", icon=":material/refresh:", width="stretch"):
         st.session_state["history"] = []
         st.rerun()
@@ -163,9 +171,9 @@ question = st.session_state.pop("pending_q", None)
 if not history and not question:
     st.markdown("**Try one:**")
     cols = st.columns(3)
-    for i, s in enumerate(SAMPLES):
-        if cols[i % 3].button(s, key=f"sample_{i}", width="stretch"):
-            question = s
+    for i, (lbl, q) in enumerate(SAMPLES):
+        if cols[i % 3].button(lbl, key=f"sample_{i}", help=q, width="stretch"):
+            question = q
 
 typed = st.chat_input("Ask a question about U.S. banks", disabled=used >= SESSION_CAP)
 question = typed or question
