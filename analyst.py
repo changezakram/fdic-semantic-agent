@@ -303,6 +303,39 @@ def check_claims(answer: dict, results: dict) -> list[str]:
     return problems
 
 
+_PCT = re.compile(r"(?<![\w.])[-\u2212]?(\d[\d,]*\.?\d*)\s?%")
+
+
+def check_percentages(answer: dict, results: dict, calc_values: list[float]) -> list[str]:
+    """Every 'X%' in the headline and insights must trace to a governed percent value, a growth or
+    change figure the layer returned, a concentration figure, or a calculate result."""
+    known = list(calc_values)
+    for r in results.values():
+        units = r.get("units", {})
+        for row in r.get("rows") or []:
+            pct_row = row.get("unit") == "pct" or "change_pct" in row
+            for k, v in row.items():
+                if isinstance(v, (int, float)) and (units.get(k) == "percent" or pct_row or k.startswith("change_p")):
+                    known.append(v)
+        for k, v in (r.get("concentration") or {}).items():
+            if isinstance(v, (int, float)):
+                known.append(v)
+    texts = [(answer or {}).get("headline", "")] + list((answer or {}).get("insights") or [])
+    problems = []
+    for text in texts:
+        for m in _PCT.finditer(text):
+            raw = m.group(1).replace(",", "").rstrip(".")
+            try:
+                n = float(raw)
+            except ValueError:
+                continue
+            dec = len(raw.split(".")[1]) if "." in raw else 0
+            if not any(abs(round(abs(v), dec) - n) < 1e-9 for v in known):
+                problems.append(f'"{m.group(0).strip()}" does not match any number from query_metrics or calculate. '
+                                f"Compute it with calculate (e.g. a share = part / total * 100) or remove it.")
+    return problems
+
+
 def build_spec() -> dict:
     """System prompt and tools: analyst rules + the same governed glossary as Setup C."""
     c = prompts.build("C")
@@ -333,6 +366,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
     messages = history_messages(history or []) + [{"role": "user", "content": question}]
     results, steps, answer, error = {}, [], None, None
     chart_retries = 0
+    calc_values: list[float] = []
     log = []
     user_step = on_step
 
@@ -361,6 +395,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
         for tu in uses:
             if tu.name == "present_answer":
                 probs = (chart_problems(tu.input, results) + check_claims(tu.input, results)
+                         + check_percentages(tu.input, results, calc_values)
                          if tu.input.get("answer_type") == "answer" else [])
                 if probs and chart_retries < 2:
                     chart_retries += 1
@@ -400,8 +435,9 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                                 + f" for {tu.input.get('period')}")
                 elif tu.name == "calculate":
                     try:
-                        content, is_err = json.dumps({"expression": tu.input.get("expression"),
-                                                      "result": calculate(tu.input.get("expression", ""))}), False
+                        val = calculate(tu.input.get("expression", ""))
+                        calc_values.append(val)
+                        content, is_err = json.dumps({"expression": tu.input.get("expression"), "result": val}), False
                     except (ValueError, SyntaxError, ZeroDivisionError, TypeError) as e:
                         content, is_err = f"ERROR: {e}", True
                     if on_step:
