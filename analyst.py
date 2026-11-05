@@ -238,45 +238,66 @@ def _direction(word: str, metric: str):
 
 def check_claims(answer: dict, results: dict) -> list[str]:
     """Check 'highest / lowest / best / led ...' claims against code-computed rankings."""
-    index = []          # (value, entity, metric, result)
+    index = []          # (value, entity, metric, vals, complete_end)  complete_end: None = all, "max"/"min" = only that end
     for r in results.values():
         req, rows = r.get("request", {}), r.get("rows") or []
         dims = [d for d in req.get("dimensions") or [] if rows and d in rows[0]]
-        if len(rows) < 2 or len(dims) != 1 or dims[0] == "period" or any("Only the first" in n for n in r.get("notes", [])):
+        if len(rows) < 2 or len(dims) != 1 or dims[0] == "period":
             continue
+        end = None
+        if any("Only the first" in n for n in r.get("notes", [])):
+            ob = (req.get("order_by") or "").split()
+            if not ob:
+                continue
+            end = "min" if len(ob) > 1 and ob[1].lower() == "asc" else "max"
+        skip = NON_PEER if dims[0] == "state" else {"Unknown"}
         for m in req.get("metrics") or []:
-            vals = [(row[dims[0]], row[m]) for row in rows if isinstance(row.get(m), (int, float))]
+            if end and (req.get("order_by") or "").split()[0] != m:
+                continue
+            vals = [(row[dims[0]], row[m]) for row in rows
+                    if isinstance(row.get(m), (int, float)) and str(row[dims[0]]) not in skip]
             for ent, v in vals:
-                index.append((v, ent, m, vals))
+                index.append((v, ent, m, vals, end))
     if not index:
         return []
     texts = [(answer or {}).get("headline", "")] + list((answer or {}).get("insights") or [])
     problems = []
     for text in texts:
         for sm in _SUPER.finditer(text):
-            window = text[sm.end(): sm.end() + 70]
-            nm = _NUM.search(window)
+            nm = _NUM.search(text[sm.end(): sm.end() + 70])
+            if not nm:                                   # "Maine (0.42%) has the lowest ..." - number before
+                before = list(_NUM.finditer(text[max(0, sm.start() - 70): sm.start()]))
+                nm = before[-1] if before else None
             if not nm:
                 continue
             try:
-                n = float(nm.group().replace(",", ""))
+                n = float(nm.group().replace(",", "").rstrip("."))
             except ValueError:
                 continue
-            decimals = len(nm.group().split(".")[1]) if "." in nm.group() else 0
-            hits = [(v, ent, m, vals) for v, ent, m, vals in index if abs(round(v, decimals) - n) < 1e-9]
-            if len({(ent, m) for _, ent, m, _ in hits}) != 1:
-                continue                                     # no match or ambiguous: skip
-            v, ent, m, vals = hits[0]
+            decimals = len(nm.group().rstrip(".").split(".")[1]) if "." in nm.group().rstrip(".") else 0
+            hits = [h for h in index if abs(round(h[0], decimals) - n) < 1e-9]
+            if not hits:
+                continue
+            metrics_hit = {h[2] for h in hits}
+            if len(metrics_hit) != 1:
+                continue                                     # same number in two metrics: cannot tell which
+            _, _, m, vals, end = hits[0]
             d = _direction(sm.group(), m)
             if d is None:
                 continue
             how, rank = d
+            if end and end != how:
+                problems.append(f'You wrote "{sm.group()} ... {nm.group()}" for {m}, but that result was sorted '
+                                f'the other way and cut off, so its {"low" if how == "min" else "high"} end is '
+                                f'missing. Run query_metrics with order_by "{m} {"asc" if how == "min" else "desc"}" '
+                                f"and a limit, or drop the claim.")
+                continue
             ordered = sorted(vals, key=lambda t: t[1], reverse=(how == "max"))
             if len(ordered) < rank:
                 continue
             true_ent, true_v = ordered[rank - 1]
-            if true_ent != ent:
-                problems.append(f'You wrote "{sm.group()} ... {nm.group()}" for {m} ({ent}), but the '
+            if true_ent not in {h[1] for h in hits}:          # also catches rounding ties (0.42 = ME or SC)
+                problems.append(f'You wrote "{sm.group()} ... {nm.group()}" for {m}, but the '
                                 f'{"second " if rank == 2 else ""}{"highest" if how == "max" else "lowest"} {m} is '
                                 f"{true_v:.2f} ({true_ent}). Fix this claim.")
     return problems
@@ -368,6 +389,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                         dreq, dres, block = conc
                         did = f"q{len(results) + 1}"
                         results[did] = {"request": dreq, **dres, "auto": True}
+                        results[rid]["concentration"] = block
                         shown["concentration"] = {**block, "detail_result_id": did}
                         if on_step:
                             on_step(f"Checked concentration: {block['driver_bank']} drives {block['group']}")

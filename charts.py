@@ -6,6 +6,19 @@ import pandas as pd
 
 UNIT_SUFFIX = {"$ billions": "($B)", "percent": "(%)", "count": ""}
 BAR = "#5B9BD5"
+BAR_LIGHT = "#B9D3EC"
+STATE_NAMES = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California", "CO": "Colorado",
+    "CT": "Connecticut", "DE": "Delaware", "DC": "District of Columbia", "FL": "Florida", "GA": "Georgia",
+    "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas",
+    "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts",
+    "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi", "MO": "Missouri", "MT": "Montana",
+    "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico",
+    "NY": "New York", "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma",
+    "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina", "SD": "South Dakota",
+    "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont", "VA": "Virginia", "WA": "Washington",
+    "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming", "PR": "Puerto Rico", "VI": "U.S. Virgin Islands",
+    "GU": "Guam", "FM": "Micronesia", "AS": "American Samoa", "MP": "Northern Mariana Islands"}
 
 
 def label(name: str) -> str:
@@ -27,6 +40,21 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     x, y, color = chart["x"], chart["y"], chart.get("color")
     if chart.get("only") and x in df.columns:
         df = df[df[x].astype(str).isin([str(v) for v in chart["only"]])].reset_index(drop=True)
+    conc = result.get("concentration") or {}
+    if chart["kind"] == "bar" and not color and conc.get("metric") == y and conc.get("group_rate_without_driver") is not None \
+            and conc.get("group", "").split(" = ")[0] == x:
+        grp = conc["group"].split(" = ", 1)[1]
+        if grp in set(df[x].astype(str)):
+            extra = {x: f"{grp} excl. {conc['driver_bank']}", y: conc["group_rate_without_driver"], "_excl": True}
+            df = pd.concat([df, pd.DataFrame([extra])], ignore_index=True)
+    if "_excl" not in df.columns:
+        df["_excl"] = False
+    df["_excl"] = df["_excl"].fillna(False).astype(bool)
+    if x == "state":
+        def nice(v):
+            code, sep, rest = str(v).partition(" excl. ")
+            return STATE_NAMES.get(code, code) + sep + rest
+        df[x] = df[x].map(nice)
     if chart["kind"] == "bar" and color == "period":     # segments over time read better as lines
         chart = {**chart, "kind": "line"}
         x, color = "period", chart["x"]
@@ -59,10 +87,15 @@ def build(chart: dict, result: dict, max_bars: int = 15):
         return alt.layer(*layers).properties(title=chart.get("title", ""), height=320), note
 
     # bar
-    if not color and len(df) > max_bars:
-        note = f"Showing the top {max_bars} of {len(df)}. The full table is under How I got this."
-        df = df.nlargest(max_bars, y)
-    order = df.groupby(x)[y].max().sort_values(ascending=False).index.tolist()
+    if not color and len(df[~df["_excl"]]) > max_bars:
+        note = f"Showing the top {max_bars} of {len(df[~df['_excl']])}. The full table is under How I got this."
+        df = pd.concat([df[~df["_excl"]].nlargest(max_bars, y), df[df["_excl"]]], ignore_index=True)
+    order = df[~df["_excl"]].groupby(x)[y].max().sort_values(ascending=False).index.tolist()
+    for _, r in df[df["_excl"]].iterrows():           # the "excl." bar sits right under its group
+        base_name = str(r[x]).split(" excl. ")[0]
+        order.insert(order.index(base_name) + 1 if base_name in order else len(order), r[x])
+        note = (f"Light bar: {base_name} without {str(r[x]).split(' excl. ')[1]}, which holds most of its "
+                "problem loans. Computed in code from the same governed data.")
     y_axis = alt.Y(f"{x}:N", title=None, sort=order,
                    axis=alt.Axis(labelLimit=320, labelPadding=8, labelFontSize=12, ticks=False, domain=False))
     x_axis = alt.X(f"{y}:Q", title=y_title, axis=alt.Axis(gridOpacity=0.25, tickCount=5),
@@ -74,8 +107,10 @@ def build(chart: dict, result: dict, max_bars: int = 15):
         height = df[x].nunique() * (16 * df[color].nunique() + 14)
         return bars.properties(title=chart.get("title", ""), height=min(max(height, 160), 640)), note
     base = alt.Chart(df).encode(y=y_axis, x=x_axis, tooltip=tooltip)
-    bars = base.mark_bar(cornerRadiusEnd=3, color=BAR, height={"band": 0.7})
-    text = base.mark_text(align="right", dx=-8, fontSize=12, fontWeight="bold", color="white").encode(text="_label:N")
+    bars = base.mark_bar(cornerRadiusEnd=3, height={"band": 0.7}).encode(
+        color=alt.condition("datum._excl", alt.value(BAR_LIGHT), alt.value(BAR)))
+    text = base.mark_text(align="right", dx=-8, fontSize=12, fontWeight="bold", color="white").encode(
+        text="_label:N", color=alt.condition("datum._excl", alt.value("#1F3B57"), alt.value("white")))
     return (bars + text).properties(title=chart.get("title", ""), height=alt.Step(38)), note
 
 

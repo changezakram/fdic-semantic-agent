@@ -25,7 +25,7 @@ import yaml
 ROOT = Path(__file__).parent
 MODEL_FILE = ROOT / "semantic_model.yaml"
 SNAPSHOT = ROOT / "data" / "snapshot_2026Q2"
-MAX_ROWS = 50
+MAX_ROWS = 60   # all 50 states + DC fit in one result (was 50 in the frozen experiment)
 
 # Dimensions whose values are names (matched by search); the rest are fixed categories.
 NAME_DIMENSIONS = {"bank_name", "holding_company", "organization", "state_name"}
