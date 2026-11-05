@@ -7,6 +7,7 @@ Every number comes from the semantic layer; charts are drawn by the app from tho
 from __future__ import annotations
 
 import ast
+import copy
 import json
 import re
 import operator
@@ -34,6 +35,12 @@ How to work:
 - Industry and group TOTALS always include every filer, "Unknown" too (it is part of the industry). Leave
   "Unknown" out of rankings and charts only. For a total's growth, use query_metrics compare_to; never
   recompute it from rounded numbers. Feed calculate the full-precision values the results returned.
+- Gainers and losers, or growth by group: ONE query_metrics call with compare_to and one dimension. Chart it
+  as a bar with y = "change_pct" (or "change_pp" for ratios) so gains and losses show on each side of zero.
+  If a row has banks_changed true, say its change includes a merger and is not organic. Over a year, also say
+  that acquisitions of banks from other holding companies are not yet detected.
+- Peer groups by place and size: us_region (e.g. "New England") and organization_asset_band (e.g. $5B-$50B =
+  ["$5B-$10B", "$10B-$50B"]). Use these filters, never a hand-made list of states or companies.
 - If a result has a "concentration" block, one bank drives that group's figure. Say so in an insight,
   name the bank, and give the group's rate without it (both numbers are in the block).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
@@ -130,6 +137,12 @@ PRESENT_TOOL = {
 }
 
 
+def _metrics_in(request: dict, rows: list) -> list:
+    """The request's metrics plus any change columns a compare_to result added."""
+    extra = [c for c in ("change_pct", "change_pp", "change") if rows and c in rows[0]]
+    return [m for m in (request.get("metrics") or []) if not rows or m in rows[0]] + extra
+
+
 NON_PEER = {"Unknown", "PR", "VI", "GU", "FM", "AS", "MP", "MH", "PW"}
 
 
@@ -150,7 +163,7 @@ def rankings(res: dict, request: dict) -> dict | None:
             return {"warning": "This result was cut off at the row limit, so it does not contain every group. "
                                "Do not rank from it. Narrow the query with filters (e.g. organization_size_class, "
                                "geography_type) or use order_by with a limit, then rank."}
-    for m in request.get("metrics") or []:
+    for m in _metrics_in(request, rows):
         vals = [(r[d], r[m]) for r in rows if isinstance(r.get(m), (int, float)) and str(r[d]) not in skip]
         if len(vals) < 2:
             continue
@@ -290,7 +303,7 @@ def check_claims(answer: dict, results: dict) -> list[str]:
                 continue
             end = "min" if len(ob) > 1 and ob[1].lower() == "asc" else "max"
         skip = NON_PEER if dims[0] == "state" else {"Unknown"}
-        for m in req.get("metrics") or []:
+        for m in _metrics_in(req, rows):
             if end and (req.get("order_by") or "").split()[0] != m:
                 continue
             vals = [(row[dims[0]], row[m]) for row in rows
@@ -395,8 +408,15 @@ def build_spec() -> dict:
     """System prompt and tools: analyst rules + the same governed glossary as Setup C."""
     c = prompts.build("C")
     system = f"{ANALYST_RULES}\n\nThe data covers 2024Q3 through 2026Q2.\n\n{prompts.render_glossary()}"
-    tools = [t for t in c["tools"] if t["name"] in ("query_metrics", "list_values")] + [CALC_TOOL, PRESENT_TOOL]
-    return {"system": system, "tools": tools}
+    tools = [copy.deepcopy(t) for t in c["tools"] if t["name"] in ("query_metrics", "list_values")]
+    props = tools[0]["input_schema"]["properties"]      # the app's layer does more than the frozen Setup C
+    props["compare_to"]["description"] = (
+        "Optional. 'prior_quarter', 'prior_year', or a 'YYYYQn' period. Returns both values and the change "
+        "(percent change, or percentage-point change for ratios). With no dimensions: any metrics. With ONE "
+        "dimension and ONE metric: the change for every group, sorted by change (gainers and losers), with "
+        "banks_changed flagging organizations whose banks changed (a merger).")
+    props["limit"]["description"] = "Optional. Maximum rows (up to 60)."
+    return {"system": system, "tools": tools + [CALC_TOOL, PRESENT_TOOL]}
 
 
 def history_messages(history: list[dict]) -> list[dict]:
@@ -556,6 +576,8 @@ def auto_chart(results: dict) -> dict | None:
 
 def chart_problems(answer: dict, results: dict) -> list[str]:
     """Specific, fixable problems with the model's chart specs (checked before the answer is accepted)."""
+    if (answer or {}).get("answer_type") == "answer" and change_chart(results):
+        return []                                  # the gainers-and-losers chart is drawn by code
     probs = []
     for i, c in enumerate((answer or {}).get("charts") or [], 1):
         r = results.get(c.get("result_id"))
@@ -582,8 +604,30 @@ def chart_problems(answer: dict, results: dict) -> list[str]:
     return probs
 
 
+def change_chart(results: dict) -> dict | None:
+    """When the answer rests on a change-by-group result (compare_to with a dimension), the chart is always
+    that result as gainers and losers. Decided in code, so a trend of the wrong groups is never drawn."""
+    for rid in reversed(list(results)):
+        r = results[rid]
+        req, rows = r.get("request", {}), r.get("rows") or []
+        if req.get("compare_to") and req.get("dimensions") and len(rows) >= 2:
+            y = "change_pct" if "change_pct" in rows[0] else "change_pp" if "change_pp" in rows[0] else None
+            if not y:
+                continue
+            m, d = req["metrics"][0], req["dimensions"][0]
+            prior = next((k[len(m) + 1:] for k in rows[0] if k.startswith(m + "_")), "prior period")
+            return {"result_id": rid, "kind": "bar", "x": d, "y": y,
+                    "title": f"{m.replace('_', ' ').capitalize()}: change from {prior} to {req['period']}"
+                             + (" (percentage points)" if y == "change_pp" else " (%)")}
+    return None
+
+
 def valid_charts(answer: dict, results: dict) -> list[dict]:
     """Chart specs whose result, x, y and color exist in the data; a fallback if none qualify."""
+    if (answer or {}).get("answer_type") == "answer":
+        forced = change_chart(results)
+        if forced:
+            return [forced]
     good = []
     for c in (answer or {}).get("charts") or []:
         r = results.get(c.get("result_id"))
@@ -596,4 +640,66 @@ def valid_charts(answer: dict, results: dict) -> list[dict]:
         fallback = auto_chart(results)
         if fallback:
             good.append(fallback)
-    return good
+    return [chart_rules(c, results) for c in good]
+
+
+MAX_LINES = 8
+
+
+def chart_rules(c: dict, results: dict) -> dict:
+    """Chart-type rules applied in code to every chart, whatever the model asked for. They depend only on the
+    shape of the data, so they hold for any metric or dimension:
+      1. Change between two periods for many groups -> a diverging bar of the change (gains right, losses
+         left; top 5 each way when there are more than 10). A line through two points shows little.
+      2. A trend with more than 8 lines -> the 8 largest by their latest value.
+      3. Lines on very different scales (largest 20x the smallest) -> each indexed to 100 at the first period,
+         so every line's movement is visible.
+    Rankings and comparisons of one period are sorted horizontal bars; scorecards cover several metrics."""
+    r = results.get(c.get("result_id")) or {}
+    rows, x, y, color = r.get("rows") or [], c.get("x"), c.get("y"), c.get("color")
+    if c.get("kind") != "line" or x != "period" or not color or not rows:
+        return c
+    periods = sorted({row["period"] for row in rows})
+    unit = (r.get("units") or {}).get(y, "")
+    series = {}
+    for row in rows:
+        if isinstance(row.get(y), (int, float)) and str(row.get(color)) != "Unknown":
+            series.setdefault(row[color], {})[row["period"]] = row[y]
+    if len(periods) == 2 and len(series) >= 3:                                      # rule 1
+        a, b = periods
+        out = []
+        for g, v in series.items():
+            if a in v and b in v:
+                if unit == "percent":
+                    out.append({color: g, "change_pp": round(v[b] - v[a], 4)})
+                elif v[a]:
+                    out.append({color: g, "change_pct": round((v[b] / v[a] - 1) * 100, 4)})
+        ycol = "change_pp" if unit == "percent" else "change_pct"
+        did = f"{c['result_id']}_change"
+        results[did] = {"request": {"metrics": [ycol], "dimensions": [color], "period": f"{a} to {b}",
+                                    "derived_from": c["result_id"]},
+                        "rows": sorted(out, key=lambda t: -t[ycol]), "units": {ycol: "percent"}, "auto": True,
+                        "notes": [f"Change computed in code from {c['result_id']}."], "sql": ""}
+        name = y.replace("_", " ").capitalize()
+        return {"result_id": did, "kind": "bar", "x": color, "y": ycol,
+                "title": f"{name}: change from {a} to {b}" + (" (percentage points)" if unit == "percent" else " (%)")}
+    c = dict(c)
+    if len(series) > MAX_LINES:                                                     # rule 2
+        last = {g: v[max(v)] for g, v in series.items() if v}
+        c["only_series"] = sorted(last, key=last.get, reverse=True)[:MAX_LINES]
+        series = {g: series[g] for g in c["only_series"]}
+    latest = [v[max(v)] for v in series.values() if v and v[max(v)] and v[max(v)] > 0]
+    if len(latest) >= 2 and max(latest) / min(latest) >= 20 and unit != "percent":   # rule 3
+        first = periods[0]
+        out = [{"period": row["period"], color: row[color],
+                "index": round(row[y] / series[row[color]][first] * 100, 2)}
+               for row in rows if row.get(color) in series and series[row[color]].get(first)
+               and isinstance(row.get(y), (int, float))]
+        did = f"{c['result_id']}_index"
+        results[did] = {"request": {"metrics": ["index"], "dimensions": ["period", color], "period": r["request"].get("period"),
+                                    "derived_from": c["result_id"]},
+                        "rows": out, "units": {"index": "index"}, "auto": True,
+                        "notes": [f"Each line indexed to 100 at {first}, computed in code from {c['result_id']}."],
+                        "sql": ""}
+        c.update(result_id=did, y="index", title=f"{c.get('title') or y} (indexed, {first} = 100)")
+    return c

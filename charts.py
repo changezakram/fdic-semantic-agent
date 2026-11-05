@@ -4,7 +4,7 @@ from __future__ import annotations
 import altair as alt
 import pandas as pd
 
-UNIT_SUFFIX = {"$ billions": "($B)", "percent": "(%)", "count": ""}
+UNIT_SUFFIX = {"$ billions": "($B)", "percent": "(%)", "count": "", "index": ""}
 BAR = "#5B9BD5"
 BAR_LIGHT = "#B9D3EC"
 STATE_NAMES = {
@@ -22,7 +22,8 @@ STATE_NAMES = {
 
 
 def label(name: str) -> str:
-    return name.replace("_", " ").capitalize()
+    special = {"change_pct": "Change", "change_pp": "Change (points)", "change": "Change"}
+    return special.get(name, name.replace("_", " ").capitalize())
 
 
 def value_format(unit: str) -> tuple[str, str]:
@@ -38,6 +39,10 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     """Return (altair chart, note or None)."""
     df = pd.DataFrame(result["rows"])
     x, y, color = chart["x"], chart["y"], chart.get("color")
+    series_note = None
+    if chart.get("only_series") and color in df.columns:
+        df = df[df[color].isin(chart["only_series"])].reset_index(drop=True)
+        series_note = f"Showing the {len(chart['only_series'])} largest series. The full table is under How I got this."
     if chart.get("only") and x in df.columns:
         df = df[df[x].astype(str).isin([str(v) for v in chart["only"]])].reset_index(drop=True)
     conc = result.get("concentration") or {}
@@ -63,7 +68,7 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     fmt, suffix = value_format(unit)
     prefix = "$" if unit == "$ billions" else ""
     df["_label"] = df[y].map(lambda v: "" if pd.isna(v) else f"{prefix}{v:{fmt}}{suffix}")
-    note = None
+    note = series_note
 
     tooltip = [alt.Tooltip(f"{x}:N", title=label(x)), alt.Tooltip(f"{y}:Q", title=y_title, format=",.2f")]
     if color:
@@ -94,6 +99,8 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     if not chart.get("only") and len(df) > 2 and (df[x].astype(str) == "Unknown").any():
         df = df[df[x].astype(str) != "Unknown"].reset_index(drop=True)
         note = "Unknown (banks with no institution record) is left out of the chart; it is in the table under How I got this."
+    if not color and (df[y] < 0).any():
+        max_bars = 10 ** 6
     if not color and len(df[~df["_excl"]]) > max_bars:
         note = f"Showing the top {max_bars} of {len(df[~df['_excl']])}. The full table is under How I got this."
         df = pd.concat([df[~df["_excl"]].nlargest(max_bars, y), df[df["_excl"]]], ignore_index=True)
@@ -116,6 +123,25 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     base = alt.Chart(df).encode(y=y_axis, x=x_axis, tooltip=tooltip)
     bars = base.mark_bar(cornerRadiusEnd=3, height={"band": 0.7}).encode(
         color=alt.condition("datum._excl", alt.value(BAR_LIGHT), alt.value(BAR)))
+    if (df[y] < 0).any():                    # gainers and losers: bars on each side of zero, labels outside
+        n_all = len(df)
+        if n_all > 10:                       # the 5 largest gains and the 5 largest declines
+            df = pd.concat([df[df[y] >= 0].nlargest(5, y), df[df[y] < 0].nsmallest(5, y)], ignore_index=True)
+            note = (f"Showing the 5 largest gains and the 5 largest declines of {n_all}. "
+                    "The full list is under How I got this.")
+        order = df.sort_values(y, ascending=False)[x].tolist()
+        y_axis = alt.Y(f"{x}:N", title=None, sort=order,
+                       axis=alt.Axis(labelLimit=320, labelPadding=8, labelFontSize=12, ticks=False, domain=False))
+        df["_sign"] = df[y].map(lambda v: "Gain" if v >= 0 else "Loss")
+        df["_label"] = df[y].map(lambda v: "" if pd.isna(v) else f"{'+' if v >= 0 else '−'}{prefix}{abs(v):{fmt}}{suffix}")
+        base = alt.Chart(df).encode(y=y_axis, x=x_axis, tooltip=tooltip)
+        bars = base.mark_bar(cornerRadiusEnd=3, height={"band": 0.7}).encode(
+            color=alt.Color("_sign:N", scale=alt.Scale(domain=["Gain", "Loss"], range=[BAR, "#E07B6A"]), legend=None))
+        pos = base.transform_filter("datum._sign == 'Gain'").mark_text(
+            align="left", dx=6, fontSize=12, fontWeight="bold", color="#8A94A6").encode(text="_label:N")
+        neg = base.transform_filter("datum._sign == 'Loss'").mark_text(
+            align="right", dx=-6, fontSize=12, fontWeight="bold", color="#8A94A6").encode(text="_label:N")
+        return (bars + pos + neg).properties(title=chart.get("title", ""), height=alt.Step(30)), note
     df["_inside"] = df[y].abs() >= 0.15 * df[y].abs().max()        # short bars get their label outside
     base = alt.Chart(df).encode(y=y_axis, x=x_axis, tooltip=tooltip)
     inside = base.transform_filter("datum._inside").mark_text(

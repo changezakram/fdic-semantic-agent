@@ -186,9 +186,12 @@ class SemanticLayer:
         where, bank_single = self._filter_sql(filters)
         compiled = {m: self._metric_sql(m, basis, bank_single) for m in metrics}
 
+        if compare_to and dimensions:
+            return self._compare_by_group(metrics, periods, dimensions, filters, basis, full_year, flow_metrics,
+                                          compare_to, order_by, limit)
         if compare_to:
-            if len(periods) != 1 or dimensions:
-                raise QueryError("compare_to works with one period and no dimensions. Ask for each group separately.")
+            if len(periods) != 1:
+                raise QueryError("compare_to works with one period.")
             base = periods[0]
             other = self._shift(base, compare_to)
             if flow_metrics and basis == "quarterly" and other == "2024Q3":
@@ -212,6 +215,59 @@ class SemanticLayer:
         out = self._run(compiled, periods, dimensions, where, order_by, limit)
         return self._result(out["rows"], metrics, basis, full_year, out["sql"], truncated=out["truncated"])
 
+    SIZE_DIMS = ("size_class", "organization_size_class", "organization_asset_band")
+
+    def _compare_by_group(self, metrics, periods, dimensions, filters, basis, full_year, flow_metrics,
+                          compare_to, order_by, limit):
+        """Change by group: one metric, one dimension, two periods. Groups (and any size filter) are set by the
+        later period; the earlier period is measured for those same groups. Each group also reports whether its
+        set of banks changed between the periods (usually a merger), so growth is not mistaken for organic."""
+        if len(periods) != 1 or len(dimensions) != 1 or dimensions[0] == "period" or len(metrics) != 1:
+            raise QueryError("compare_to with dimensions takes one period, one dimension and one metric.")
+        m, d, base = metrics[0], dimensions[0], periods[0]
+        other = self._shift(base, compare_to)
+        if flow_metrics and basis == "quarterly" and other == "2024Q3":
+            raise QueryError("Quarterly income for 2024Q3 is not available (needs 2024Q2). Compare year-to-date instead.")
+        where_cur, single = self._filter_sql(filters)
+        prior_filters = {k: v for k, v in (filters or {}).items() if k not in self.SIZE_DIMS}
+        where_prev, _ = self._filter_sql(prior_filters)
+        compiled = {m: self._metric_sql(m, basis, single), "_banks": ("COUNT(DISTINCT CERT)", "count")}
+        cur = self._run(compiled, [base], [d], where_cur, limit=10000)
+        prev = self._run(compiled, [other], [d], where_prev, limit=10000)
+        before = {r[d]: r for r in prev["rows"]}
+        unit = compiled[m][1]
+        rows = []
+        for r in cur["rows"]:
+            p = before.get(r[d], {})
+            a, b = r.get(m), p.get(m)
+            row = {d: r[d], m: a, f"{m}_{other}": b}
+            if a is not None and b is not None:
+                if unit == "pct":
+                    row["change_pp"] = round(a - b, 4)
+                else:
+                    row["change"] = round(a - b, 4)
+                    row["change_pct"] = round((a / b - 1) * 100, 4) if b else None
+            if d in ("organization", "holding_company"):
+                row["banks_changed"] = p.get("_banks") != r.get("_banks")
+            rows.append(row)
+        key = str(order_by).split()[0] if order_by else ("change_pct" if unit != "pct" else "change_pp")
+        desc = not (order_by and str(order_by).lower().endswith(" asc"))
+        rows.sort(key=lambda x: (x.get(key) is None, -(x.get(key) or 0) if desc else (x.get(key) or 0)))
+        cap = min(int(limit), MAX_ROWS) if limit else MAX_ROWS
+        truncated = len(rows) > cap
+        rows = rows[:cap]
+        note = f"Compared {base} with {other} for each {d.replace('_', ' ')}. Groups are set by {base}."
+        if d in ("organization", "holding_company"):
+            note += (" banks_changed = the organization's own banks differ between the periods (a merger), so its "
+                     "change is not organic. Not yet detected: buying a bank that sat under another holding company "
+                     "(merger history is not loaded). Over a year, treat large jumps as possible acquisitions; "
+                     "prior_quarter is less exposed.")
+        res = self._result(rows, [m], basis, full_year, cur["sql"] + "\n-- vs --\n" + prev["sql"],
+                           truncated=truncated, note=note)
+        u = res["units"][m]
+        res["units"].update({f"{m}_{other}": u, "change": u, "change_pct": "percent", "change_pp": "percent"})
+        return res
+
     def _run(self, compiled, periods, dimensions, where, order_by=None, limit=None):
         sel_dims, group = [], []
         for d in dimensions:
@@ -223,7 +279,7 @@ class SemanticLayer:
         sel_metrics = [f"{sql} AS \"{m}\"" for m, (sql, _) in compiled.items()]
         plist = ", ".join(f"'{p}'" for p in periods)
         conds = [f"period IN ({plist})"] + where
-        needs_share = any(self.metrics[m]["type"] == "share" for m in compiled)
+        needs_share = any(self.metrics.get(m, {}).get("type") == "share" for m in compiled)
         src = "bank_quarter"
         if needs_share:
             src = ("(SELECT b.*, t._industry_assets FROM bank_quarter b JOIN "
@@ -238,7 +294,7 @@ class SemanticLayer:
             sql += f"\nORDER BY \"{col}\" {'ASC' if direction.lower() == 'asc' else 'DESC'} NULLS LAST"
         elif "period" in dimensions:
             sql += '\nORDER BY "period"'
-        cap = min(int(limit), MAX_ROWS) if limit else MAX_ROWS
+        cap = int(limit) if limit and int(limit) > MAX_ROWS else (min(int(limit), MAX_ROWS) if limit else MAX_ROWS)
         rows = self.con.execute(sql + f"\nLIMIT {cap + 1}").df().to_dict("records")
         truncated = len(rows) > cap
         rows = [{k: (None if v != v else v) for k, v in r.items()} for r in rows[:cap]]   # NaN -> None

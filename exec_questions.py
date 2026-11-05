@@ -146,6 +146,17 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   expect="answer", headline=[[rows[0]["region"]]], numbers=[rows[0]["noncurrent_loan_rate"]],
                   must_text=[["MidFirst"]], not_headline=["Unknown"], chart=True, key=rows))
 
+    # E16 gainers and losers, peer group by place and size, change by group
+    rows = L.query_metrics(metrics=["total_deposits"], period="2026Q2", dimensions=["organization"],
+                           filters={"us_region": "New England", "organization_asset_band": ["$5B-$10B", "$10B-$50B"]},
+                           compare_to="prior_quarter")["rows"]
+    top, bottom = rows[0], rows[-1]
+    Q.append(dict(id="E16", topic="gainers and losers",
+                  question="Which New England banking organizations with $5B-$50B in assets gained and lost the most "
+                           "deposits in percentage terms from 2026Q1 to 2026Q2?",
+                  expect="answer", headline=[[top["organization"].split()[0]], [bottom["organization"].split()[0]]],
+                  numbers=[top["change_pct"], bottom["change_pct"]], chart=True, key=rows))
+
     # E13-E15 out of scope: must decline, not estimate
     Q.append(dict(id="E13", topic="decline", question="What's the cost of deposits for $10B-$100B banks?",
                   expect="decline"))

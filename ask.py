@@ -28,8 +28,9 @@ SAMPLES = [   # (button label, full question); each question is in exec_question
      "Huntington in 2026Q2. Who leads on profitability?"),
     ("Credit trend by organization size since 2024",
      "How has the noncurrent loan rate trended by organization size since 2024, and which group has deteriorated the most?"),
-    ("Deposit growth by regulator, year over year",
-     "Deposit growth by regulator, year over year"),
+    ("Deposit gainers and losers, New England peers",
+     "Which New England banking organizations with $5B-$50B in assets gained and lost the most deposits in "
+     "percentage terms from 2026Q1 to 2026Q2?"),
     ("Median ROA: community banks vs. others",
      "Median ROA for community banks vs. other banks, 2026Q2"),
 ]

@@ -8,7 +8,7 @@
 # and raw_institutions (i), plus the governed base view defined in `base_view`.
 # Change log lives in DECISIONS.md. Bump `version` on every edit.
 # =====================================================================
-version: 0.1.4   # 0.1.2: unique holding-company names; 0.1.3: organization_size_class; 0.1.4: geography_type (all after the frozen experiment, which used 0.1.1)
+version: 0.1.5   # 0.1.2: unique holding-company names; 0.1.3: organization_size_class; 0.1.4: geography_type; 0.1.5: us_region, organization_asset_band, change by group (all after the frozen experiment, which used 0.1.1)
 model: fdic_call_reports
 snapshot:
   path: data/snapshot_2026Q2/
@@ -217,6 +217,22 @@ dimensions:
   bank_name:       {sql: "COALESCE(NAME, 'Unknown')", description: "Display only. Not unique; filter by CERT"}
   state:           {sql: "COALESCE(STALP, 'Unknown')"}
   state_name:      {sql: "COALESCE(STNAME, 'Unknown')"}
+  us_region:
+    sql: |
+      CASE WHEN STALP IN ('CT','ME','MA','NH','RI','VT') THEN 'New England'
+           WHEN STALP IN ('NJ','NY','PA') THEN 'Mid-Atlantic'
+           WHEN STALP IN ('IL','IN','MI','OH','WI') THEN 'East North Central'
+           WHEN STALP IN ('IA','KS','MN','MO','NE','ND','SD') THEN 'West North Central'
+           WHEN STALP IN ('DE','DC','FL','GA','MD','NC','SC','VA','WV') THEN 'South Atlantic'
+           WHEN STALP IN ('AL','KY','MS','TN') THEN 'East South Central'
+           WHEN STALP IN ('AR','LA','OK','TX') THEN 'West South Central'
+           WHEN STALP IN ('AZ','CO','ID','MT','NV','NM','UT','WY') THEN 'Mountain'
+           WHEN STALP IN ('AK','CA','HI','OR','WA') THEN 'Pacific'
+           WHEN STALP IS NULL THEN 'Unknown'
+           ELSE 'U.S. territory' END
+    description: >
+      U.S. Census division of the bank's headquarters state (New England = CT, ME, MA, NH, RI, VT).
+      Different from region, which is the FDIC supervisory region.
   geography_type:
     sql: |
       CASE WHEN STALP IS NULL THEN 'Unknown'
@@ -260,6 +276,18 @@ dimensions:
       all its banks (or the bank's own assets if it has no holding company), in that quarter.
       Use this, not size_class, for peer groups of holding companies (e.g. "holding companies
       with $10-100B in assets"). size_class classifies each bank charter separately.
+  organization_asset_band:
+    sql: |
+      CASE WHEN org_assets < 1000000   THEN 'Under $1B'
+           WHEN org_assets < 5000000   THEN '$1B-$5B'
+           WHEN org_assets < 10000000  THEN '$5B-$10B'
+           WHEN org_assets < 50000000  THEN '$10B-$50B'
+           WHEN org_assets < 100000000 THEN '$50B-$100B'
+           ELSE '$100B and over' END
+    description: >
+      Finer size bands for the whole banking organization (holding company's total bank assets, or the bank's
+      own if it has none), in that quarter. For a range such as $5B-$50B, filter on several bands:
+      ["$5B-$10B", "$10B-$50B"].
   holding_company:
     sql: "COALESCE(hc_name, CASE WHEN has_bank_record THEN 'No holding company' ELSE 'Unknown' END)"
     key_sql: "RSSDHCR"
