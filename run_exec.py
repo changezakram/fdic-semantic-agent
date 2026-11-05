@@ -23,7 +23,7 @@ import anthropic
 
 import analyst
 import exec_questions
-from semantic_layer import SemanticLayer
+from semantic_layer import EXT_SNAPSHOT, SemanticLayer
 
 ROOT = Path(__file__).parent
 _local = threading.local()
@@ -41,7 +41,7 @@ def secret(name, default=None):
 
 def layer():
     if getattr(_local, "layer", None) is None:
-        _local.layer = SemanticLayer()
+        _local.layer = SemanticLayer(ext=EXT_SNAPSHOT, pro_forma=True)
     return _local.layer
 
 

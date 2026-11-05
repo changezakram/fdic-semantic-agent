@@ -1,0 +1,842 @@
+TRANSNUM,CHANGECODE,CHANGECODE_DESC,EFFDATE,PROCDATE,CERT,INSTNAME,ACQ_CERT,ACQ_INSTNAME,OUT_CERT,OUT_INSTNAME,SUR_CERT,SUR_INSTNAME,ORG_ROLE_CDE,REPORT_TYPE
+2024000197,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-01-01T00:00:00,2024-01-04T00:00:00,,,28865,MidCountry Bank,8193,Lake Community Bank,28865,MidCountry Bank,FI,224
+2024000197,810,Participated in Absorbtion/Consolidation/Merger,2024-01-01T00:00:00,2024-01-04T00:00:00,28865,,28865,MidCountry Bank,8193,Lake Community Bank,28865,MidCountry Bank,FI,810
+2024000443,223,Merger -Without Assistance,2024-01-02T00:00:00,2024-01-09T00:00:00,27704,,27619,Piedmont Federal Savings Bank,27704,Wake Forest Federal Savings and Loan Association,27619,Piedmont Federal Savings Bank,FI,223
+2024000443,810,Participated in Absorbtion/Consolidation/Merger,2024-01-02T00:00:00,2024-01-09T00:00:00,27619,,27619,Piedmont Federal Savings Bank,27704,Wake Forest Federal Savings and Loan Association,27619,Piedmont Federal Savings Bank,FI,810
+2024000618,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-01-01T00:00:00,2024-01-11T00:00:00,,,17266,Umpqua Bank,34227,Columbia Trust Company,17266,Umpqua Bank,FI,224
+2024000618,810,Participated in Absorbtion/Consolidation/Merger,2024-01-01T00:00:00,2024-01-11T00:00:00,17266,,17266,Umpqua Bank,34227,Columbia Trust Company,17266,Umpqua Bank,FI,810
+2024003200,223,Merger -Without Assistance,2024-01-31T00:00:00,2024-02-05T00:00:00,22939,,30788,Glacier Bank,22939,Wheatland Bank,30788,Glacier Bank,FI,223
+2024003200,810,Participated in Absorbtion/Consolidation/Merger,2024-01-31T00:00:00,2024-02-05T00:00:00,30788,,30788,Glacier Bank,22939,Wheatland Bank,30788,Glacier Bank,FI,810
+2024003298,223,Merger -Without Assistance,2024-01-31T00:00:00,2024-02-06T00:00:00,17244,,14843,MidWestOne Bank,17244,The Bank of Denver,14843,MidWestOne Bank,FI,223
+2024003298,810,Participated in Absorbtion/Consolidation/Merger,2024-01-31T00:00:00,2024-02-06T00:00:00,14843,,14843,MidWestOne Bank,17244,The Bank of Denver,14843,MidWestOne Bank,FI,810
+2024003538,223,Merger -Without Assistance,2024-01-31T00:00:00,2024-02-09T00:00:00,29999,,30111,Oconee Federal Savings and Loan Association,29999,Mutual Savings Bank,30111,Oconee Federal Savings and Loan Association,FI,223
+2024003538,810,Participated in Absorbtion/Consolidation/Merger,2024-01-31T00:00:00,2024-02-09T00:00:00,30111,,30111,Oconee Federal Savings and Loan Association,29999,Mutual Savings Bank,30111,Oconee Federal Savings and Loan Association,FI,810
+2024003707,223,Merger -Without Assistance,2024-02-02T00:00:00,2024-02-13T00:00:00,10644,,18740,Heartland Bank,10644,State Bank of Odell,18740,Heartland Bank,FI,223
+2024003707,810,Participated in Absorbtion/Consolidation/Merger,2024-02-02T00:00:00,2024-02-13T00:00:00,18740,,18740,Heartland Bank,10644,State Bank of Odell,18740,Heartland Bank,FI,810
+2024003778,223,Merger -Without Assistance,2024-02-10T00:00:00,2024-02-15T00:00:00,1635,,25858,Equity Bank,1635,Bank of Kirksville,25858,Equity Bank,FI,223
+2024003778,810,Participated in Absorbtion/Consolidation/Merger,2024-02-10T00:00:00,2024-02-15T00:00:00,25858,,25858,Equity Bank,1635,Bank of Kirksville,25858,Equity Bank,FI,810
+2024004043,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-02-12T00:00:00,2024-02-20T00:00:00,,,22559,Bravera Bank,10176,Financial Security Bank,22559,Bravera Bank,FI,224
+2024004043,810,Participated in Absorbtion/Consolidation/Merger,2024-02-12T00:00:00,2024-02-20T00:00:00,22559,,22559,Bravera Bank,10176,Financial Security Bank,22559,Bravera Bank,FI,810
+2024004487,223,Merger -Without Assistance,2024-02-16T00:00:00,2024-02-27T00:00:00,7910,,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",7910,Mars Bank,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",FI,223
+2024004487,810,Participated in Absorbtion/Consolidation/Merger,2024-02-16T00:00:00,2024-02-27T00:00:00,7900,,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",7910,Mars Bank,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",FI,810
+2024004657,712,Branch Purchased,2024-01-26T00:00:00,2024-03-04T00:00:00,5162,,5162,The First National Bank of Henning,5252,First Security Bank - Sleepy Eye,,,FI,712
+2024004844,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-02-17T00:00:00,2024-03-05T00:00:00,,,14597,Union Bank,14534,The First National Bank at Paris,14597,Union Bank,FI,224
+2024004844,810,Participated in Absorbtion/Consolidation/Merger,2024-02-17T00:00:00,2024-03-05T00:00:00,14597,,14597,Union Bank,14534,The First National Bank at Paris,14597,Union Bank,FI,810
+2024004911,223,Merger -Without Assistance,2024-02-22T00:00:00,2024-03-06T00:00:00,29501,,12814,Peoples State Bank,29501,Interstate Federal Savings and Loan Association of McGregor,12814,Peoples State Bank,FI,223
+2024004911,810,Participated in Absorbtion/Consolidation/Merger,2024-02-22T00:00:00,2024-03-06T00:00:00,12814,,12814,Peoples State Bank,29501,Interstate Federal Savings and Loan Association of McGregor,12814,Peoples State Bank,FI,810
+2024005002,223,Merger -Without Assistance,2024-01-26T00:00:00,2024-03-07T00:00:00,25260,,8499,Union State Bank,25260,State Bank of Brooks,8499,Union State Bank,FI,223
+2024005002,810,Participated in Absorbtion/Consolidation/Merger,2024-01-26T00:00:00,2024-03-07T00:00:00,8499,,8499,Union State Bank,25260,State Bank of Brooks,8499,Union State Bank,FI,810
+2024005004,223,Merger -Without Assistance,2024-02-09T00:00:00,2024-03-07T00:00:00,10987,,15324,Security Bank & Trust Company,10987,Cambridge State Bank,15324,Security Bank & Trust Company,FI,223
+2024005004,810,Participated in Absorbtion/Consolidation/Merger,2024-02-09T00:00:00,2024-03-07T00:00:00,15324,,15324,Security Bank & Trust Company,10987,Cambridge State Bank,15324,Security Bank & Trust Company,FI,810
+2024006012,223,Merger -Without Assistance,2024-03-01T00:00:00,2024-03-13T00:00:00,32178,,28088,Washington Federal Bank,32178,Luther Burbank Savings,28088,Washington Federal Bank,FI,223
+2024006012,810,Participated in Absorbtion/Consolidation/Merger,2024-03-01T00:00:00,2024-03-13T00:00:00,28088,,28088,Washington Federal Bank,32178,Luther Burbank Savings,28088,Washington Federal Bank,FI,810
+2024006478,712,Branch Purchased,2024-03-12T00:00:00,2024-03-22T00:00:00,50007,,50007,Nusenda Federal Credit Union,35492,Western Heritage Bank,,,FI,712
+2024006836,223,Merger -Without Assistance,2024-03-19T00:00:00,2024-03-26T00:00:00,57279,,29087,BANK 34,57279,Commerce Bank of Arizona,29087,BANK 34,FI,223
+2024006836,810,Participated in Absorbtion/Consolidation/Merger,2024-03-19T00:00:00,2024-03-26T00:00:00,29087,,29087,BANK 34,57279,Commerce Bank of Arizona,29087,BANK 34,FI,810
+2024007503,223,Merger -Without Assistance,2024-04-01T00:00:00,2024-04-04T00:00:00,3116,,16835,Prosperity Bank,3116,Lone Star State  Bank of West Texas,16835,Prosperity Bank,FI,223
+2024007503,810,Participated in Absorbtion/Consolidation/Merger,2024-04-01T00:00:00,2024-04-04T00:00:00,16835,,16835,Prosperity Bank,3116,Lone Star State  Bank of West Texas,16835,Prosperity Bank,FI,810
+2024007521,223,Merger -Without Assistance,2024-04-01T00:00:00,2024-04-04T00:00:00,58823,,3832,Old National Bank,58823,CapStar Bank,3832,Old National Bank,FI,223
+2024007521,810,Participated in Absorbtion/Consolidation/Merger,2024-04-01T00:00:00,2024-04-04T00:00:00,3832,,3832,Old National Bank,58823,CapStar Bank,3832,Old National Bank,FI,810
+2024007582,223,Merger -Without Assistance,2024-04-01T00:00:00,2024-04-05T00:00:00,27572,,23030,Central Valley Community Bank,27572,"Community West Bank, National Association",23030,Community West Bank,FI,223
+2024007582,810,Participated in Absorbtion/Consolidation/Merger,2024-04-01T00:00:00,2024-04-05T00:00:00,23030,,23030,Central Valley Community Bank,27572,"Community West Bank, National Association",23030,Community West Bank,FI,810
+2024007693,223,Merger -Without Assistance,2024-04-01T00:00:00,2024-04-08T00:00:00,6837,,34589,Atlantic Union Bank,6837,American National Bank and Trust Company,34589,Atlantic Union Bank,FI,223
+2024007693,810,Participated in Absorbtion/Consolidation/Merger,2024-04-01T00:00:00,2024-04-08T00:00:00,34589,,34589,Atlantic Union Bank,6837,American National Bank and Trust Company,34589,Atlantic Union Bank,FI,810
+2024008037,712,Branch Purchased,2024-01-16T00:00:00,2024-04-09T00:00:00,36301,,36301,ALL IN FEDERAL CREDIT UNION,18600,SunSouth Bank,,,FI,712
+2024008837,223,Merger -Without Assistance,2024-04-10T00:00:00,2024-04-18T00:00:00,23222,,12203,Merchants & Marine Bank,23222,Mississippi River Bank,12203,Merchants & Marine Bank,FI,223
+2024008837,810,Participated in Absorbtion/Consolidation/Merger,2024-04-10T00:00:00,2024-04-18T00:00:00,12203,,12203,Merchants & Marine Bank,23222,Mississippi River Bank,12203,Merchants & Marine Bank,FI,810
+2024008846,223,Merger -Without Assistance,2024-04-09T00:00:00,2024-04-18T00:00:00,58899,,58239,Providence Bank,58899,Coastal Bank & Trust,58239,Providence Bank,FI,223
+2024008846,810,Participated in Absorbtion/Consolidation/Merger,2024-04-09T00:00:00,2024-04-18T00:00:00,58239,,58239,Providence Bank,58899,Coastal Bank & Trust,58239,Providence Bank,FI,810
+2024009026,223,Merger -Without Assistance,2024-04-01T00:00:00,2024-04-22T00:00:00,4199,,19288,Firstar Bank,4199,The First National Bank of Stigler,19288,Firstar Bank,FI,223
+2024009026,810,Participated in Absorbtion/Consolidation/Merger,2024-04-01T00:00:00,2024-04-22T00:00:00,19288,,19288,Firstar Bank,4199,The First National Bank of Stigler,19288,Firstar Bank,FI,810
+2024009546,211,Failure - Whole Institution,2024-04-26T00:00:00,2024-04-29T00:00:00,,,7551,"Fulton Bank, National Association",27332,Republic Bank,7551,"Fulton Bank, National Association",FI,211
+2024009546,811,Participated in FDIC Assisted Merger,2024-04-26T00:00:00,2024-04-29T00:00:00,7551,,7551,"Fulton Bank, National Association",27332,Republic Bank,7551,"Fulton Bank, National Association",FI,811
+2024010268,223,Merger -Without Assistance,2024-04-12T00:00:00,2024-05-02T00:00:00,30439,,6623,LCNB National Bank,30439,EAGLE.bank,6623,LCNB National Bank,FI,223
+2024010268,810,Participated in Absorbtion/Consolidation/Merger,2024-04-12T00:00:00,2024-05-02T00:00:00,6623,,6623,LCNB National Bank,30439,EAGLE.bank,6623,LCNB National Bank,FI,810
+2024011779,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-05-01T00:00:00,2024-05-15T00:00:00,,,22340,Panhandle First Bank,26219,First National Bank,22340,Panhandle First Bank,FI,224
+2024011779,810,Participated in Absorbtion/Consolidation/Merger,2024-05-01T00:00:00,2024-05-15T00:00:00,22340,,22340,Panhandle First Bank,26219,First National Bank,22340,Panhandle First Bank,FI,810
+2024012019,223,Merger -Without Assistance,2024-05-03T00:00:00,2024-05-17T00:00:00,29049,,28530,Forward Bank,29049,Lake City Federal Bank,28530,Forward Bank,FI,223
+2024012019,810,Participated in Absorbtion/Consolidation/Merger,2024-05-03T00:00:00,2024-05-17T00:00:00,28530,,28530,Forward Bank,29049,Lake City Federal Bank,28530,Forward Bank,FI,810
+2024012075,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-05-13T00:00:00,2024-05-20T00:00:00,,,32647,Northwest Bank,4444,The First National Bank in Creston,32647,Northwest Bank,FI,224
+2024012075,810,Participated in Absorbtion/Consolidation/Merger,2024-05-13T00:00:00,2024-05-20T00:00:00,32647,,32647,Northwest Bank,4444,The First National Bank in Creston,32647,Northwest Bank,FI,810
+2024012239,712,Branch Purchased,2024-04-30T00:00:00,2024-05-21T00:00:00,48611,,48611,FIVE STAR CREDIT UNION,17126,Wilcox County State Bank,,,FI,712
+2024012444,712,Branch Purchased,2024-05-15T00:00:00,2024-05-24T00:00:00,35772,,35772,HARBORSTONE CREDIT UNION,57799,First Sound Bank,,,FI,712
+2024012493,223,Merger -Without Assistance,2024-05-03T00:00:00,2024-05-28T00:00:00,34102,,11578,Burke & Herbert Bank & Trust Company,34102,"Summit Community Bank, Inc",11578,Burke & Herbert Bank & Trust Company,FI,223
+2024012493,810,Participated in Absorbtion/Consolidation/Merger,2024-05-03T00:00:00,2024-05-28T00:00:00,11578,,11578,Burke & Herbert Bank & Trust Company,34102,"Summit Community Bank, Inc",11578,Burke & Herbert Bank & Trust Company,FI,810
+2024012808,223,Merger -Without Assistance,2024-05-16T00:00:00,2024-05-31T00:00:00,19953,,12010,Provident Bank,19953,Lakeland Bank,12010,Provident Bank,FI,223
+2024012808,810,Participated in Absorbtion/Consolidation/Merger,2024-05-16T00:00:00,2024-05-31T00:00:00,12010,,12010,Provident Bank,19953,Lakeland Bank,12010,Provident Bank,FI,810
+2024012925,223,Merger -Without Assistance,2024-05-17T00:00:00,2024-06-04T00:00:00,3598,,17320,Peoples Bank & Trust,3598,Arcola First Bank,17320,Peoples Bank & Trust,FI,223
+2024012925,810,Participated in Absorbtion/Consolidation/Merger,2024-05-17T00:00:00,2024-06-04T00:00:00,17320,,17320,Peoples Bank & Trust,3598,Arcola First Bank,17320,Peoples Bank & Trust,FI,810
+2024013202,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-06-01T00:00:00,2024-06-06T00:00:00,,,58115,Oakstar Bank,12426,Community First Bank,58115,Oakstar Bank,FI,224
+2024013202,810,Participated in Absorbtion/Consolidation/Merger,2024-06-01T00:00:00,2024-06-06T00:00:00,58115,,58115,Oakstar Bank,12426,Community First Bank,58115,Oakstar Bank,FI,810
+2024013359,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-05-31T00:00:00,2024-06-07T00:00:00,,,29847,Wayne Savings Community Bank,57162,Main Street Bank Corp.,29847,Main Street Bank Corp.,FI,224
+2024013359,810,Participated in Absorbtion/Consolidation/Merger,2024-05-31T00:00:00,2024-06-07T00:00:00,29847,,29847,Wayne Savings Community Bank,57162,Main Street Bank Corp.,29847,Main Street Bank Corp.,FI,810
+2024013601,223,Merger -Without Assistance,2024-06-01T00:00:00,2024-06-10T00:00:00,58743,,6821,The National Bank of Blacksburg,58743,Frontier Community Bank,6821,The National Bank of Blacksburg,FI,223
+2024013601,810,Participated in Absorbtion/Consolidation/Merger,2024-06-01T00:00:00,2024-06-10T00:00:00,6821,,6821,The National Bank of Blacksburg,58743,Frontier Community Bank,6821,The National Bank of Blacksburg,FI,810
+2024013602,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-05-24T00:00:00,2024-06-10T00:00:00,,,1047,Bank & Trust Company,3845,Security National Bank,1047,Bank & Trust Company,FI,224
+2024013602,810,Participated in Absorbtion/Consolidation/Merger,2024-05-24T00:00:00,2024-06-10T00:00:00,1047,,1047,Bank & Trust Company,3845,Security National Bank,1047,Bank & Trust Company,FI,810
+2024013813,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-06-01T00:00:00,2024-06-11T00:00:00,,,58115,Oakstar Bank,3047,First Colorado National Bank,58115,Oakstar Bank,FI,224
+2024013813,810,Participated in Absorbtion/Consolidation/Merger,2024-06-01T00:00:00,2024-06-11T00:00:00,58115,,58115,Oakstar Bank,3047,First Colorado National Bank,58115,Oakstar Bank,FI,810
+2024014470,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-06-01T00:00:00,2024-06-20T00:00:00,,,32188,USAA Federal Savings Bank,34351,USAA Savings Bank,32188,USAA Federal Savings Bank,FI,224
+2024014470,810,Participated in Absorbtion/Consolidation/Merger,2024-06-01T00:00:00,2024-06-20T00:00:00,32188,,32188,USAA Federal Savings Bank,34351,USAA Savings Bank,32188,USAA Federal Savings Bank,FI,810
+2024014553,223,Merger -Without Assistance,2024-06-01T00:00:00,2024-06-21T00:00:00,14345,,18374,Security State Bank,14345,The Valley State Bank,18374,Security State Bank,FI,223
+2024014553,810,Participated in Absorbtion/Consolidation/Merger,2024-05-31T00:00:00,2024-06-21T00:00:00,18374,,18374,Security State Bank,14345,The Valley State Bank,18374,Security State Bank,FI,810
+2024014672,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-04-19T00:00:00,2024-06-24T00:00:00,,,15324,Security Bank & Trust Company,8188,Flagship Bank Minnesota,15324,Security Bank & Trust Company,FI,224
+2024014672,810,Participated in Absorbtion/Consolidation/Merger,2024-04-19T00:00:00,2024-06-24T00:00:00,15324,,15324,Security Bank & Trust Company,8188,Flagship Bank Minnesota,15324,Security Bank & Trust Company,FI,810
+2024014796,712,Branch Purchased,2024-04-30T00:00:00,2024-06-25T00:00:00,48611,,48611,FIVE STAR CREDIT UNION,15813,OneSouth Bank,,,FI,712
+2024014802,223,Merger -Without Assistance,2024-06-24T00:00:00,2024-06-25T00:00:00,94,,90,Commercial Bank & Trust Company,94,First State Bank of Warren,90,Commercial Bank & Trust Company,FI,223
+2024014802,810,Participated in Absorbtion/Consolidation/Merger,2024-06-24T00:00:00,2024-06-25T00:00:00,90,,90,Commercial Bank & Trust Company,94,First State Bank of Warren,90,Commercial Bank & Trust Company,FI,810
+2024015192,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-06-21T00:00:00,2024-07-01T00:00:00,,,16450,Busey Bank,20040,Merchants and Manufacturers Bank,16450,Busey Bank,FI,224
+2024015192,810,Participated in Absorbtion/Consolidation/Merger,2024-06-21T00:00:00,2024-07-01T00:00:00,16450,,16450,Busey Bank,20040,Merchants and Manufacturers Bank,16450,Busey Bank,FI,810
+2024015193,712,Branch Purchased,2024-06-14T00:00:00,2024-07-01T00:00:00,5095,,5095,Star Bank,10568,"Community Development Bank, FSB",,,FI,712
+2024015633,712,Branch Purchased,2024-06-07T00:00:00,2024-07-03T00:00:00,36187,,36187,DFCU Financial,14843,MidWestOne Bank,,,FI,712
+2024015667,223,Merger -Without Assistance,2024-07-01T00:00:00,2024-07-05T00:00:00,7472,,7514,Peoples Security Bank and Trust Company,7472,FNCB Bank,7514,Peoples Security Bank and Trust Company,FI,223
+2024015667,810,Participated in Absorbtion/Consolidation/Merger,2024-07-01T00:00:00,2024-07-05T00:00:00,7514,,7514,Peoples Security Bank and Trust Company,7472,FNCB Bank,7514,Peoples Security Bank and Trust Company,FI,810
+2024015792,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-07-02T00:00:00,2024-07-08T00:00:00,,,16971,SOLUTIONS NORTH BANK,19749,Community State Bank,16971,SOLUTIONS NORTH BANK,FI,224
+2024015792,810,Participated in Absorbtion/Consolidation/Merger,2024-07-02T00:00:00,2024-07-08T00:00:00,16971,,16971,SOLUTIONS NORTH BANK,19749,Community State Bank,16971,SOLUTIONS NORTH BANK,FI,810
+2024015795,712,Branch Purchased,2024-01-26T00:00:00,2024-07-08T00:00:00,1552,,1552,CBI Bank & Trust,11329,Farmers-Merchants Bank of Illinois,,,FI,712
+2024015800,712,Branch Purchased,2024-01-26T00:00:00,2024-07-08T00:00:00,16982,,16982,Bank of Pontiac,11329,Farmers-Merchants Bank of Illinois,,,FI,712
+2024015805,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-01-26T00:00:00,2024-07-08T00:00:00,,,8056,Merchants Bank of Indiana,11329,Farmers-Merchants Bank of Illinois,8056,Merchants Bank of Indiana,FI,224
+2024015805,810,Participated in Absorbtion/Consolidation/Merger,2024-01-26T00:00:00,2024-07-08T00:00:00,8056,,8056,Merchants Bank of Indiana,11329,Farmers-Merchants Bank of Illinois,8056,Merchants Bank of Indiana,FI,810
+2024015837,223,Merger -Without Assistance,2024-07-01T00:00:00,2024-07-08T00:00:00,13879,,713,Orrstown Bank,13879,"PeoplesBank, a Codorus Valley Company",713,Orrstown Bank,FI,223
+2024015837,810,Participated in Absorbtion/Consolidation/Merger,2024-07-01T00:00:00,2024-07-08T00:00:00,713,,713,Orrstown Bank,13879,"PeoplesBank, a Codorus Valley Company",713,Orrstown Bank,FI,810
+2024015838,223,Merger -Without Assistance,2024-07-02T00:00:00,2024-07-08T00:00:00,13957,,25858,Equity Bank,13957,KansasLand Bank,25858,Equity Bank,FI,223
+2024015838,810,Participated in Absorbtion/Consolidation/Merger,2024-07-02T00:00:00,2024-07-08T00:00:00,25858,,25858,Equity Bank,13957,KansasLand Bank,25858,Equity Bank,FI,810
+2024015997,223,Merger -Without Assistance,2024-07-01T00:00:00,2024-07-09T00:00:00,57733,,22354,Commercial Bank,57733,Alliance Bank & Trust Company,22354,Commercial Bank,FI,223
+2024015997,810,Participated in Absorbtion/Consolidation/Merger,2024-07-01T00:00:00,2024-07-09T00:00:00,22354,,22354,Commercial Bank,57733,Alliance Bank & Trust Company,22354,Commercial Bank,FI,810
+2024016355,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-06-30T00:00:00,2024-07-15T00:00:00,,,10989,Lake Central Bank,1401,State Bank of Danvers,10989,Lake Central Bank,FI,224
+2024016355,810,Participated in Absorbtion/Consolidation/Merger,2024-06-30T00:00:00,2024-07-15T00:00:00,10989,,10989,Lake Central Bank,1401,State Bank of Danvers,10989,Lake Central Bank,FI,810
+2024016906,223,Merger -Without Assistance,2024-07-01T00:00:00,2024-07-16T00:00:00,10693,,4382,"First Financial Bank, National Association",10693,SimplyBank.,4382,"First Financial Bank, National Association",FI,223
+2024016906,810,Participated in Absorbtion/Consolidation/Merger,2024-07-01T00:00:00,2024-07-16T00:00:00,4382,,4382,"First Financial Bank, National Association",10693,SimplyBank.,4382,"First Financial Bank, National Association",FI,810
+2024018628,712,Branch Purchased,2024-07-05T00:00:00,2024-07-30T00:00:00,8273,,8273,"UMB Bank, National Association",3832,Old National Bank,,,FI,712
+2024018633,712,Branch Purchased,2024-07-19T00:00:00,2024-07-30T00:00:00,30788,,30788,Glacier Bank,58458,HTLF Bank,,,FI,712
+2024019551,223,Merger -Without Assistance,2024-07-12T00:00:00,2024-08-01T00:00:00,8152,,32773,Eastern Bank,8152,Cambridge Trust Company,32773,Eastern Bank,FI,223
+2024019551,810,Participated in Absorbtion/Consolidation/Merger,2024-07-12T00:00:00,2024-08-01T00:00:00,32773,,32773,Eastern Bank,8152,Cambridge Trust Company,32773,Eastern Bank,FI,810
+2024020407,223,Merger -Without Assistance,2024-08-01T00:00:00,2024-08-02T00:00:00,32838,,57095,Dogwood State Bank,32838,"Community First Bank, Inc.",57095,Dogwood State Bank,FI,223
+2024020407,810,Participated in Absorbtion/Consolidation/Merger,2024-08-01T00:00:00,2024-08-02T00:00:00,57095,,57095,Dogwood State Bank,32838,"Community First Bank, Inc.",57095,Dogwood State Bank,FI,810
+2024021082,223,Merger -Without Assistance,2024-07-12T00:00:00,2024-08-06T00:00:00,1862,,9100,Pilot Grove Savings Bank,1862,Wayland State Bank,9100,Pilot Grove Savings Bank,FI,223
+2024021082,810,Participated in Absorbtion/Consolidation/Merger,2024-07-12T00:00:00,2024-08-06T00:00:00,9100,,9100,Pilot Grove Savings Bank,1862,Wayland State Bank,9100,Pilot Grove Savings Bank,FI,810
+2024021210,712,Branch Purchased,2024-07-19T00:00:00,2024-08-07T00:00:00,57497,,57497,Pathfinder Bank,23621,Berkshire Bank,,,FI,712
+2024021813,223,Merger -Without Assistance,2024-07-31T00:00:00,2024-08-14T00:00:00,58583,,57044,"Bank of Southern California, National Association",58583,California Bank of Commerce,57044,"California Bank of Commerce, National Association",FI,223
+2024021813,810,Participated in Absorbtion/Consolidation/Merger,2024-07-31T00:00:00,2024-08-14T00:00:00,57044,,57044,"Bank of Southern California, National Association",58583,California Bank of Commerce,57044,"California Bank of Commerce, National Association",FI,810
+2024022043,712,Branch Purchased,2024-08-02T00:00:00,2024-08-19T00:00:00,7074,,7074,Glens Falls National Bank and Trust Company,23621,Berkshire Bank,,,FI,712
+2024022383,712,Branch Purchased,2024-07-22T00:00:00,2024-08-22T00:00:00,16191,,16191,Stockman Bank of Montana,58458,HTLF Bank,,,FI,712
+2024022484,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-07-01T00:00:00,2024-08-23T00:00:00,,,22451,Volunteer State Bank,59101,Fourth Capital Bank,22451,Volunteer State Bank,FI,224
+2024022484,810,Participated in Absorbtion/Consolidation/Merger,2024-07-01T00:00:00,2024-08-23T00:00:00,22451,,22451,Volunteer State Bank,59101,Fourth Capital Bank,22451,Volunteer State Bank,FI,810
+2024023155,712,Branch Purchased,2024-08-16T00:00:00,2024-09-05T00:00:00,11666,,11666,D. L. Evans Bank,1105,First Interstate Bank,,,FI,712
+2024023182,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-08-31T00:00:00,2024-09-05T00:00:00,,,11243,Bank of Salem,16395,Security Bank,11243,Bank of Salem,FI,224
+2024023182,810,Participated in Absorbtion/Consolidation/Merger,2024-08-31T00:00:00,2024-09-05T00:00:00,11243,,11243,Bank of Salem,16395,Security Bank,11243,Bank of Salem,FI,810
+2024023559,223,Merger -Without Assistance,2024-07-31T00:00:00,2024-09-10T00:00:00,35236,,58558,Southern States Bank,35236,Century Bank of Georgia,58558,Southern States Bank,FI,223
+2024023559,810,Participated in Absorbtion/Consolidation/Merger,2024-07-31T00:00:00,2024-09-10T00:00:00,58558,,58558,Southern States Bank,35236,Century Bank of Georgia,58558,Southern States Bank,FI,810
+2024023560,712,Branch Purchased,2024-09-01T00:00:00,2024-09-10T00:00:00,38426,,38426,Innovations Financial Credit Union,25122,First National Bank Northwest Florida,,,FI,712
+2024023565,223,Merger -Without Assistance,2024-05-31T00:00:00,2024-09-10T00:00:00,14468,,10378,The Bank of New Glarus,14468,First National Bank at Darlington,10378,The Bank of New Glarus,FI,223
+2024023565,810,Participated in Absorbtion/Consolidation/Merger,2024-05-31T00:00:00,2024-09-10T00:00:00,10378,,10378,The Bank of New Glarus,14468,First National Bank at Darlington,10378,The Bank of New Glarus,FI,810
+2024024076,223,Merger -Without Assistance,2024-09-01T00:00:00,2024-09-20T00:00:00,22070,,6861,SKYLINE NATIONAL BANK,22070,Johnson County Bank,6861,SKYLINE NATIONAL BANK,FI,223
+2024024076,810,Participated in Absorbtion/Consolidation/Merger,2024-09-01T00:00:00,2024-09-20T00:00:00,6861,,6861,SKYLINE NATIONAL BANK,22070,Johnson County Bank,6861,SKYLINE NATIONAL BANK,FI,810
+2024024128,712,Branch Purchased,2024-09-01T00:00:00,2024-09-23T00:00:00,46907,,46907,MICHIGAN STATE UNIVERSITY FEDERAL CREDIT UNION,13080,Algonquin State Bank,,,FI,712
+2024024216,712,Branch Purchased,2024-09-01T00:00:00,2024-09-24T00:00:00,46907,,46907,MICHIGAN STATE UNIVERSITY FEDERAL CREDIT UNION,30864,McHenry Savings Bank,,,FI,712
+2024024282,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-09-21T00:00:00,2024-09-25T00:00:00,,,26484,"North Shore Bank, a Co-operative Bank",26590,Abington Bank,26484,"North Shore Bank, a Co-operative Bank",FI,224
+2024024282,810,Participated in Absorbtion/Consolidation/Merger,2024-09-21T00:00:00,2024-09-25T00:00:00,26484,,26484,"North Shore Bank, a Co-operative Bank",26590,Abington Bank,26484,"North Shore Bank, a Co-operative Bank",FI,810
+2024024560,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-09-20T00:00:00,2024-10-01T00:00:00,,,15953,Guaranty Bank and Trust Company,57034,Oxford University Bank,15953,Guaranty Bank and Trust Company,FI,224
+2024024560,810,Participated in Absorbtion/Consolidation/Merger,2024-09-20T00:00:00,2024-10-01T00:00:00,15953,,15953,Guaranty Bank and Trust Company,57034,Oxford University Bank,15953,Guaranty Bank and Trust Company,FI,810
+2024024758,223,Merger -Without Assistance,2024-08-24T00:00:00,2024-10-04T00:00:00,35286,,58513,The Bank of Princeton,35286,Cornerstone Bank,58513,The Bank of Princeton,FI,223
+2024024758,810,Participated in Absorbtion/Consolidation/Merger,2024-08-23T00:00:00,2024-10-04T00:00:00,58513,,58513,The Bank of Princeton,35286,Cornerstone Bank,58513,The Bank of Princeton,FI,810
+2024024766,712,Branch Purchased,2024-09-13T00:00:00,2024-10-07T00:00:00,5821,,5821,First State Bank,16363,Capra Bank,,,FI,712
+2024024770,712,Branch Purchased,2024-10-01T00:00:00,2024-10-07T00:00:00,58657,,58657,PromiseOne Bank,26610,Bank of Hope,,,FI,712
+2024024870,223,Merger -Without Assistance,2024-10-01T00:00:00,2024-10-08T00:00:00,10334,,58228,b1BANK,10334,Oakwood Bank,58228,b1BANK,FI,223
+2024024870,810,Participated in Absorbtion/Consolidation/Merger,2024-10-01T00:00:00,2024-10-08T00:00:00,58228,,58228,b1BANK,10334,Oakwood Bank,58228,b1BANK,FI,810
+2024024912,223,Merger -Without Assistance,2024-10-01T00:00:00,2024-10-08T00:00:00,58485,,57591,Santa Cruz County Bank,58485,1st Capital Bank,57591,Santa Cruz County Bank,FI,223
+2024024912,810,Participated in Absorbtion/Consolidation/Merger,2024-10-01T00:00:00,2024-10-08T00:00:00,57591,,57591,Santa Cruz County Bank,58485,1st Capital Bank,57591,Santa Cruz County Bank,FI,810
+2024024913,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-10-01T00:00:00,2024-10-08T00:00:00,,,7542,Ameriserv Financial Bank,33702,Ameriserv Trust and Financial Services Company,7542,Ameriserv Financial Bank,FI,224
+2024024913,810,Participated in Absorbtion/Consolidation/Merger,2024-10-01T00:00:00,2024-10-08T00:00:00,7542,,7542,Ameriserv Financial Bank,33702,Ameriserv Trust and Financial Services Company,7542,Ameriserv Financial Bank,FI,810
+2024024933,712,Branch Purchased,2024-09-20T00:00:00,2024-10-09T00:00:00,5123,,5123,Deerwood Bank,10568,"Community Development Bank, FSB",,,FI,712
+2024024940,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-09-30T00:00:00,2024-10-09T00:00:00,,,58,United Bank,22621,Town Country United Bank,58,United Bank,FI,224
+2024024940,810,Participated in Absorbtion/Consolidation/Merger,2024-09-30T00:00:00,2024-10-09T00:00:00,58,,58,United Bank,22621,Town Country United Bank,58,United Bank,FI,810
+2024024984,712,Branch Purchased,2024-09-27T00:00:00,2024-10-10T00:00:00,44713,,44713,HUDSON VALLEY CREDIT UNION,23621,Berkshire Bank,,,FI,712
+2024025104,712,Branch Purchased,2024-08-14T00:00:00,2024-10-11T00:00:00,30776,,30776,"Pathward, National Association",34603,"MVB Bank, Inc",,,FI,712
+2024025326,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-10-05T00:00:00,2024-10-17T00:00:00,,,28834,Columbia Bank,30519,Freehold Bank,28834,Columbia Bank,FI,224
+2024025326,810,Participated in Absorbtion/Consolidation/Merger,2024-10-05T00:00:00,2024-10-17T00:00:00,28834,,28834,Columbia Bank,30519,Freehold Bank,28834,Columbia Bank,FI,810
+2024025331,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-10-01T00:00:00,2024-10-17T00:00:00,,,28865,MidCountry Bank,1386,Red Rock Bank,28865,MidCountry Bank,FI,224
+2024025331,810,Participated in Absorbtion/Consolidation/Merger,2024-10-01T00:00:00,2024-10-17T00:00:00,28865,,28865,MidCountry Bank,1386,Red Rock Bank,28865,MidCountry Bank,FI,810
+2024025443,223,Merger -Without Assistance,2024-10-01T00:00:00,2024-10-18T00:00:00,6139,,6917,First Bank,6139,Touchstone Bank,6917,First Bank,FI,223
+2024025443,810,Participated in Absorbtion/Consolidation/Merger,2024-10-01T00:00:00,2024-10-18T00:00:00,6917,,6917,First Bank,6139,Touchstone Bank,6917,First Bank,FI,810
+2024025444,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-10-05T00:00:00,2024-10-18T00:00:00,,,8274,Exchange Bank of Northeast Missouri,19774,Kahoka State Bank,8274,Exchange Bank of Northeast Missouri,FI,224
+2024025444,810,Participated in Absorbtion/Consolidation/Merger,2024-10-05T00:00:00,2024-10-18T00:00:00,8274,,8274,Exchange Bank of Northeast Missouri,19774,Kahoka State Bank,8274,Exchange Bank of Northeast Missouri,FI,810
+2024025563,211,Failure - Whole Institution,2024-10-18T00:00:00,2024-10-21T00:00:00,,,27394,First Bank & Trust Co.,4134,The First National Bank of Lindsay,27394,First Bank & Trust Co.,FI,211
+2024025563,811,Participated in FDIC Assisted Merger,2024-10-18T00:00:00,2024-10-21T00:00:00,27394,,27394,First Bank & Trust Co.,4134,The First National Bank of Lindsay,27394,First Bank & Trust Co.,FI,811
+2024025570,712,Branch Purchased,2024-10-01T00:00:00,2024-10-21T00:00:00,54119,,54119,ADVIA CREDIT UNION,34416,Northside Community Bank,,,FI,712
+2024025573,223,Merger -Without Assistance,2024-10-09T00:00:00,2024-10-21T00:00:00,29042,,3931,"Alerus Financial, National Association",29042,Home Federal Savings Bank,3931,"Alerus Financial, National Association",FI,223
+2024025573,810,Participated in Absorbtion/Consolidation/Merger,2024-10-09T00:00:00,2024-10-21T00:00:00,3931,,3931,"Alerus Financial, National Association",29042,Home Federal Savings Bank,3931,"Alerus Financial, National Association",FI,810
+2024025783,223,Merger -Without Assistance,2024-10-01T00:00:00,2024-10-22T00:00:00,28151,,35278,"Capital Bank, National Association",28151,West Town Bank & Trust,35278,"Capital Bank, National Association",FI,223
+2024025783,810,Participated in Absorbtion/Consolidation/Merger,2024-10-01T00:00:00,2024-10-22T00:00:00,35278,,35278,"Capital Bank, National Association",28151,West Town Bank & Trust,35278,"Capital Bank, National Association",FI,810
+2024025819,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-10-15T00:00:00,2024-10-23T00:00:00,,,9465,Alva State Bank & Trust Company,4161,First National Bank in Okeene,9465,Alva State Bank & Trust Company,FI,224
+2024025819,810,Participated in Absorbtion/Consolidation/Merger,2024-10-15T00:00:00,2024-10-23T00:00:00,9465,,9465,Alva State Bank & Trust Company,4161,First National Bank in Okeene,9465,Alva State Bank & Trust Company,FI,810
+2024026681,223,Merger -Without Assistance,2024-10-26T00:00:00,2024-11-01T00:00:00,2289,,2284,North Valley Bank,2289,Commodore Bank,2284,North Valley Bank,FI,223
+2024026681,810,Participated in Absorbtion/Consolidation/Merger,2024-10-26T00:00:00,2024-11-01T00:00:00,2284,,2284,North Valley Bank,2289,Commodore Bank,2284,North Valley Bank,FI,810
+2024028139,712,Branch Purchased,2024-11-01T00:00:00,2024-11-08T00:00:00,50112,,50112,Empeople Credit Union,17208,TSB Bank,,,FI,712
+2024028400,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-10-11T00:00:00,2024-11-12T00:00:00,,,10829,"Petefish, Skiles & Co.",3607,The First National Bank of Beardstown,10829,"Petefish, Skiles & Co.",FI,224
+2024028400,810,Participated in Absorbtion/Consolidation/Merger,2024-10-11T00:00:00,2024-11-12T00:00:00,10829,,10829,"Petefish, Skiles & Co.",3607,The First National Bank of Beardstown,10829,"Petefish, Skiles & Co.",FI,810
+2024028408,223,Merger -Without Assistance,2024-11-01T00:00:00,2024-11-12T00:00:00,9440,,6659,Peoples State Bank,9440,The Pataskala Banking Company,6659,Peoples State Bank,FI,223
+2024028408,810,Participated in Absorbtion/Consolidation/Merger,2024-11-01T00:00:00,2024-11-12T00:00:00,6659,,6659,Peoples State Bank,9440,The Pataskala Banking Company,6659,Peoples State Bank,FI,810
+2024029194,223,Merger -Without Assistance,2024-11-01T00:00:00,2024-11-19T00:00:00,34210,,57417,Commercial Bank of California,34210,Community Bank of the Bay,57417,Commercial Bank of California,FI,223
+2024029194,810,Participated in Absorbtion/Consolidation/Merger,2024-11-01T00:00:00,2024-11-19T00:00:00,57417,,57417,Commercial Bank of California,34210,Community Bank of the Bay,57417,Commercial Bank of California,FI,810
+2024029253,223,Merger -Without Assistance,2024-10-22T00:00:00,2024-11-21T00:00:00,18838,,8499,Union State Bank,18838,Exchange State Bank,8499,Union State Bank,FI,223
+2024029253,810,Participated in Absorbtion/Consolidation/Merger,2024-10-22T00:00:00,2024-11-21T00:00:00,8499,,8499,Union State Bank,18838,Exchange State Bank,8499,Union State Bank,FI,810
+2024030061,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-11-16T00:00:00,2024-12-03T00:00:00,,,11935,First Texas Bank,22551,First Texas Bank,11935,First Texas Bank,FI,224
+2024030061,810,Participated in Absorbtion/Consolidation/Merger,2024-11-16T00:00:00,2024-12-03T00:00:00,11935,,11935,First Texas Bank,22551,First Texas Bank,11935,First Texas Bank,FI,810
+2024030357,223,Merger -Without Assistance,2024-11-16T00:00:00,2024-12-09T00:00:00,14926,,14513,Thumb Bank and Trust,14926,Freeland State Bank,14513,Thumb Bank and Trust,FI,223
+2024030357,810,Participated in Absorbtion/Consolidation/Merger,2024-11-16T00:00:00,2024-12-09T00:00:00,14513,,14513,Thumb Bank and Trust,14926,Freeland State Bank,14513,Thumb Bank and Trust,FI,810
+2024030597,712,Branch Purchased,2024-11-15T00:00:00,2024-12-11T00:00:00,1373,,1373,BOM Bank,9967,American State Bank,,,FI,712
+2024030601,223,Merger -Without Assistance,2024-11-15T00:00:00,2024-12-11T00:00:00,58772,,19600,"Academy Bank, National Association",58772,Mountain View Bank of Commerce,19600,"Academy Bank, National Association",FI,223
+2024030601,810,Participated in Absorbtion/Consolidation/Merger,2024-11-15T00:00:00,2024-12-11T00:00:00,19600,,19600,"Academy Bank, National Association",58772,Mountain View Bank of Commerce,19600,"Academy Bank, National Association",FI,810
+2024030603,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-12-06T00:00:00,2024-12-11T00:00:00,,,8387,BankNorth,9128,Harwood State Bank,8387,BankNorth,FI,224
+2024030603,810,Participated in Absorbtion/Consolidation/Merger,2024-12-06T00:00:00,2024-12-11T00:00:00,8387,,8387,BankNorth,9128,Harwood State Bank,8387,BankNorth,FI,810
+2024030604,223,Merger -Without Assistance,2024-11-15T00:00:00,2024-12-11T00:00:00,34930,,16402,The Bennington State Bank,34930,Alliance Bank,16402,The Bennington State Bank,FI,223
+2024030604,810,Participated in Absorbtion/Consolidation/Merger,2024-11-15T00:00:00,2024-12-11T00:00:00,16402,,16402,The Bennington State Bank,34930,Alliance Bank,16402,The Bennington State Bank,FI,810
+2024030610,223,Merger -Without Assistance,2024-12-05T00:00:00,2024-12-11T00:00:00,16905,,5496,Cornerstone Bank,16905,Bank of Orchard,5496,Cornerstone Bank,FI,223
+2024030610,810,Participated in Absorbtion/Consolidation/Merger,2024-12-05T00:00:00,2024-12-11T00:00:00,5496,,5496,Cornerstone Bank,16905,Bank of Orchard,5496,Cornerstone Bank,FI,810
+2024030818,712,Branch Purchased,2024-11-30T00:00:00,2024-12-16T00:00:00,40403,,40403,SOUND CREDIT UNION,57167,Washington Business Bank,,,FI,712
+2024030819,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-12-06T00:00:00,2024-12-16T00:00:00,,,58300,Table Rock Community Bank,33832,First Community  Bank of the Ozarks,58300,Table Rock Community Bank,FI,224
+2024030819,810,Participated in Absorbtion/Consolidation/Merger,2024-12-06T00:00:00,2024-12-16T00:00:00,58300,,58300,Table Rock Community Bank,33832,First Community  Bank of the Ozarks,58300,Table Rock Community Bank,FI,810
+2024030820,223,Merger -Without Assistance,2024-11-29T00:00:00,2024-12-16T00:00:00,29986,,30819,Community Partners Savings Bank,29986,Guardian Savings Bank,30819,Community Partners Savings Bank,FI,223
+2024030820,810,Participated in Absorbtion/Consolidation/Merger,2024-11-29T00:00:00,2024-12-16T00:00:00,30819,,30819,Community Partners Savings Bank,29986,Guardian Savings Bank,30819,Community Partners Savings Bank,FI,810
+2024030821,712,Branch Purchased,2024-12-06T00:00:00,2024-12-16T00:00:00,3603,,3603,Old Second National Bank,4365,First Merchants Bank,,,FI,712
+2024031027,223,Merger -Without Assistance,2024-12-13T00:00:00,2024-12-18T00:00:00,27932,,14266,National Bank of Commerce,27932,"RiverWood Bank, National Association",14266,National Bank of Commerce,FI,223
+2024031027,810,Participated in Absorbtion/Consolidation/Merger,2024-12-13T00:00:00,2024-12-18T00:00:00,14266,,14266,National Bank of Commerce,27932,"RiverWood Bank, National Association",14266,National Bank of Commerce,FI,810
+2024031262,223,Merger -Without Assistance,2024-12-05T00:00:00,2024-12-20T00:00:00,15673,,9172,Security Bank and Trust Company,15673,Bank of Ripley,9172,Security Bank and Trust Company,FI,223
+2024031262,810,Participated in Absorbtion/Consolidation/Merger,2024-12-05T00:00:00,2024-12-20T00:00:00,9172,,9172,Security Bank and Trust Company,15673,Bank of Ripley,9172,Security Bank and Trust Company,FI,810
+2024031775,223,Merger -Without Assistance,2024-11-05T00:00:00,2024-12-30T00:00:00,15907,,17229,Henderson State Bank,15907,Community First Bank,17229,Henderson State Bank,FI,223
+2024031775,810,Participated in Absorbtion/Consolidation/Merger,2024-11-05T00:00:00,2024-12-30T00:00:00,17229,,17229,Henderson State Bank,15907,Community First Bank,17229,Henderson State Bank,FI,810
+2025000491,223,Merger -Without Assistance,2024-12-13T00:00:00,2025-01-07T00:00:00,19188,,58210,Bridgewater Bank,19188,First Minnetonka City Bank,58210,Bridgewater Bank,FI,223
+2025000491,810,Participated in Absorbtion/Consolidation/Merger,2024-12-13T00:00:00,2025-01-07T00:00:00,58210,,58210,Bridgewater Bank,19188,First Minnetonka City Bank,58210,Bridgewater Bank,FI,810
+2025000553,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-10-01T00:00:00,2025-01-08T00:00:00,,,20741,"Pioneer Bank, National Association",57849,Pioneer Commercial Bank,20741,"Pioneer Bank, National Association",FI,224
+2025000553,810,Participated in Absorbtion/Consolidation/Merger,2024-10-01T00:00:00,2025-01-08T00:00:00,20741,,20741,"Pioneer Bank, National Association",57849,Pioneer Commercial Bank,20741,"Pioneer Bank, National Association",FI,810
+2025000845,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2024-12-31T00:00:00,2025-01-14T00:00:00,,,7074,Glens Falls National Bank and Trust Company,27290,Saratoga National Bank and Trust,7074,Glens Falls National Bank and Trust Company,FI,224
+2025000845,810,Participated in Absorbtion/Consolidation/Merger,2024-12-31T00:00:00,2025-01-14T00:00:00,7074,,7074,Glens Falls National Bank and Trust Company,27290,Saratoga National Bank and Trust,7074,Glens Falls National Bank and Trust Company,FI,810
+2025001883,712,Branch Purchased,2024-12-31T00:00:00,2025-01-27T00:00:00,34038,,34038,Time Bank,15830,Northwest Bank & Trust Company,,,FI,712
+2025012925,712,Branch Purchased,2024-11-08T00:00:00,2025-05-22T00:00:00,4063,,4063,MidFirst Bank,22953,"Amerant Bank, National Association",,,FI,712
+2025013181,712,Branch Purchased,2024-06-29T00:00:00,2025-05-28T00:00:00,58115,,58115,Oakstar Bank,10641,Riverstone Bank,,,FI,712
+2026030839,223,Merger -Without Assistance,2024-01-01T00:00:00,2026-10-26T00:00:00,53347,,47382,Blaze Credit Union,53347,Hiway Credit Union,47382,Blaze Credit Union,FI,223
+2026030839,810,Participated in Absorbtion/Consolidation/Merger,2024-01-01T00:00:00,2026-10-26T00:00:00,47382,,47382,Blaze Credit Union,53347,Hiway Credit Union,47382,Blaze Credit Union,FI,810
+2025000305,223,Merger -Without Assistance,2025-01-01T00:00:00,2025-01-06T00:00:00,5628,,1027,Farmers Bank and Trust Company,5628,Piggott State Bank,1027,Farmers Bank and Trust Company,FI,223
+2025000305,810,Participated in Absorbtion/Consolidation/Merger,2025-01-01T00:00:00,2025-01-06T00:00:00,1027,,1027,Farmers Bank and Trust Company,5628,Piggott State Bank,1027,Farmers Bank and Trust Company,FI,810
+2025000494,223,Merger -Without Assistance,2025-01-01T00:00:00,2025-01-07T00:00:00,10502,,26522,The Bank,10502,BANKWEST OF KANSAS,26522,The Bank,FI,223
+2025000494,810,Participated in Absorbtion/Consolidation/Merger,2025-01-01T00:00:00,2025-01-07T00:00:00,26522,,26522,The Bank,10502,BANKWEST OF KANSAS,26522,The Bank,FI,810
+2025000542,223,Merger -Without Assistance,2025-01-01T00:00:00,2025-01-08T00:00:00,17748,,17741,Maine Community Bank,17748,Gorham Savings Bank,17741,Maine Community Bank,FI,223
+2025000542,810,Participated in Absorbtion/Consolidation/Merger,2025-01-01T00:00:00,2025-01-08T00:00:00,17741,,17741,Maine Community Bank,17748,Gorham Savings Bank,17741,Maine Community Bank,FI,810
+2025000556,223,Merger -Without Assistance,2025-01-01T00:00:00,2025-01-08T00:00:00,3076,,33555,"SouthState Bank, National Association",3076,Independent Bank,33555,"SouthState Bank, National Association",FI,223
+2025000556,810,Participated in Absorbtion/Consolidation/Merger,2025-01-01T00:00:00,2025-01-08T00:00:00,33555,,33555,"SouthState Bank, National Association",3076,Independent Bank,33555,"SouthState Bank, National Association",FI,810
+2025000724,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-01-01T00:00:00,2025-01-13T00:00:00,,,10860,Murphy-Wall State Bank and Trust Company,11300,Oakdale State Bank,10860,Murphy-Wall State Bank and Trust Company,FI,224
+2025000724,810,Participated in Absorbtion/Consolidation/Merger,2025-01-01T00:00:00,2025-01-13T00:00:00,10860,,10860,Murphy-Wall State Bank and Trust Company,11300,Oakdale State Bank,10860,Murphy-Wall State Bank and Trust Company,FI,810
+2025000847,223,Merger -Without Assistance,2025-01-02T00:00:00,2025-01-14T00:00:00,14240,,4255,The Camden National Bank,14240,Northway Bank,4255,The Camden National Bank,FI,223
+2025000847,810,Participated in Absorbtion/Consolidation/Merger,2025-01-02T00:00:00,2025-01-14T00:00:00,4255,,4255,The Camden National Bank,14240,Northway Bank,4255,The Camden National Bank,FI,810
+2025000848,223,Merger -Without Assistance,2025-01-11T00:00:00,2025-01-14T00:00:00,58374,,22858,United Bank,58374,The Piedmont Bank,22858,United Bank,FI,223
+2025000848,810,Participated in Absorbtion/Consolidation/Merger,2025-01-11T00:00:00,2025-01-14T00:00:00,22858,,22858,United Bank,58374,The Piedmont Bank,22858,United Bank,FI,810
+2025000927,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-01-01T00:00:00,2025-01-15T00:00:00,,,13652,Pine Country Bank,8831,First State Bank of Sauk Centre,13652,Pine Country Bank,FI,224
+2025000927,810,Participated in Absorbtion/Consolidation/Merger,2025-01-01T00:00:00,2025-01-15T00:00:00,13652,,13652,Pine Country Bank,8831,First State Bank of Sauk Centre,13652,Pine Country Bank,FI,810
+2025001194,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-01-01T00:00:00,2025-01-17T00:00:00,,,12305,Columbus State Bank,11902,Hill Bank & Trust Co.,12305,Columbus State Bank,FI,224
+2025001194,810,Participated in Absorbtion/Consolidation/Merger,2025-01-01T00:00:00,2025-01-17T00:00:00,12305,,12305,Columbus State Bank,11902,Hill Bank & Trust Co.,12305,Columbus State Bank,FI,810
+2025001196,223,Merger -Without Assistance,2025-01-02T00:00:00,2025-01-17T00:00:00,33880,,14445,Farmers and Merchants Union Bank,33880,Wisconsin River Bank,14445,Farmers and Merchants Union Bank,FI,223
+2025001196,810,Participated in Absorbtion/Consolidation/Merger,2025-01-02T00:00:00,2025-01-17T00:00:00,14445,,14445,Farmers and Merchants Union Bank,33880,Wisconsin River Bank,14445,Farmers and Merchants Union Bank,FI,810
+2025001264,211,Failure - Whole Institution,2025-01-17T00:00:00,2025-01-21T00:00:00,,,58348,Millennium Bank,28611,Pulaski Savings Bank,58348,Millennium Bank,FI,211
+2025001264,811,Participated in FDIC Assisted Merger,2025-01-17T00:00:00,2025-01-21T00:00:00,58348,,58348,Millennium Bank,28611,Pulaski Savings Bank,58348,Millennium Bank,FI,811
+2025001778,223,Merger -Without Assistance,2025-01-18T00:00:00,2025-01-24T00:00:00,9860,,13339,The State Bank and Trust Company,9860,The Marblehead Bank,13339,The State Bank and Trust Company,FI,223
+2025001778,810,Participated in Absorbtion/Consolidation/Merger,2025-01-18T00:00:00,2025-01-24T00:00:00,13339,,13339,The State Bank and Trust Company,9860,The Marblehead Bank,13339,The State Bank and Trust Company,FI,810
+2025001973,223,Merger -Without Assistance,2025-01-10T00:00:00,2025-01-29T00:00:00,358,,1402,Citizens Alliance Bank,358,Stockmens Bank,1402,Citizens Alliance Bank,FI,223
+2025001973,810,Participated in Absorbtion/Consolidation/Merger,2025-01-10T00:00:00,2025-01-29T00:00:00,1402,,1402,Citizens Alliance Bank,358,Stockmens Bank,1402,Citizens Alliance Bank,FI,810
+2025002894,712,Branch Purchased,2025-05-02T00:00:00,2025-02-04T00:00:00,58469,,58469,"American Plus Bank, N.A.",29566,"United Fidelity Bank, fsb",,,FI,712
+2025004749,223,Merger -Without Assistance,2025-02-01T00:00:00,2025-02-19T00:00:00,58458,,8273,"UMB Bank, National Association",58458,HTLF Bank,8273,"UMB Bank, National Association",FI,223
+2025004749,810,Participated in Absorbtion/Consolidation/Merger,2025-02-01T00:00:00,2025-02-19T00:00:00,8273,,8273,"UMB Bank, National Association",58458,HTLF Bank,8273,"UMB Bank, National Association",FI,810
+2025004832,712,Branch Purchased,2025-01-17T00:00:00,2025-02-21T00:00:00,36869,,36869,Levo Federal Credit Union,19254,Heritage Bank National Association,,,FI,712
+2025004866,712,Branch Purchased,2025-01-31T00:00:00,2025-02-21T00:00:00,44713,,44713,HUDSON VALLEY CREDIT UNION,33859,Catskill Hudson Bank,,,FI,712
+2025005014,223,Merger -Without Assistance,2025-02-01T00:00:00,2025-02-25T00:00:00,57377,,7506,ACNB Bank,57377,Traditions Bank,7506,ACNB Bank,FI,223
+2025005014,810,Participated in Absorbtion/Consolidation/Merger,2025-02-01T00:00:00,2025-02-25T00:00:00,7506,,7506,ACNB Bank,57377,Traditions Bank,7506,ACNB Bank,FI,810
+2025005022,223,Merger -Without Assistance,2025-01-31T00:00:00,2025-02-25T00:00:00,10489,,14807,Farmers Savings Bank,10489,Elgin State Bank,14807,Farmers Savings Bank,FI,223
+2025005022,810,Participated in Absorbtion/Consolidation/Merger,2025-01-31T00:00:00,2025-02-25T00:00:00,14807,,14807,Farmers Savings Bank,10489,Elgin State Bank,14807,Farmers Savings Bank,FI,810
+2025005146,223,Merger -Without Assistance,2025-02-21T00:00:00,2025-02-28T00:00:00,18132,,3301,First Liberty Bank,18132,Pearland State Bank,3301,First Liberty Bank,FI,223
+2025005146,810,Participated in Absorbtion/Consolidation/Merger,2025-02-21T00:00:00,2025-02-28T00:00:00,3301,,3301,First Liberty Bank,18132,Pearland State Bank,3301,First Liberty Bank,FI,810
+2025005147,223,Merger -Without Assistance,2025-02-21T00:00:00,2025-02-28T00:00:00,18282,,3301,First Liberty Bank,18282,First National Bank of Alvin,3301,First Liberty Bank,FI,223
+2025005147,810,Participated in Absorbtion/Consolidation/Merger,2025-02-21T00:00:00,2025-02-28T00:00:00,3301,,3301,First Liberty Bank,18282,First National Bank of Alvin,3301,First Liberty Bank,FI,810
+2025005154,223,Merger -Without Assistance,2025-02-14T00:00:00,2025-02-28T00:00:00,24272,,3276,"Austin Bank, Texas National Association",24272,The Chasewood Bank,3276,"Austin Bank, Texas National Association",FI,223
+2025005154,810,Participated in Absorbtion/Consolidation/Merger,2025-02-14T00:00:00,2025-02-28T00:00:00,3276,,3276,"Austin Bank, Texas National Association",24272,The Chasewood Bank,3276,"Austin Bank, Texas National Association",FI,810
+2025005156,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-02-01T00:00:00,2025-02-28T00:00:00,,,57465,First Commerce Bank,35604,PEOPLES BANK OF MIDDLE TENNESSEE,57465,First Commerce Bank,FI,224
+2025005156,810,Participated in Absorbtion/Consolidation/Merger,2025-02-01T00:00:00,2025-02-28T00:00:00,57465,,57465,First Commerce Bank,35604,PEOPLES BANK OF MIDDLE TENNESSEE,57465,First Commerce Bank,FI,810
+2025005621,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-02-01T00:00:00,2025-03-07T00:00:00,,,17393,German American Bank,9443,Heartland Bank,17393,German American Bank,FI,224
+2025005621,810,Participated in Absorbtion/Consolidation/Merger,2025-02-01T00:00:00,2025-03-07T00:00:00,17393,,17393,German American Bank,9443,Heartland Bank,17393,German American Bank,FI,810
+2025005960,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-03-01T00:00:00,2025-03-11T00:00:00,,,57071,Georgia Banking Company,58523,Georgia Primary Bank,57071,Georgia Banking Company,FI,224
+2025005960,810,Participated in Absorbtion/Consolidation/Merger,2025-03-01T00:00:00,2025-03-11T00:00:00,57071,,57071,Georgia Banking Company,58523,Georgia Primary Bank,57071,Georgia Banking Company,FI,810
+2025006247,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-02-28T00:00:00,2025-03-14T00:00:00,,,803,"WesBanco Bank, Inc.",29845,Premier Bank,803,"WesBanco Bank, Inc.",FI,224
+2025006247,810,Participated in Absorbtion/Consolidation/Merger,2025-02-28T00:00:00,2025-03-14T00:00:00,803,,803,"WesBanco Bank, Inc.",29845,Premier Bank,803,"WesBanco Bank, Inc.",FI,810
+2025006632,712,Branch Purchased,2025-02-28T00:00:00,2025-03-18T00:00:00,12769,,12769,First United Bank,1210,Vista Bank,,,FI,712
+2025006633,223,Merger -Without Assistance,2025-03-15T00:00:00,2025-03-18T00:00:00,11406,,1014,ChoiceOne Bank,11406,The State Bank,1014,ChoiceOne Bank,FI,223
+2025006633,810,Participated in Absorbtion/Consolidation/Merger,2025-03-15T00:00:00,2025-03-18T00:00:00,1014,,1014,ChoiceOne Bank,11406,The State Bank,1014,ChoiceOne Bank,FI,810
+2025006659,712,Branch Purchased,2025-02-28T00:00:00,2025-03-20T00:00:00,12769,,12769,First United Bank,1210,Vista Bank,,,FI,712
+2025007809,712,Branch Purchased,2025-01-24T00:00:00,2025-04-01T00:00:00,16265,,16265,Peoples Bank,1905,"Profinium, Inc.",,,FI,712
+2025007922,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-03-10T00:00:00,2025-04-02T00:00:00,,,11319,Longview Community Bank,22838,Bank of Gibson City,11319,Longview Community Bank,FI,224
+2025007922,810,Participated in Absorbtion/Consolidation/Merger,2025-03-10T00:00:00,2025-04-02T00:00:00,11319,,11319,Longview Community Bank,22838,Bank of Gibson City,11319,Longview Community Bank,FI,810
+2025008111,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-04-01T00:00:00,2025-04-04T00:00:00,,,5219,Community Resource Bank,31249,1st United Bank,5219,Community Resource Bank,FI,224
+2025008111,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-04T00:00:00,5219,,5219,Community Resource Bank,31249,1st United Bank,5219,Community Resource Bank,FI,810
+2025008219,223,Merger -Without Assistance,2025-04-01T00:00:00,2025-04-07T00:00:00,35115,,59113,"Grasshopper Bank, N.A.",35115,"Auto Club Trust, FSB",59113,"Grasshopper Bank, N.A.",FI,223
+2025008219,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-07T00:00:00,59113,,59113,"Grasshopper Bank, N.A.",35115,"Auto Club Trust, FSB",59113,"Grasshopper Bank, N.A.",FI,810
+2025008221,223,Merger -Without Assistance,2025-04-01T00:00:00,2025-04-07T00:00:00,4865,,34589,Atlantic Union Bank,4865,Sandy Spring Bank,34589,Atlantic Union Bank,FI,223
+2025008221,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-07T00:00:00,34589,,34589,Atlantic Union Bank,4865,Sandy Spring Bank,34589,Atlantic Union Bank,FI,810
+2025008411,223,Merger -Without Assistance,2025-04-01T00:00:00,2025-04-08T00:00:00,34217,,12437,Renasant Bank,34217,The First Bank,12437,Renasant Bank,FI,223
+2025008411,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-08T00:00:00,12437,,12437,Renasant Bank,34217,The First Bank,12437,Renasant Bank,FI,810
+2025008412,223,Merger -Without Assistance,2025-04-01T00:00:00,2025-04-08T00:00:00,17224,,20624,Byline Bank,17224,First Security Trust and Savings Bank,20624,Byline Bank,FI,223
+2025008412,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-08T00:00:00,20624,,20624,Byline Bank,17224,First Security Trust and Savings Bank,20624,Byline Bank,FI,810
+2025008418,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-04-01T00:00:00,2025-04-08T00:00:00,,,24938,"State Street Bank and Trust Company, National Association",26474,"State Street Bank and Trust Company of California, National Association",24938,"State Street Bank and Trust Company, National Association",FI,224
+2025008418,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-08T00:00:00,24938,,24938,"State Street Bank and Trust Company, National Association",26474,"State Street Bank and Trust Company of California, National Association",24938,"State Street Bank and Trust Company, National Association",FI,810
+2025008428,223,Merger -Without Assistance,2025-04-04T00:00:00,2025-04-09T00:00:00,13157,,1365,Peoples Bank and Trust Company,13157,Kanza Bank,1365,Peoples Bank and Trust Company,FI,223
+2025008428,810,Participated in Absorbtion/Consolidation/Merger,2025-04-04T00:00:00,2025-04-09T00:00:00,1365,,1365,Peoples Bank and Trust Company,13157,Kanza Bank,1365,Peoples Bank and Trust Company,FI,810
+2025008616,223,Merger -Without Assistance,2025-04-03T00:00:00,2025-04-11T00:00:00,14404,,3170,Farmers and Merchants Bank,14404,Farmers State Bank of Newcastle,3170,Farmers and Merchants Bank,FI,223
+2025008616,810,Participated in Absorbtion/Consolidation/Merger,2025-04-03T00:00:00,2025-04-11T00:00:00,3170,,3170,Farmers and Merchants Bank,14404,Farmers State Bank of Newcastle,3170,Farmers and Merchants Bank,FI,810
+2025008671,223,Merger -Without Assistance,2025-04-02T00:00:00,2025-04-14T00:00:00,30836,,26610,Bank of Hope,30836,Territorial Savings Bank,26610,Bank of Hope,FI,223
+2025008671,810,Participated in Absorbtion/Consolidation/Merger,2025-04-02T00:00:00,2025-04-14T00:00:00,26610,,26610,Bank of Hope,30836,Territorial Savings Bank,26610,Bank of Hope,FI,810
+2025008831,223,Merger -Without Assistance,2025-04-01T00:00:00,2025-04-15T00:00:00,32232,,34775,"EverBank, National Association",32232,"Sterling Bank and Trust, FSB",34775,"EverBank, National Association",FI,223
+2025008831,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-15T00:00:00,34775,,34775,"EverBank, National Association",32232,"Sterling Bank and Trust, FSB",34775,"EverBank, National Association",FI,810
+2025008832,712,Branch Purchased,2025-03-31T00:00:00,2025-04-15T00:00:00,50712,,50712,AMERICAN HERITAGE FEDERAL CREDIT UNION,14863,LINKBANK,,,FI,712
+2025008833,712,Branch Purchased,2025-03-24T00:00:00,2025-04-15T00:00:00,2270,,2270,"Zions Bancorporation, N.A.",18714,FirstBank,,,FI,712
+2025009000,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-04-01T00:00:00,2025-04-16T00:00:00,,,35095,TowneBank,35111,Village Bank,35095,TowneBank,FI,224
+2025009000,810,Participated in Absorbtion/Consolidation/Merger,2025-04-01T00:00:00,2025-04-16T00:00:00,35095,,35095,TowneBank,35111,Village Bank,35095,TowneBank,FI,810
+2025010009,712,Branch Purchased,2025-04-11T00:00:00,2025-04-30T00:00:00,36301,,36301,ALL IN FEDERAL CREDIT UNION,16910,22nd State Bank,,,FI,712
+2025010025,712,Branch Purchased,2025-01-25T00:00:00,2025-04-30T00:00:00,21083,,21083,United Mississippi Bank,5903,BankPlus,,,FI,712
+2025010038,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-04-17T00:00:00,2025-04-30T00:00:00,,,17650,"The Stockgrowers State Bank of Ashland, Kansas",14636,Peoples Bank,17650,"The Stockgrowers State Bank of Ashland, Kansas",FI,224
+2025010038,810,Participated in Absorbtion/Consolidation/Merger,2025-04-17T00:00:00,2025-04-30T00:00:00,17650,,17650,"The Stockgrowers State Bank of Ashland, Kansas",14636,Peoples Bank,17650,"The Stockgrowers State Bank of Ashland, Kansas",FI,810
+2025011043,223,Merger -Without Assistance,2025-04-30T00:00:00,2025-05-05T00:00:00,26403,,30788,Glacier Bank,26403,Bank of Idaho,30788,Glacier Bank,FI,223
+2025011043,810,Participated in Absorbtion/Consolidation/Merger,2025-04-30T00:00:00,2025-05-05T00:00:00,30788,,30788,Glacier Bank,26403,Bank of Idaho,30788,Glacier Bank,FI,810
+2025011403,223,Merger -Without Assistance,2025-05-01T00:00:00,2025-05-06T00:00:00,26516,,26620,Reading Co-operative Bank,26516,Wakefield Co-operative Bank,26620,Reading Co-operative Bank,FI,223
+2025011403,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-06T00:00:00,26620,,26620,Reading Co-operative Bank,26516,Wakefield Co-operative Bank,26620,Reading Co-operative Bank,FI,810
+2025011404,223,Merger -Without Assistance,2025-04-25T00:00:00,2025-05-06T00:00:00,16778,,1908,The Wanda State Bank,16778,Franklin State Bank,1908,The Wanda State Bank,FI,223
+2025011404,810,Participated in Absorbtion/Consolidation/Merger,2025-04-25T00:00:00,2025-05-06T00:00:00,1908,,1908,The Wanda State Bank,16778,Franklin State Bank,1908,The Wanda State Bank,FI,810
+2025011405,223,Merger -Without Assistance,2025-04-30T00:00:00,2025-05-06T00:00:00,27799,,9889,Mid Penn Bank,27799,William Penn Bank,9889,Mid Penn Bank,FI,223
+2025011405,810,Participated in Absorbtion/Consolidation/Merger,2025-04-30T00:00:00,2025-05-06T00:00:00,9889,,9889,Mid Penn Bank,27799,William Penn Bank,9889,Mid Penn Bank,FI,810
+2025012124,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-05-01T00:00:00,2025-05-12T00:00:00,,,16889,United Community Bank,26398,American National Bank,16889,United Community Bank,FI,224
+2025012124,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-12T00:00:00,16889,,16889,United Community Bank,26398,American National Bank,16889,United Community Bank,FI,810
+2025012132,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-05-01T00:00:00,2025-05-12T00:00:00,,,11813,Cadence Bank,57252,First Chatham Bank,11813,Cadence Bank,FI,224
+2025012132,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-12T00:00:00,11813,,11813,Cadence Bank,57252,First Chatham Bank,11813,Cadence Bank,FI,810
+2025012136,712,Branch Purchased,2025-04-04T00:00:00,2025-05-12T00:00:00,35019,,35019,Currency Bank,58228,b1BANK,,,FI,712
+2025012288,223,Merger -Without Assistance,2025-04-28T00:00:00,2025-05-13T00:00:00,29875,,18198,Ion Bank,29875,NVE Bank,18198,Ion Bank,FI,223
+2025012288,810,Participated in Absorbtion/Consolidation/Merger,2025-04-28T00:00:00,2025-05-13T00:00:00,18198,,18198,Ion Bank,29875,NVE Bank,18198,Ion Bank,FI,810
+2025012341,712,Branch Purchased,2025-04-26T00:00:00,2025-05-14T00:00:00,44534,,44534,BEACON CREDIT UNION,30133,"Mid-Southern Savings Bank, FSB",,,FI,712
+2025012408,712,Branch Purchased,2025-05-03T00:00:00,2025-05-16T00:00:00,45934,,45934,PIMA FEDERAL CREDIT UNION,58271,Republic Bank of Arizona,,,FI,712
+2025012591,223,Merger -Without Assistance,2025-05-02T00:00:00,2025-05-19T00:00:00,6947,,7230,"NBT Bank, National Association",6947,"Evans Bank, National Association",7230,"NBT Bank, National Association",FI,223
+2025012591,810,Participated in Absorbtion/Consolidation/Merger,2025-05-02T00:00:00,2025-05-19T00:00:00,7230,,7230,"NBT Bank, National Association",6947,"Evans Bank, National Association",7230,"NBT Bank, National Association",FI,810
+2025013002,223,Merger -Without Assistance,2025-04-30T00:00:00,2025-05-23T00:00:00,35117,,7468,First Commonwealth Bank,35117,CenterBank,7468,First Commonwealth Bank,FI,223
+2025013002,810,Participated in Absorbtion/Consolidation/Merger,2025-04-30T00:00:00,2025-05-23T00:00:00,7468,,7468,First Commonwealth Bank,35117,CenterBank,7468,First Commonwealth Bank,FI,810
+2025013003,223,Merger -Without Assistance,2025-05-16T00:00:00,2025-05-23T00:00:00,15928,,10883,Bank of Bluffs,15928,Farmers National Bank of Griggsville,10883,Eagle Valley Bank,FI,223
+2025013003,810,Participated in Absorbtion/Consolidation/Merger,2025-05-16T00:00:00,2025-05-23T00:00:00,10883,,10883,Bank of Bluffs,15928,Farmers National Bank of Griggsville,10883,Eagle Valley Bank,FI,810
+2025013183,712,Branch Purchased,2025-05-10T00:00:00,2025-05-28T00:00:00,48367,,48367,SPOKANE TEACHERS CREDIT UNION,17445,Community Bank,,,FI,712
+2025013186,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-05-01T00:00:00,2025-05-28T00:00:00,,,5749,Foresight Bank,20666,Northwest Bank of Rockford,5749,Foresight Bank,FI,224
+2025013186,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-28T00:00:00,5749,,5749,Foresight Bank,20666,Northwest Bank of Rockford,5749,Foresight Bank,FI,810
+2025013371,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-05-01T00:00:00,2025-05-30T00:00:00,,,5749,Foresight Bank,35169,State Bank,5749,Foresight Bank,FI,224
+2025013371,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-30T00:00:00,5749,,5749,Foresight Bank,35169,State Bank,5749,Foresight Bank,FI,810
+2025013375,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-05-01T00:00:00,2025-05-30T00:00:00,,,5749,Foresight Bank,12395,Lena State Bank,5749,Foresight Bank,FI,224
+2025013375,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-30T00:00:00,5749,,5749,Foresight Bank,12395,Lena State Bank,5749,Foresight Bank,FI,810
+2025013376,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-05-01T00:00:00,2025-05-30T00:00:00,,,5749,Foresight Bank,5740,State Bank of Davis,5749,Foresight Bank,FI,224
+2025013376,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-30T00:00:00,5749,,5749,Foresight Bank,5740,State Bank of Davis,5749,Foresight Bank,FI,810
+2025013378,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-05-01T00:00:00,2025-05-30T00:00:00,,,5749,Foresight Bank,11671,State Bank of Herscher,5749,Foresight Bank,FI,224
+2025013378,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-05-30T00:00:00,5749,,5749,Foresight Bank,11671,State Bank of Herscher,5749,Foresight Bank,FI,810
+2025013888,223,Merger -Without Assistance,2025-05-18T00:00:00,2025-06-04T00:00:00,5649,,4297,"Capital One, National Association",5649,Discover Bank,4297,"Capital One, National Association",FI,223
+2025013888,810,Participated in Absorbtion/Consolidation/Merger,2025-05-18T00:00:00,2025-06-04T00:00:00,4297,,4297,"Capital One, National Association",5649,Discover Bank,4297,"Capital One, National Association",FI,810
+2025014050,223,Merger -Without Assistance,2025-06-01T00:00:00,2025-06-09T00:00:00,7072,,57919,ConnectOne Bank,7072,The First National Bank of Long Island,57919,ConnectOne Bank,FI,223
+2025014050,810,Participated in Absorbtion/Consolidation/Merger,2025-06-01T00:00:00,2025-06-09T00:00:00,57919,,57919,ConnectOne Bank,7072,The First National Bank of Long Island,57919,ConnectOne Bank,FI,810
+2025014309,223,Merger -Without Assistance,2025-06-01T00:00:00,2025-06-10T00:00:00,59077,,59286,Thrivent Bank,59077,Thrivent Federal Credit Union,59286,Thrivent Bank,FI,223
+2025014309,810,Participated in Absorbtion/Consolidation/Merger,2025-06-01T00:00:00,2025-06-10T00:00:00,59286,,59286,Thrivent Bank,59077,Thrivent Federal Credit Union,59286,Thrivent Bank,FI,810
+2025014411,223,Merger -Without Assistance,2025-05-01T00:00:00,2025-06-11T00:00:00,12923,,3832,Old National Bank,12923,"Bremer Bank, National Association",3832,Old National Bank,FI,223
+2025014411,810,Participated in Absorbtion/Consolidation/Merger,2025-05-01T00:00:00,2025-06-11T00:00:00,3832,,3832,Old National Bank,12923,"Bremer Bank, National Association",3832,Old National Bank,FI,810
+2025014694,712,Branch Purchased,2025-06-06T00:00:00,2025-06-13T00:00:00,3184,,3184,"Lone Oak Bank, National Association",1720,Western Bank,,,FI,712
+2025014781,223,Merger -Without Assistance,2025-05-30T00:00:00,2025-06-16T00:00:00,35015,,25886,Rio Bank,35015,"Lone Star Capital Bank, National Association",25886,Rio Bank,FI,223
+2025014781,810,Participated in Absorbtion/Consolidation/Merger,2025-05-30T00:00:00,2025-06-16T00:00:00,25886,,25886,Rio Bank,35015,"Lone Star Capital Bank, National Association",25886,Rio Bank,FI,810
+2025014870,712,Branch Purchased,2025-04-25T00:00:00,2025-06-17T00:00:00,26962,,26962,Wilson Bank and Trust,9963,F&M Bank,,,FI,712
+2025014871,223,Merger -Without Assistance,2025-05-30T00:00:00,2025-06-17T00:00:00,16934,,5595,The Yoakum National Bank,16934,Citizens State Bank,5595,The Yoakum National Bank,FI,223
+2025014871,810,Participated in Absorbtion/Consolidation/Merger,2025-05-30T00:00:00,2025-06-17T00:00:00,5595,,5595,The Yoakum National Bank,16934,Citizens State Bank,5595,The Yoakum National Bank,FI,810
+2025014888,712,Branch Purchased,2025-05-31T00:00:00,2025-06-17T00:00:00,43010,,43010,GESA CREDIT UNION,13232,Security State Bank,,,FI,712
+2025015015,712,Branch Purchased,2025-05-27T00:00:00,2025-06-20T00:00:00,58596,,58596,Carter Bank & Trust,35214,First Reliance Bank,,,FI,712
+2025015235,223,Merger -Without Assistance,2025-06-21T00:00:00,2025-06-25T00:00:00,58648,,16450,Busey Bank,58648,CrossFirst Bank,16450,Busey Bank,FI,223
+2025015235,810,Participated in Absorbtion/Consolidation/Merger,2025-06-21T00:00:00,2025-06-25T00:00:00,16450,,16450,Busey Bank,58648,CrossFirst Bank,16450,Busey Bank,FI,810
+2025015463,223,Merger -Without Assistance,2025-06-13T00:00:00,2025-06-27T00:00:00,57734,,59245,Genesis Bank,57734,EH National Bank,59245,Genesis Bank,FI,223
+2025015463,810,Participated in Absorbtion/Consolidation/Merger,2025-06-13T00:00:00,2025-06-27T00:00:00,59245,,59245,Genesis Bank,57734,EH National Bank,59245,Genesis Bank,FI,810
+2025015466,223,Merger -Without Assistance,2025-06-20T00:00:00,2025-06-27T00:00:00,4630,,1868,The Bank of Tescott,4630,First Bank of Beloit,1868,The Bank of Tescott,FI,223
+2025015466,810,Participated in Absorbtion/Consolidation/Merger,2025-06-20T00:00:00,2025-06-27T00:00:00,1868,,1868,The Bank of Tescott,4630,First Bank of Beloit,1868,The Bank of Tescott,FI,810
+2025015504,211,Failure - Whole Institution,2025-06-27T00:00:00,2025-06-30T00:00:00,,,15480,Coleman County State Bank,5520,The Santa Anna National Bank,15480,Coleman County State Bank,FI,211
+2025015504,811,Participated in FDIC Assisted Merger,2025-06-27T00:00:00,2025-06-30T00:00:00,15480,,15480,Coleman County State Bank,5520,The Santa Anna National Bank,15480,Coleman County State Bank,FI,811
+2025015651,712,Branch Purchased,2025-04-11T00:00:00,2025-07-01T00:00:00,42595,,42595,Global Federal Credit Union,29058,First Financial Northwest Bank,,,FI,712
+2025015652,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-06-26T00:00:00,2025-07-01T00:00:00,,,11719,Liberty Bank,23244,North Adams State Bank,11719,Liberty Bank,FI,224
+2025015652,810,Participated in Absorbtion/Consolidation/Merger,2025-06-26T00:00:00,2025-07-01T00:00:00,11719,,11719,Liberty Bank,23244,North Adams State Bank,11719,Liberty Bank,FI,810
+2025015762,223,Merger -Without Assistance,2025-06-20T00:00:00,2025-07-02T00:00:00,4033,,4779,"Dream First Bank, National Association",4033,"BancCentral, National Association",4779,"Dream First Bank, National Association",FI,223
+2025015762,810,Participated in Absorbtion/Consolidation/Merger,2025-06-20T00:00:00,2025-07-02T00:00:00,4779,,4779,"Dream First Bank, National Association",4033,"BancCentral, National Association",4779,"Dream First Bank, National Association",FI,810
+2025015985,223,Merger -Without Assistance,2025-07-02T00:00:00,2025-07-07T00:00:00,4032,,25858,Equity Bank,4032,NBC OKLAHOMA,25858,Equity Bank,FI,223
+2025015985,810,Participated in Absorbtion/Consolidation/Merger,2025-07-02T00:00:00,2025-07-07T00:00:00,25858,,25858,Equity Bank,4032,NBC OKLAHOMA,25858,Equity Bank,FI,810
+2025015986,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-07T00:00:00,58411,,23275,Plumas Bank,58411,Cornerstone Community Bank,23275,Plumas Bank,FI,223
+2025015986,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-07T00:00:00,23275,,23275,Plumas Bank,58411,Cornerstone Community Bank,23275,Plumas Bank,FI,810
+2025016097,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-08T00:00:00,28167,,18194,Ascend Bank,28167,Eastern Connecticut Savings Bank,18194,Ascend Bank,FI,223
+2025016097,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-08T00:00:00,18194,,18194,Ascend Bank,28167,Eastern Connecticut Savings Bank,18194,Ascend Bank,FI,810
+2025016127,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-08T00:00:00,22081,,8870,BankFirst Financial Services,22081,Magnolia State Bank,8870,BankFirst Financial Services,FI,223
+2025016127,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-08T00:00:00,8870,,8870,BankFirst Financial Services,22081,Magnolia State Bank,8870,BankFirst Financial Services,FI,810
+2025016203,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-09T00:00:00,57102,,11813,Cadence Bank,57102,"Bank of Brenham, National Association",11813,Cadence Bank,FI,223
+2025016203,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-09T00:00:00,11813,,11813,Cadence Bank,57102,"Bank of Brenham, National Association",11813,Cadence Bank,FI,810
+2025016205,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-09T00:00:00,12506,,11813,Cadence Bank,12506,Industry State Bank,11813,Cadence Bank,FI,223
+2025016205,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-09T00:00:00,11813,,11813,Cadence Bank,12506,Industry State Bank,11813,Cadence Bank,FI,810
+2025016206,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-09T00:00:00,3195,,11813,Cadence Bank,3195,Fayetteville Bank,11813,Cadence Bank,FI,223
+2025016206,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-09T00:00:00,11813,,11813,Cadence Bank,3195,Fayetteville Bank,11813,Cadence Bank,FI,810
+2025016207,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-09T00:00:00,5529,,11813,Cadence Bank,5529,The First National Bank of Shiner,11813,Cadence Bank,FI,223
+2025016207,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-09T00:00:00,11813,,11813,Cadence Bank,5529,The First National Bank of Shiner,11813,Cadence Bank,FI,810
+2025016208,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-09T00:00:00,3099,,11813,Cadence Bank,3099,The First National Bank of Bellville,11813,Cadence Bank,FI,223
+2025016208,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-09T00:00:00,11813,,11813,Cadence Bank,3099,The First National Bank of Bellville,11813,Cadence Bank,FI,810
+2025016209,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-09T00:00:00,12501,,11813,Cadence Bank,12501,Citizens State Bank,11813,Cadence Bank,FI,223
+2025016209,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-09T00:00:00,11813,,11813,Cadence Bank,12501,Citizens State Bank,11813,Cadence Bank,FI,810
+2025016219,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-09T00:00:00,27408,,9712,Rockland Trust Company,27408,Enterprise Bank and Trust Company,9712,Rockland Trust Company,FI,223
+2025016219,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-09T00:00:00,9712,,9712,Rockland Trust Company,27408,Enterprise Bank and Trust Company,9712,Rockland Trust Company,FI,810
+2025016437,223,Merger -Without Assistance,2025-06-06T00:00:00,2025-07-14T00:00:00,5558,,18185,Community National Bank & Trust of Texas,5558,CapTex Bank,18185,Community National Bank & Trust of Texas,FI,223
+2025016437,810,Participated in Absorbtion/Consolidation/Merger,2025-06-06T00:00:00,2025-07-14T00:00:00,18185,,18185,Community National Bank & Trust of Texas,5558,CapTex Bank,18185,Community National Bank & Trust of Texas,FI,810
+2025016657,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-07-16T00:00:00,58558,,8663,FirstBank,58558,Southern States Bank,8663,FirstBank,FI,223
+2025016657,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-07-16T00:00:00,8663,,8663,FirstBank,58558,Southern States Bank,8663,FirstBank,FI,810
+2025017193,223,Merger -Without Assistance,2025-07-11T00:00:00,2025-07-22T00:00:00,15767,,1900,First Independent Bank,15767,First Security Bank-Hendricks,1900,First Independent Bank,FI,223
+2025017193,810,Participated in Absorbtion/Consolidation/Merger,2025-07-11T00:00:00,2025-07-22T00:00:00,1900,,1900,First Independent Bank,15767,First Security Bank-Hendricks,1900,First Independent Bank,FI,810
+2025017195,223,Merger -Without Assistance,2025-07-11T00:00:00,2025-07-22T00:00:00,35052,,131,Seacoast National Bank,35052,Heartland National Bank,131,Seacoast National Bank,FI,223
+2025017195,810,Participated in Absorbtion/Consolidation/Merger,2025-07-11T00:00:00,2025-07-22T00:00:00,131,,131,Seacoast National Bank,35052,Heartland National Bank,131,Seacoast National Bank,FI,810
+2025017306,712,Branch Purchased,2025-06-20T00:00:00,2025-07-23T00:00:00,9306,,9306,The Citizens Bank,9172,Security Bank and Trust Company,,,FI,712
+2025017307,223,Merger -Without Assistance,2025-07-19T00:00:00,2025-07-23T00:00:00,18889,,3787,Dieterich Bank,18889,Community Bank of Trenton,3787,Dieterich Bank,FI,223
+2025017307,810,Participated in Absorbtion/Consolidation/Merger,2025-07-19T00:00:00,2025-07-23T00:00:00,3787,,3787,Dieterich Bank,18889,Community Bank of Trenton,3787,Dieterich Bank,FI,810
+2025018322,223,Merger -Without Assistance,2025-07-24T00:00:00,2025-07-30T00:00:00,28262,,13876,CNB Bank,28262,ESSA Bank & Trust,13876,CNB Bank,FI,223
+2025018322,810,Participated in Absorbtion/Consolidation/Merger,2025-07-24T00:00:00,2025-07-30T00:00:00,13876,,13876,CNB Bank,28262,ESSA Bank & Trust,13876,CNB Bank,FI,810
+2025019360,223,Merger -Without Assistance,2025-07-18T00:00:00,2025-08-04T00:00:00,4775,,27046,Community National Bank & Trust,4775,Prairie Bank of Kansas,27046,Community National Bank & Trust,FI,223
+2025019360,810,Participated in Absorbtion/Consolidation/Merger,2025-07-18T00:00:00,2025-08-04T00:00:00,27046,,27046,Community National Bank & Trust,4775,Prairie Bank of Kansas,27046,Community National Bank & Trust,FI,810
+2025020000,223,Merger -Without Assistance,2025-08-01T00:00:00,2025-08-06T00:00:00,8718,,14712,First National Bank,8718,Wyoming Bank & Trust,14712,First National Bank,FI,223
+2025020000,810,Participated in Absorbtion/Consolidation/Merger,2025-08-01T00:00:00,2025-08-06T00:00:00,14712,,14712,First National Bank,8718,Wyoming Bank & Trust,14712,First National Bank,FI,810
+2025020057,223,Merger -Without Assistance,2025-07-25T00:00:00,2025-08-06T00:00:00,14359,,28178,Northwest Bank,14359,Jersey Shore State Bank,28178,Northwest Bank,FI,223
+2025020057,810,Participated in Absorbtion/Consolidation/Merger,2025-07-25T00:00:00,2025-08-06T00:00:00,28178,,28178,Northwest Bank,14359,Jersey Shore State Bank,28178,Northwest Bank,FI,810
+2025020115,223,Merger -Without Assistance,2025-07-25T00:00:00,2025-08-06T00:00:00,7586,,28178,Northwest Bank,7586,The Luzerne Bank,28178,Northwest Bank,FI,223
+2025020115,810,Participated in Absorbtion/Consolidation/Merger,2025-07-25T00:00:00,2025-08-06T00:00:00,28178,,28178,Northwest Bank,7586,The Luzerne Bank,28178,Northwest Bank,FI,810
+2025020424,223,Merger -Without Assistance,2025-07-01T00:00:00,2025-08-11T00:00:00,35230,,3603,Old Second National Bank,35230,Evergreen Bank Group,3603,Old Second National Bank,FI,223
+2025020424,810,Participated in Absorbtion/Consolidation/Merger,2025-07-01T00:00:00,2025-08-11T00:00:00,3603,,3603,Old Second National Bank,35230,Evergreen Bank Group,3603,Old Second National Bank,FI,810
+2025020570,223,Merger -Without Assistance,2025-08-01T00:00:00,2025-08-12T00:00:00,7666,,10685,Mifflinburg Bank and Trust Company,7666,The Northumberland National Bank,10685,Central Penn Bank & Trust,FI,223
+2025020570,810,Participated in Absorbtion/Consolidation/Merger,2025-08-01T00:00:00,2025-08-12T00:00:00,10685,,10685,Mifflinburg Bank and Trust Company,7666,The Northumberland National Bank,10685,Central Penn Bank & Trust,FI,810
+2025020640,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-07-26T00:00:00,2025-08-13T00:00:00,,,28930,Verimore Bank,29764,Clay County Savings Bank,28930,Verimore Bank,FI,224
+2025020640,810,Participated in Absorbtion/Consolidation/Merger,2025-07-26T00:00:00,2025-08-13T00:00:00,28930,,28930,Verimore Bank,29764,Clay County Savings Bank,28930,Verimore Bank,FI,810
+2025022311,223,Merger -Without Assistance,2025-08-27T00:00:00,2025-09-02T00:00:00,30492,,29426,"Worthington Federal Savings Bank, FSB",30492,Jackson Federal Savings and Loan Association,29426,"Worthington Federal Savings Bank, FSB",FI,223
+2025022311,810,Participated in Absorbtion/Consolidation/Merger,2025-08-27T00:00:00,2025-09-02T00:00:00,29426,,29426,"Worthington Federal Savings Bank, FSB",30492,Jackson Federal Savings and Loan Association,29426,"Worthington Federal Savings Bank, FSB",FI,810
+2025022435,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-08-22T00:00:00,2025-09-03T00:00:00,,,10307,Builtwell Bank,26955,Bank of Cleveland,10307,Builtwell Bank,FI,224
+2025022435,810,Participated in Absorbtion/Consolidation/Merger,2025-08-22T00:00:00,2025-09-03T00:00:00,10307,,10307,Builtwell Bank,26955,Bank of Cleveland,10307,Builtwell Bank,FI,810
+2025022726,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-09-02T00:00:00,2025-09-05T00:00:00,,,17798,Beacon Bank and Trust,34147,Bank Rhode Island,17798,Beacon Bank and Trust,FI,224
+2025022726,810,Participated in Absorbtion/Consolidation/Merger,2025-09-02T00:00:00,2025-09-05T00:00:00,17798,,17798,Beacon Bank and Trust,34147,Bank Rhode Island,17798,Beacon Bank and Trust,FI,810
+2025022727,223,Merger -Without Assistance,2025-09-02T00:00:00,2025-09-05T00:00:00,23621,,17798,Beacon Bank and Trust,23621,Berkshire Bank,17798,Beacon Bank and Trust,FI,223
+2025022727,810,Participated in Absorbtion/Consolidation/Merger,2025-09-02T00:00:00,2025-09-05T00:00:00,17798,,17798,Beacon Bank and Trust,23621,Berkshire Bank,17798,Beacon Bank and Trust,FI,810
+2025023013,712,Branch Purchased,2025-05-23T00:00:00,2025-09-09T00:00:00,9176,,9176,Apex Bank,27677,HomeTrust Bank,,,FI,712
+2025023056,712,Branch Purchased,2025-09-02T00:00:00,2025-09-10T00:00:00,35772,,35772,HARBORSTONE CREDIT UNION,57978,SAVIBANK,,,FI,712
+2025023079,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-09-02T00:00:00,2025-09-10T00:00:00,,,17798,Beacon Bank and Trust,15995,PCSB Bank,17798,Beacon Bank and Trust,FI,224
+2025023079,810,Participated in Absorbtion/Consolidation/Merger,2025-09-02T00:00:00,2025-09-10T00:00:00,17798,,17798,Beacon Bank and Trust,15995,PCSB Bank,17798,Beacon Bank and Trust,FI,810
+2025023236,223,Merger -Without Assistance,2025-09-01T00:00:00,2025-09-12T00:00:00,6892,,35095,TowneBank,6892,The Old Point National Bank of Phoebus,35095,TowneBank,FI,223
+2025023236,810,Participated in Absorbtion/Consolidation/Merger,2025-09-01T00:00:00,2025-09-12T00:00:00,35095,,35095,TowneBank,6892,The Old Point National Bank of Phoebus,35095,TowneBank,FI,810
+2025023349,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-08-01T00:00:00,2025-09-15T00:00:00,,,22334,One Community Bank,17128,Intercity State Bank,22334,One Community Bank,FI,224
+2025023349,810,Participated in Absorbtion/Consolidation/Merger,2025-08-01T00:00:00,2025-09-15T00:00:00,22334,,22334,One Community Bank,17128,Intercity State Bank,22334,One Community Bank,FI,810
+2025023495,223,Merger -Without Assistance,2025-09-05T00:00:00,2025-09-16T00:00:00,13413,,1867,"The Farmers State Bank of Oakley, Kansas",13413,Kaw Valley State Bank,1867,"The Farmers State Bank of Oakley, Kansas",FI,223
+2025023495,810,Participated in Absorbtion/Consolidation/Merger,2025-09-05T00:00:00,2025-09-16T00:00:00,1867,,1867,"The Farmers State Bank of Oakley, Kansas",13413,Kaw Valley State Bank,1867,"The Farmers State Bank of Oakley, Kansas",FI,810
+2025023496,223,Merger -Without Assistance,2025-08-16T00:00:00,2025-09-16T00:00:00,1150,,57548,Heritage Bank,1150,Fidelity State Bank and Trust Company,57548,Heritage Bank,FI,223
+2025023496,810,Participated in Absorbtion/Consolidation/Merger,2025-08-16T00:00:00,2025-09-16T00:00:00,57548,,57548,Heritage Bank,1150,Fidelity State Bank and Trust Company,57548,Heritage Bank,FI,810
+2025023502,223,Merger -Without Assistance,2025-09-02T00:00:00,2025-09-16T00:00:00,32489,,1768,Mechanics Bank,32489,HomeStreet Bank,1768,Mechanics Bank,FI,223
+2025023502,810,Participated in Absorbtion/Consolidation/Merger,2025-09-02T00:00:00,2025-09-16T00:00:00,1768,,1768,Mechanics Bank,32489,HomeStreet Bank,1768,Mechanics Bank,FI,810
+2025023507,223,Merger -Without Assistance,2025-07-31T00:00:00,2025-09-16T00:00:00,18031,,11971,Bar Harbor Bank & Trust,18031,Woodsville Guaranty Savings Bank,11971,Bar Harbor Bank & Trust,FI,223
+2025023507,810,Participated in Absorbtion/Consolidation/Merger,2025-07-31T00:00:00,2025-09-16T00:00:00,11971,,11971,Bar Harbor Bank & Trust,18031,Woodsville Guaranty Savings Bank,11971,Bar Harbor Bank & Trust,FI,810
+2025023508,223,Merger -Without Assistance,2025-08-02T00:00:00,2025-09-16T00:00:00,10123,,14291,BANK,10123,First Trust and Savings Bank,14291,BANK,FI,223
+2025023508,810,Participated in Absorbtion/Consolidation/Merger,2025-08-02T00:00:00,2025-09-16T00:00:00,14291,,14291,BANK,10123,First Trust and Savings Bank,14291,BANK,FI,810
+2025023981,223,Merger -Without Assistance,2025-09-01T00:00:00,2025-09-23T00:00:00,32172,,17266,Columbia Bank,32172,"Pacific Premier Bank, National Association",17266,Columbia Bank,FI,223
+2025023981,810,Participated in Absorbtion/Consolidation/Merger,2025-09-01T00:00:00,2025-09-23T00:00:00,17266,,17266,Columbia Bank,32172,"Pacific Premier Bank, National Association",17266,Columbia Bank,FI,810
+2025024102,712,Branch Purchased,2025-06-13T00:00:00,2025-09-25T00:00:00,42796,,42796,FAMILY SAVINGS CREDIT UNION,15270,Merit Bank,,,FI,712
+2025024288,712,Branch Purchased,2025-07-01T00:00:00,2025-09-30T00:00:00,53358,,53358,Y-12 FEDERAL CREDIT UNION,2710,"First State Bank of the Southeast, Inc",,,FI,712
+2025024395,223,Merger -Without Assistance,2025-08-31T00:00:00,2025-10-01T00:00:00,12309,,3144,The City National Bank of Colorado City,12309,"Citizens Bank, National Association",3144,The City National Bank of Colorado City,FI,223
+2025024395,810,Participated in Absorbtion/Consolidation/Merger,2025-08-31T00:00:00,2025-10-01T00:00:00,3144,,3144,The City National Bank of Colorado City,12309,"Citizens Bank, National Association",3144,The City National Bank of Colorado City,FI,810
+2025024405,712,Branch Purchased,2025-08-01T00:00:00,2025-10-01T00:00:00,49059,,49059,HAPO COMMUNITY CREDIT UNION,34627,Community First Bank,,,FI,712
+2025024587,223,Merger -Without Assistance,2025-10-01T00:00:00,2025-10-03T00:00:00,33794,,21883,TruPoint Bank,33794,First Community Bank of East Tennessee,21883,TruPoint Bank,FI,223
+2025024587,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-10-03T00:00:00,21883,,21883,TruPoint Bank,33794,First Community Bank of East Tennessee,21883,TruPoint Bank,FI,810
+2025024588,223,Merger -Without Assistance,2025-09-30T00:00:00,2025-10-03T00:00:00,9865,,14991,The Farmers State Bank,9865,The Republic Banking Company,14991,The Farmers State Bank,FI,223
+2025024588,810,Participated in Absorbtion/Consolidation/Merger,2025-09-30T00:00:00,2025-10-03T00:00:00,14991,,14991,The Farmers State Bank,9865,The Republic Banking Company,14991,The Farmers State Bank,FI,810
+2025024594,223,Merger -Without Assistance,2025-10-01T00:00:00,2025-10-03T00:00:00,8421,,7799,Citizens & Northern Bank,8421,Susquehanna Community Bank,7799,Citizens & Northern Bank,FI,223
+2025024594,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-10-03T00:00:00,7799,,7799,Citizens & Northern Bank,8421,Susquehanna Community Bank,7799,Citizens & Northern Bank,FI,810
+2025024678,223,Merger -Without Assistance,2025-10-01T00:00:00,2025-10-06T00:00:00,34662,,35138,Millennium Bank,34662,North Georgia National Bank,35138,Millennium Bank,FI,223
+2025024678,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-10-06T00:00:00,35138,,35138,Millennium Bank,34662,North Georgia National Bank,35138,Millennium Bank,FI,810
+2025024864,223,Merger -Without Assistance,2025-10-01T00:00:00,2025-10-07T00:00:00,872,,16418,BankSouth,872,State Bank of Cochran,16418,BankSouth,FI,223
+2025024864,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-10-07T00:00:00,16418,,16418,BankSouth,872,State Bank of Cochran,16418,BankSouth,FI,810
+2025024865,223,Merger -Without Assistance,2025-10-03T00:00:00,2025-10-07T00:00:00,17569,,17410,The Bendena State Bank,17569,Bank of Denton,17410,The Bendena State Bank,FI,223
+2025024865,810,Participated in Absorbtion/Consolidation/Merger,2025-10-03T00:00:00,2025-10-07T00:00:00,17410,,17410,The Bendena State Bank,17569,Bank of Denton,17410,The Bendena State Bank,FI,810
+2025024870,712,Branch Purchased,2025-10-02T00:00:00,2025-10-07T00:00:00,5394,,5394,Waypoint Bank,17636,Astra Bank,,,FI,712
+2025024945,223,Merger -Without Assistance,2025-10-01T00:00:00,2025-10-08T00:00:00,8888,,5452,First National Bank of Omaha,8888,Country Club Bank,5452,First National Bank of Omaha,FI,223
+2025024945,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-10-08T00:00:00,5452,,5452,First National Bank of Omaha,8888,Country Club Bank,5452,First National Bank of Omaha,FI,810
+2025024954,223,Merger -Without Assistance,2025-10-01T00:00:00,2025-10-08T00:00:00,1208,,30788,Glacier Bank,1208,"Guaranty Bank & Trust, N.A.",30788,Glacier Bank,FI,223
+2025024954,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-10-08T00:00:00,30788,,30788,Glacier Bank,1208,"Guaranty Bank & Trust, N.A.",30788,Glacier Bank,FI,810
+2025025041,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-10-01T00:00:00,2025-10-09T00:00:00,,,58852,Liberty Capital Bank,11903,Texas Heritage Bank,58852,Liberty Capital Bank,FI,224
+2025025041,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-10-09T00:00:00,58852,,58852,Liberty Capital Bank,11903,Texas Heritage Bank,58852,Liberty Capital Bank,FI,810
+2025025043,223,Merger -Without Assistance,2025-10-03T00:00:00,2025-10-09T00:00:00,17403,,23099,The Bank of Protection,17403,The Haviland State Bank,23099,The Bank of Protection,FI,223
+2025025043,810,Participated in Absorbtion/Consolidation/Merger,2025-10-03T00:00:00,2025-10-09T00:00:00,23099,,23099,The Bank of Protection,17403,The Haviland State Bank,23099,The Bank of Protection,FI,810
+2025025494,223,Merger -Without Assistance,2025-10-03T00:00:00,2025-10-17T00:00:00,20215,,15664,"Freedom Bank, Inc.",20215,"BCBank, Inc.",15664,"Freedom Bank, Inc.",FI,223
+2025025494,810,Participated in Absorbtion/Consolidation/Merger,2025-10-03T00:00:00,2025-10-17T00:00:00,15664,,15664,"Freedom Bank, Inc.",20215,"BCBank, Inc.",15664,"Freedom Bank, Inc.",FI,810
+2025025496,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-10-06T00:00:00,2025-10-17T00:00:00,,,22559,Bravera Bank,57892,VISIONBank,22559,Bravera Bank,FI,224
+2025025496,810,Participated in Absorbtion/Consolidation/Merger,2025-10-06T00:00:00,2025-10-17T00:00:00,22559,,22559,Bravera Bank,57892,VISIONBank,22559,Bravera Bank,FI,810
+2025025497,223,Merger -Without Assistance,2025-10-03T00:00:00,2025-10-17T00:00:00,17589,,17229,Henderson State Bank,17589,The Culbertson Bank,17229,Henderson State Bank,FI,223
+2025025497,810,Participated in Absorbtion/Consolidation/Merger,2025-10-03T00:00:00,2025-10-17T00:00:00,17229,,17229,Henderson State Bank,17589,The Culbertson Bank,17229,Henderson State Bank,FI,810
+2025025835,223,Merger -Without Assistance,2025-10-15T00:00:00,2025-10-21T00:00:00,8323,,13868,First State Bank Nebraska,8323,Community State Bank,13868,First State Bank Nebraska,FI,223
+2025025835,810,Participated in Absorbtion/Consolidation/Merger,2025-10-15T00:00:00,2025-10-21T00:00:00,13868,,13868,First State Bank Nebraska,8323,Community State Bank,13868,First State Bank Nebraska,FI,810
+2025025903,712,Branch Purchased,2025-09-30T00:00:00,2025-10-22T00:00:00,45298,,45298,FRONTWAVE CREDIT UNION,58500,Community Valley Bank,,,FI,712
+2025025910,223,Merger -Without Assistance,2025-10-10T00:00:00,2025-10-22T00:00:00,13584,,4766,SJN Bank of Kansas,13584,The Tampa State Bank,4766,SJN Bank of Kansas,FI,223
+2025025910,810,Participated in Absorbtion/Consolidation/Merger,2025-10-10T00:00:00,2025-10-22T00:00:00,4766,,4766,SJN Bank of Kansas,13584,The Tampa State Bank,4766,SJN Bank of Kansas,FI,810
+2025026185,712,Branch Purchased,2025-10-10T00:00:00,2025-10-27T00:00:00,27237,,27237,Enterprise Bank & Trust,1105,First Interstate Bank,,,FI,712
+2025026226,223,Merger -Without Assistance,2025-10-17T00:00:00,2025-10-28T00:00:00,12126,,14382,Fidelity Bank & Trust,12126,County Bank,14382,Fidelity Bank & Trust,FI,223
+2025026226,810,Participated in Absorbtion/Consolidation/Merger,2025-10-17T00:00:00,2025-10-28T00:00:00,14382,,14382,Fidelity Bank & Trust,12126,County Bank,14382,Fidelity Bank & Trust,FI,810
+2025026228,223,Merger -Without Assistance,2025-10-20T00:00:00,2025-10-28T00:00:00,57665,,6560,The Huntington National Bank,57665,Veritex Community Bank,6560,The Huntington National Bank,FI,223
+2025026228,810,Participated in Absorbtion/Consolidation/Merger,2025-10-20T00:00:00,2025-10-28T00:00:00,6560,,6560,The Huntington National Bank,57665,Veritex Community Bank,6560,The Huntington National Bank,FI,810
+2025026229,223,Merger -Without Assistance,2025-10-06T00:00:00,2025-10-28T00:00:00,321,,9359,Bank of Commerce,321,Holmes County Bank,9359,Bank of Commerce,FI,223
+2025026229,810,Participated in Absorbtion/Consolidation/Merger,2025-10-06T00:00:00,2025-10-28T00:00:00,9359,,9359,Bank of Commerce,321,Holmes County Bank,9359,Bank of Commerce,FI,810
+2025027647,223,Merger -Without Assistance,2025-11-01T00:00:00,2025-11-05T00:00:00,28481,,26484,"North Shore Bank, a Co-operative Bank",28481,Colonial Federal Savings Bank,26484,"North Shore Bank, a Co-operative Bank",FI,223
+2025027647,810,Participated in Absorbtion/Consolidation/Merger,2025-11-01T00:00:00,2025-11-05T00:00:00,26484,,26484,"North Shore Bank, a Co-operative Bank",28481,Colonial Federal Savings Bank,26484,"North Shore Bank, a Co-operative Bank",FI,810
+2025027946,712,Branch Purchased,2025-10-17T00:00:00,2025-11-06T00:00:00,15932,,15932,The Citizens Bank,34966,First Capital Bank,,,FI,712
+2025028269,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-11-07T00:00:00,2025-11-12T00:00:00,,,10460,Town & Country Bank Midwest,9274,The Hill-Dodge Banking Company,10460,Town & Country Bank Midwest,FI,224
+2025028269,810,Participated in Absorbtion/Consolidation/Merger,2025-11-07T00:00:00,2025-11-12T00:00:00,10460,,10460,Town & Country Bank Midwest,9274,The Hill-Dodge Banking Company,10460,Town & Country Bank Midwest,FI,810
+2025028309,712,Branch Purchased,2025-11-05T00:00:00,2025-11-13T00:00:00,6672,,6672,"Fifth Third Bank, National Association",30776,"Pathward, National Association",,,FI,712
+2025028426,223,Merger -Without Assistance,2025-11-04T00:00:00,2025-11-17T00:00:00,22657,,3337,Texas National Bank,22657,Citizens State Bank,3337,Texas National Bank,FI,223
+2025028426,810,Participated in Absorbtion/Consolidation/Merger,2025-11-04T00:00:00,2025-11-17T00:00:00,3337,,3337,Texas National Bank,22657,Citizens State Bank,3337,Texas National Bank,FI,810
+2025028428,712,Branch Purchased,2025-10-31T00:00:00,2025-11-17T00:00:00,36187,,36187,DFCU Financial,59105,Winter Park National Bank,,,FI,712
+2025028522,712,Branch Purchased,2025-11-07T00:00:00,2025-11-18T00:00:00,1141,,1141,The Colorado Bank and Trust Company of La Junta,11492,InBank,,,FI,712
+2025028526,223,Merger -Without Assistance,2025-11-15T00:00:00,2025-11-18T00:00:00,90141,,26483,Needham Bank,90141,BankProv,26483,Needham Bank,FI,223
+2025028526,810,Participated in Absorbtion/Consolidation/Merger,2025-11-15T00:00:00,2025-11-18T00:00:00,26483,,26483,Needham Bank,90141,BankProv,26483,Needham Bank,FI,810
+2025028564,223,Merger -Without Assistance,2025-11-07T00:00:00,2025-11-19T00:00:00,2290,,12982,Civista Bank,2290,The Farmers Savings Bank,12982,Civista Bank,FI,223
+2025028564,810,Participated in Absorbtion/Consolidation/Merger,2025-11-07T00:00:00,2025-11-19T00:00:00,12982,,12982,Civista Bank,2290,The Farmers Savings Bank,12982,Civista Bank,FI,810
+2025028595,223,Merger -Without Assistance,2025-11-07T00:00:00,2025-11-19T00:00:00,10626,,18385,Regional Missouri Bank,10626,Bank of New Cambria,18385,Regional Missouri Bank,FI,223
+2025028595,810,Participated in Absorbtion/Consolidation/Merger,2025-11-07T00:00:00,2025-11-19T00:00:00,18385,,18385,Regional Missouri Bank,10626,Bank of New Cambria,18385,Regional Missouri Bank,FI,810
+2025028819,223,Merger -Without Assistance,2025-11-18T00:00:00,2025-11-24T00:00:00,14561,,13305,The New Washington State Bank,14561,State Bank of Medora,13305,The New Washington State Bank,FI,223
+2025028819,810,Participated in Absorbtion/Consolidation/Merger,2025-11-18T00:00:00,2025-11-24T00:00:00,13305,,13305,The New Washington State Bank,14561,State Bank of Medora,13305,The New Washington State Bank,FI,810
+2025028995,712,Branch Purchased,2025-11-07T00:00:00,2025-12-01T00:00:00,6989,,6989,"Community Bank, National Association",29950,"Santander Bank, N.A.",,,FI,712
+2025029119,223,Merger -Without Assistance,2025-12-01T00:00:00,2025-12-03T00:00:00,34998,,58181,Metro City Bank,34998,First IC Bank,58181,Metro City Bank,FI,223
+2025029119,810,Participated in Absorbtion/Consolidation/Merger,2025-12-01T00:00:00,2025-12-03T00:00:00,58181,,58181,Metro City Bank,34998,First IC Bank,58181,Metro City Bank,FI,810
+2025029128,223,Merger -Without Assistance,2025-12-01T00:00:00,2025-12-03T00:00:00,29331,,22257,Colony Bank,29331,TC FEDERAL BANK,22257,Colony Bank,FI,223
+2025029128,810,Participated in Absorbtion/Consolidation/Merger,2025-12-01T00:00:00,2025-12-03T00:00:00,22257,,22257,Colony Bank,29331,TC FEDERAL BANK,22257,Colony Bank,FI,810
+2025029271,712,Branch Purchased,2025-11-07T00:00:00,2025-12-08T00:00:00,11699,,11699,Goodfield State Bank,22874,Hickory Point Bank and Trust,,,FI,712
+2025029347,223,Merger -Without Assistance,2025-12-05T00:00:00,2025-12-09T00:00:00,5113,,8851,Park State Bank,5113,First National Bank,8851,Park State Bank,FI,223
+2025029347,810,Participated in Absorbtion/Consolidation/Merger,2025-12-05T00:00:00,2025-12-09T00:00:00,8851,,8851,Park State Bank,5113,First National Bank,8851,Park State Bank,FI,810
+2025029421,712,Branch Purchased,2025-11-20T00:00:00,2025-12-10T00:00:00,36420,,36420,ARIZONA STATE SAVINGS AND CREDIT UNION,57298,1st Bank Yuma,,,FI,712
+2025029438,223,Merger -Without Assistance,2025-11-01T00:00:00,2025-12-10T00:00:00,57077,,6600,First Financial Bank,57077,"Westfield Bank, FSB",6600,First Financial Bank,FI,223
+2025029438,810,Participated in Absorbtion/Consolidation/Merger,2025-11-01T00:00:00,2025-12-10T00:00:00,6600,,6600,First Financial Bank,57077,"Westfield Bank, FSB",6600,First Financial Bank,FI,810
+2025029439,223,Merger -Without Assistance,2025-11-01T00:00:00,2025-12-10T00:00:00,59070,,32773,Eastern Bank,59070,HarborOne Bank,32773,Eastern Bank,FI,223
+2025029439,810,Participated in Absorbtion/Consolidation/Merger,2025-11-01T00:00:00,2025-12-10T00:00:00,32773,,32773,Eastern Bank,59070,HarborOne Bank,32773,Eastern Bank,FI,810
+2025029472,223,Merger -Without Assistance,2025-10-01T00:00:00,2025-12-11T00:00:00,33440,,131,Seacoast National Bank,33440,Citizens First Bank,131,Seacoast National Bank,FI,223
+2025029472,810,Participated in Absorbtion/Consolidation/Merger,2025-10-01T00:00:00,2025-12-11T00:00:00,131,,131,Seacoast National Bank,33440,Citizens First Bank,131,Seacoast National Bank,FI,810
+2025029845,712,Branch Purchased,2025-09-30T00:00:00,2025-12-17T00:00:00,41374,,41374,Legacy Community Federal Credit Union,30166,First Community Bank of Cullman,,,FI,712
+2025030025,223,Merger -Without Assistance,2025-12-16T00:00:00,2025-12-22T00:00:00,5380,,5384,First Community Bank,5380,First Bank of Bancroft,5384,First Community Bank,FI,223
+2025030025,810,Participated in Absorbtion/Consolidation/Merger,2025-12-16T00:00:00,2025-12-22T00:00:00,5384,,5384,First Community Bank,5380,First Bank of Bancroft,5384,First Community Bank,FI,810
+2025030127,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-12-15T00:00:00,2025-12-23T00:00:00,,,16040,Generations Bank,59149,Generations Commercial Bank,16040,Generations Bank,FI,224
+2025030127,810,Participated in Absorbtion/Consolidation/Merger,2025-12-15T00:00:00,2025-12-23T00:00:00,16040,,16040,Generations Bank,59149,Generations Commercial Bank,16040,Generations Bank,FI,810
+2026000130,223,Merger -Without Assistance,2025-12-05T00:00:00,2026-01-05T00:00:00,8513,,14382,Fidelity Bank & Trust,8513,State Savings Bank,14382,Fidelity Bank & Trust,FI,223
+2026000130,810,Participated in Absorbtion/Consolidation/Merger,2025-12-05T00:00:00,2026-01-05T00:00:00,14382,,14382,Fidelity Bank & Trust,8513,State Savings Bank,14382,Fidelity Bank & Trust,FI,810
+2026000132,223,Merger -Without Assistance,2025-12-05T00:00:00,2026-01-05T00:00:00,26519,,14382,Fidelity Bank & Trust,26519,Frost State Bank,14382,Fidelity Bank & Trust,FI,223
+2026000132,810,Participated in Absorbtion/Consolidation/Merger,2025-12-05T00:00:00,2026-01-05T00:00:00,14382,,14382,Fidelity Bank & Trust,26519,Frost State Bank,14382,Fidelity Bank & Trust,FI,810
+2026000389,223,Merger -Without Assistance,2025-11-11T00:00:00,2026-01-06T00:00:00,12293,,16161,"Campbell County Bank, Inc.",12293,Farmers State Bank,16161,"Campbell County Bank, Inc.",FI,223
+2026000389,810,Participated in Absorbtion/Consolidation/Merger,2025-11-11T00:00:00,2026-01-06T00:00:00,16161,,16161,"Campbell County Bank, Inc.",12293,Farmers State Bank,16161,"Campbell County Bank, Inc.",FI,810
+2026000445,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2025-12-13T00:00:00,2026-01-08T00:00:00,,,15264,Peoples Savings Bank of Rhineland,16103,farmbank,15264,Peoples Savings Bank of Rhineland,FI,224
+2026000445,810,Participated in Absorbtion/Consolidation/Merger,2025-12-13T00:00:00,2026-01-08T00:00:00,15264,,15264,Peoples Savings Bank of Rhineland,16103,farmbank,15264,Peoples Savings Bank of Rhineland,FI,810
+2026000676,712,Branch Purchased,2025-12-31T00:00:00,2026-01-12T00:00:00,42683,,42683,HANSCOM FEDERAL CREDIT UNION,12885,The Peoples Bank,,,FI,712
+2026000978,712,Branch Purchased,2025-12-31T00:00:00,2026-01-14T00:00:00,40965,,40965,MARION AND POLK SCHOOLS CREDIT UNION,58428,Lewis & Clark Bank,,,FI,712
+2026006286,223,Merger -Without Assistance,2025-08-01T00:00:00,2026-03-13T00:00:00,46424,,48730,ELGA CREDIT UNION,46424,COPOCO CREDIT UNION,48730,ELGA CREDIT UNION,FI,223
+2026006286,810,Participated in Absorbtion/Consolidation/Merger,2025-08-01T00:00:00,2026-03-13T00:00:00,48730,,48730,ELGA CREDIT UNION,46424,COPOCO CREDIT UNION,48730,ELGA CREDIT UNION,FI,810
+2026000125,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-05T00:00:00,15545,,25858,Equity Bank,15545,Frontier Bank,25858,Equity Bank,FI,223
+2026000125,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-05T00:00:00,25858,,25858,Equity Bank,15545,Frontier Bank,25858,Equity Bank,FI,810
+2026000384,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-06T00:00:00,90146,,90282,Cornerstone Bank,90146,Athol Savings Bank,90282,Cornerstone Bank,FI,223
+2026000384,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-06T00:00:00,90282,,90282,Cornerstone Bank,90146,Athol Savings Bank,90282,Cornerstone Bank,FI,810
+2026000390,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-06T00:00:00,58230,,1027,Fm Bank And Trust,58230,First Missouri State Bank of Cape County,1027,Fm Bank And Trust,FI,223
+2026000390,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-06T00:00:00,1027,,1027,Fm Bank And Trust,58230,First Missouri State Bank of Cape County,1027,Fm Bank And Trust,FI,810
+2026000393,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-06T00:00:00,19349,,1027,Fm Bank And Trust,19349,First Missouri Bank of SEMO,1027,Fm Bank And Trust,FI,223
+2026000393,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-06T00:00:00,1027,,1027,Fm Bank And Trust,19349,First Missouri Bank of SEMO,1027,Fm Bank And Trust,FI,810
+2026000395,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-06T00:00:00,8282,,1027,Fm Bank And Trust,8282,First Missouri State Bank,1027,Fm Bank And Trust,FI,223
+2026000395,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-06T00:00:00,1027,,1027,Fm Bank And Trust,8282,First Missouri State Bank,1027,Fm Bank And Trust,FI,810
+2026000410,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-07T00:00:00,16228,,16825,Sunmark Community Bank,16228,Wheeler County State Bank,16825,Sunmark Community Bank,FI,223
+2026000410,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-07T00:00:00,16825,,16825,Sunmark Community Bank,16228,Wheeler County State Bank,16825,Sunmark Community Bank,FI,810
+2026000414,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-07T00:00:00,9322,,8235,Planters Bank & Trust Company,9322,Cross Keys Bank,8235,Planters Bank & Trust Company,FI,223
+2026000414,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-07T00:00:00,8235,,8235,Planters Bank & Trust Company,9322,Cross Keys Bank,8235,Planters Bank & Trust Company,FI,810
+2026000415,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-01-01T00:00:00,2026-01-07T00:00:00,,,22451,Volunteer Bank,9963,F&M Bank,22451,Lawrence Bank,FI,224
+2026000415,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-07T00:00:00,22451,,22451,Volunteer Bank,9963,F&M Bank,22451,Lawrence Bank,FI,810
+2026000448,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-08T00:00:00,28808,,6600,First Financial Bank,28808,"BankFinancial, National Association",6600,First Financial Bank,FI,223
+2026000448,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-08T00:00:00,6600,,6600,First Financial Bank,28808,"BankFinancial, National Association",6600,First Financial Bank,FI,810
+2026000467,712,Branch Purchased,2026-01-01T00:00:00,2026-01-08T00:00:00,48239,,48239,Zeal Credit Union,57192,Gogebic Range Bank,,,FI,712
+2026000508,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-01-05T00:00:00,2026-01-09T00:00:00,,,698,Wayne Bank,30085,Presence Bank,698,Wayne Bank,FI,224
+2026000508,810,Participated in Absorbtion/Consolidation/Merger,2026-01-05T00:00:00,2026-01-09T00:00:00,698,,698,Wayne Bank,30085,Presence Bank,698,Wayne Bank,FI,810
+2026000517,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-09T00:00:00,26543,,58316,"Investar Bank, National Association",26543,First National Bank,58316,"Investar Bank, National Association",FI,223
+2026000517,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-09T00:00:00,58316,,58316,"Investar Bank, National Association",26543,First National Bank,58316,"Investar Bank, National Association",FI,810
+2026000518,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-09T00:00:00,58486,,24998,Commerce Bank,58486,FineMark National Bank & Trust,24998,Commerce Bank,FI,223
+2026000518,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-09T00:00:00,24998,,24998,Commerce Bank,58486,FineMark National Bank & Trust,24998,Commerce Bank,FI,810
+2026000662,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-12T00:00:00,22139,,58228,b1BANK,22139,Progressive Bank,58228,b1BANK,FI,223
+2026000662,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-12T00:00:00,58228,,58228,b1BANK,22139,Progressive Bank,58228,b1BANK,FI,810
+2026000668,223,Merger -Without Assistance,2026-01-02T00:00:00,2026-01-12T00:00:00,873,,35583,Pinnacle Bank,873,Synovus Bank,35583,Pinnacle Bank,FI,223
+2026000668,810,Participated in Absorbtion/Consolidation/Merger,2026-01-02T00:00:00,2026-01-12T00:00:00,35583,,35583,Pinnacle Bank,873,Synovus Bank,35583,Pinnacle Bank,FI,810
+2026000673,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-01-01T00:00:00,2026-01-12T00:00:00,,,8842,Grand Marais State Bank,8848,CenBank,8842,Grand Marais State Bank,FI,224
+2026000673,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-12T00:00:00,8842,,8842,Grand Marais State Bank,8848,CenBank,8842,Grand Marais State Bank,FI,810
+2026000934,712,Branch Purchased,2026-01-01T00:00:00,2026-01-13T00:00:00,36624,,36624,NUMARK CREDIT UNION,3693,The Lemont National Bank,,,FI,712
+2026000975,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-14T00:00:00,5285,,5304,"Bank First, N.A.",5285,The First National Bank and Trust Company,5304,"Bank First, N.A.",FI,223
+2026000975,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-14T00:00:00,5304,,5304,"Bank First, N.A.",5285,The First National Bank and Trust Company,5304,"Bank First, N.A.",FI,810
+2026000983,223,Merger -Without Assistance,2026-01-09T00:00:00,2026-01-14T00:00:00,58103,,34047,First Community Bank,58103,Signature Bank of Georgia,34047,First Community Bank,FI,223
+2026000983,810,Participated in Absorbtion/Consolidation/Merger,2026-01-09T00:00:00,2026-01-14T00:00:00,34047,,34047,First Community Bank,58103,Signature Bank of Georgia,34047,First Community Bank,FI,810
+2026000984,223,Merger -Without Assistance,2026-01-07T00:00:00,2026-01-14T00:00:00,1210,,59052,NBH Bank,1210,Vista Bank,59052,NBH Bank,FI,223
+2026000984,810,Participated in Absorbtion/Consolidation/Merger,2026-01-07T00:00:00,2026-01-14T00:00:00,59052,,59052,NBH Bank,1210,Vista Bank,59052,NBH Bank,FI,810
+2026001198,223,Merger -Without Assistance,2026-01-01T00:00:00,2026-01-16T00:00:00,20241,,16835,Prosperity Bank,20241,"American Bank, National Association",16835,Prosperity Bank,FI,223
+2026001198,810,Participated in Absorbtion/Consolidation/Merger,2026-01-01T00:00:00,2026-01-16T00:00:00,16835,,16835,Prosperity Bank,20241,"American Bank, National Association",16835,Prosperity Bank,FI,810
+2026002044,223,Merger -Without Assistance,2026-01-24T00:00:00,2026-01-28T00:00:00,16620,,13012,First Community Bank,16620,"Union Bank, Inc.",13012,First Community Bank,FI,223
+2026002044,810,Participated in Absorbtion/Consolidation/Merger,2026-01-24T00:00:00,2026-01-28T00:00:00,13012,,13012,First Community Bank,16620,"Union Bank, Inc.",13012,First Community Bank,FI,810
+2026002845,211,Failure - Whole Institution,2026-01-30T00:00:00,2026-02-02T00:00:00,,,20179,First Independence Bank,57488,Metropolitan Capital Bank & Trust,20179,First Independence Bank,FI,211
+2026002845,811,Participated in FDIC Assisted Merger,2026-01-30T00:00:00,2026-02-02T00:00:00,20179,,20179,First Independence Bank,57488,Metropolitan Capital Bank & Trust,20179,First Independence Bank,FI,811
+2026004334,223,Merger -Without Assistance,2026-01-16T00:00:00,2026-02-11T00:00:00,5699,,147,Century Bank and Trust,5699,Bank of Wrightsville,147,Century Bank and Trust,FI,223
+2026004334,810,Participated in Absorbtion/Consolidation/Merger,2026-01-16T00:00:00,2026-02-11T00:00:00,147,,147,Century Bank and Trust,5699,Bank of Wrightsville,147,Century Bank and Trust,FI,810
+2026004343,712,Branch Purchased,2026-02-01T00:00:00,2026-02-11T00:00:00,53138,,53138,Frontier Credit Union,22502,First Citizens Bank of Butte,,,FI,712
+2026004346,223,Merger -Without Assistance,2026-02-01T00:00:00,2026-02-11T00:00:00,34456,,58716,Third Coast Bank,34456,"Keystone Bank, SSB",58716,Third Coast Bank,FI,223
+2026004346,810,Participated in Absorbtion/Consolidation/Merger,2026-02-01T00:00:00,2026-02-11T00:00:00,58716,,58716,Third Coast Bank,34456,"Keystone Bank, SSB",58716,Third Coast Bank,FI,810
+2026004591,223,Merger -Without Assistance,2026-02-01T00:00:00,2026-02-13T00:00:00,29961,,4365,First Merchants Bank,29961,First Savings Bank,4365,First Merchants Bank,FI,223
+2026004591,810,Participated in Absorbtion/Consolidation/Merger,2026-02-01T00:00:00,2026-02-13T00:00:00,4365,,4365,First Merchants Bank,29961,First Savings Bank,4365,First Merchants Bank,FI,810
+2026004592,223,Merger -Without Assistance,2026-02-01T00:00:00,2026-02-13T00:00:00,31121,,7493,The Ephrata National Bank,31121,Cecil Bank,7493,The Ephrata National Bank,FI,223
+2026004592,810,Participated in Absorbtion/Consolidation/Merger,2026-02-01T00:00:00,2026-02-13T00:00:00,7493,,7493,The Ephrata National Bank,31121,Cecil Bank,7493,The Ephrata National Bank,FI,810
+2026004810,223,Merger -Without Assistance,2026-01-31T00:00:00,2026-02-18T00:00:00,6161,,29012,Heritage Bank,6161,Kitsap Bank,29012,Heritage Bank,FI,223
+2026004810,810,Participated in Absorbtion/Consolidation/Merger,2026-01-31T00:00:00,2026-02-18T00:00:00,29012,,29012,Heritage Bank,6161,Kitsap Bank,29012,Heritage Bank,FI,810
+2026004811,223,Merger -Without Assistance,2026-01-12T00:00:00,2026-02-18T00:00:00,57095,,35095,TowneBank,57095,Dogwood State Bank,35095,TowneBank,FI,223
+2026004811,810,Participated in Absorbtion/Consolidation/Merger,2026-01-12T00:00:00,2026-02-18T00:00:00,35095,,35095,TowneBank,57095,Dogwood State Bank,35095,TowneBank,FI,810
+2026004813,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-02-13T00:00:00,2026-02-18T00:00:00,,,27476,BancFirst,34606,American Bank of Oklahoma,27476,BancFirst,FI,224
+2026004813,810,Participated in Absorbtion/Consolidation/Merger,2026-02-13T00:00:00,2026-02-18T00:00:00,27476,,27476,BancFirst,34606,American Bank of Oklahoma,27476,BancFirst,FI,810
+2026004916,223,Merger -Without Assistance,2026-02-01T00:00:00,2026-02-19T00:00:00,983,,6672,"Fifth Third Bank, National Association",983,Comerica Bank,6672,"Fifth Third Bank, National Association",FI,223
+2026004916,810,Participated in Absorbtion/Consolidation/Merger,2026-02-01T00:00:00,2026-02-19T00:00:00,6672,,6672,"Fifth Third Bank, National Association",983,Comerica Bank,6672,"Fifth Third Bank, National Association",FI,810
+2026004917,223,Merger -Without Assistance,2026-02-01T00:00:00,2026-02-19T00:00:00,1596,,6672,"Fifth Third Bank, National Association",1596,"Comerica Bank & Trust, National Association",6672,"Fifth Third Bank, National Association",FI,223
+2026004917,810,Participated in Absorbtion/Consolidation/Merger,2026-02-01T00:00:00,2026-02-19T00:00:00,6672,,6672,"Fifth Third Bank, National Association",1596,"Comerica Bank & Trust, National Association",6672,"Fifth Third Bank, National Association",FI,810
+2026004918,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-02-13T00:00:00,2026-02-19T00:00:00,,,11415,Harvest Bank,9337,"Citizens State Bank of Waverly, Inc.",11415,Harvest Bank,FI,224
+2026004918,810,Participated in Absorbtion/Consolidation/Merger,2026-02-13T00:00:00,2026-02-19T00:00:00,11415,,11415,Harvest Bank,9337,"Citizens State Bank of Waverly, Inc.",11415,Harvest Bank,FI,810
+2026004973,712,Branch Purchased,2026-02-13T00:00:00,2026-02-23T00:00:00,4779,,4779,"Dream First Bank, National Association",18118,Bank of the Plains,,,FI,712
+2026005285,223,Merger -Without Assistance,2026-02-01T00:00:00,2026-02-25T00:00:00,11813,,6560,The Huntington National Bank,11813,Cadence Bank,6560,The Huntington National Bank,FI,223
+2026005285,810,Participated in Absorbtion/Consolidation/Merger,2026-02-01T00:00:00,2026-02-25T00:00:00,6560,,6560,The Huntington National Bank,11813,Cadence Bank,6560,The Huntington National Bank,FI,810
+2026005510,223,Merger -Without Assistance,2026-01-16T00:00:00,2026-02-27T00:00:00,25161,,12761,F&M Bank,25161,Community National Bank of Okarche,12761,F&M Bank,FI,223
+2026005510,810,Participated in Absorbtion/Consolidation/Merger,2026-01-16T00:00:00,2026-02-27T00:00:00,12761,,12761,F&M Bank,25161,Community National Bank of Okarche,12761,F&M Bank,FI,810
+2026005511,223,Merger -Without Assistance,2026-01-23T00:00:00,2026-02-27T00:00:00,18216,,17446,Maverick Bank,18216,Tejas Bank,17446,Maverick Bank,FI,223
+2026005511,810,Participated in Absorbtion/Consolidation/Merger,2026-01-23T00:00:00,2026-02-27T00:00:00,17446,,17446,Maverick Bank,18216,Tejas Bank,17446,Maverick Bank,FI,810
+2026005658,223,Merger -Without Assistance,2026-03-01T00:00:00,2026-03-03T00:00:00,3775,,20369,Heartland Bank and Trust Company,3775,"CNB Bank and Trust, N.A.",20369,Heartland Bank and Trust Company,FI,223
+2026005658,810,Participated in Absorbtion/Consolidation/Merger,2026-03-01T00:00:00,2026-03-03T00:00:00,20369,,20369,Heartland Bank and Trust Company,3775,"CNB Bank and Trust, N.A.",20369,Heartland Bank and Trust Company,FI,810
+2026005674,712,Branch Purchased,2026-01-23T00:00:00,2026-03-03T00:00:00,10618,,10618,BTC Bank,14025,Connections Bank,,,FI,712
+2026005679,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-02-20T00:00:00,2026-03-03T00:00:00,,,10191,PrinsBank,8535,First Community Bank,10191,PrinsBank,FI,224
+2026005679,810,Participated in Absorbtion/Consolidation/Merger,2026-02-20T00:00:00,2026-03-03T00:00:00,10191,,10191,PrinsBank,8535,First Community Bank,10191,PrinsBank,FI,810
+2026005681,712,Branch Purchased,2026-01-23T00:00:00,2026-03-03T00:00:00,14025,,14025,Connections Bank,10618,BTC Bank,,,FI,712
+2026005832,223,Merger -Without Assistance,2026-03-01T00:00:00,2026-03-05T00:00:00,1778,,12594,PB&T Bank,1778,The State Bank,12594,PB&T Bank,FI,223
+2026005832,810,Participated in Absorbtion/Consolidation/Merger,2026-03-01T00:00:00,2026-03-05T00:00:00,12594,,12594,PB&T Bank,1778,The State Bank,12594,PB&T Bank,FI,810
+2026005833,223,Merger -Without Assistance,2026-03-01T00:00:00,2026-03-05T00:00:00,57684,,4382,"First Financial Bank, National Association",57684,CedarStone Bank,4382,"First Financial Bank, National Association",FI,223
+2026005833,810,Participated in Absorbtion/Consolidation/Merger,2026-03-01T00:00:00,2026-03-05T00:00:00,4382,,4382,"First Financial Bank, National Association",57684,CedarStone Bank,4382,"First Financial Bank, National Association",FI,810
+2026006018,223,Merger -Without Assistance,2026-02-01T00:00:00,2026-03-09T00:00:00,4972,,6653,The Park National Bank,4972,First Citizens National Bank,6653,The Park National Bank,FI,223
+2026006018,810,Participated in Absorbtion/Consolidation/Merger,2026-02-01T00:00:00,2026-03-09T00:00:00,6653,,6653,The Park National Bank,4972,First Citizens National Bank,6653,The Park National Bank,FI,810
+2026006019,223,Merger -Without Assistance,2026-02-27T00:00:00,2026-03-09T00:00:00,57363,,19184,Hilltop National Bank,57363,Cheyenne State Bank,19184,Hilltop National Bank,FI,223
+2026006019,810,Participated in Absorbtion/Consolidation/Merger,2026-02-27T00:00:00,2026-03-09T00:00:00,19184,,19184,Hilltop National Bank,57363,Cheyenne State Bank,19184,Hilltop National Bank,FI,810
+2026006153,223,Merger -Without Assistance,2026-03-02T00:00:00,2026-03-11T00:00:00,13716,,6540,The Farmers National Bank of Canfield,13716,The Middlefield Banking Company,6540,The Farmers National Bank of Canfield,FI,223
+2026006153,810,Participated in Absorbtion/Consolidation/Merger,2026-03-02T00:00:00,2026-03-11T00:00:00,6540,,6540,The Farmers National Bank of Canfield,13716,The Middlefield Banking Company,6540,The Farmers National Bank of Canfield,FI,810
+2026006155,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-02-02T00:00:00,2026-03-11T00:00:00,,,16835,Prosperity Bank,58581,Texas Partners Bank,16835,Prosperity Bank,FI,224
+2026006155,810,Participated in Absorbtion/Consolidation/Merger,2026-02-02T00:00:00,2026-03-11T00:00:00,16835,,16835,Prosperity Bank,58581,Texas Partners Bank,16835,Prosperity Bank,FI,810
+2026006292,712,Branch Purchased,2026-03-07T00:00:00,2026-03-13T00:00:00,48730,,48730,ELGA CREDIT UNION,34233,Marine Bank & Trust Company,,,FI,712
+2026006340,223,Merger -Without Assistance,2026-02-13T00:00:00,2026-03-16T00:00:00,5283,,14445,Farmers and Merchants Union Bank,5283,American Bank of Beaver Dam,14445,Farmers and Merchants Union Bank,FI,223
+2026006340,810,Participated in Absorbtion/Consolidation/Merger,2026-02-13T00:00:00,2026-03-16T00:00:00,14445,,14445,Farmers and Merchants Union Bank,5283,American Bank of Beaver Dam,14445,Farmers and Merchants Union Bank,FI,810
+2026006355,223,Merger -Without Assistance,2026-02-28T00:00:00,2026-03-16T00:00:00,5730,,3799,The Bradford National Bank of Greenville,5730,State Bank of St. Jacob,3799,The Bradford National Bank of Greenville,FI,223
+2026006355,810,Participated in Absorbtion/Consolidation/Merger,2026-02-28T00:00:00,2026-03-16T00:00:00,3799,,3799,The Bradford National Bank of Greenville,5730,State Bank of St. Jacob,3799,The Bradford National Bank of Greenville,FI,810
+2026006487,223,Merger -Without Assistance,2026-03-12T00:00:00,2026-03-17T00:00:00,29675,,55130,"Servbank, National Association",29675,Iroquois Federal Savings and Loan Association,55130,"Servbank, National Association",FI,223
+2026006487,810,Participated in Absorbtion/Consolidation/Merger,2026-03-12T00:00:00,2026-03-17T00:00:00,55130,,55130,"Servbank, National Association",29675,Iroquois Federal Savings and Loan Association,55130,"Servbank, National Association",FI,810
+2026006562,223,Merger -Without Assistance,2026-01-16T00:00:00,2026-03-18T00:00:00,8822,,34384,Premier Bank,8822,Adrian State Bank,34384,Premier Bank,FI,223
+2026006562,810,Participated in Absorbtion/Consolidation/Merger,2026-01-16T00:00:00,2026-03-18T00:00:00,34384,,34384,Premier Bank,8822,Adrian State Bank,34384,Premier Bank,FI,810
+2026006675,223,Merger -Without Assistance,2026-03-13T00:00:00,2026-03-20T00:00:00,17205,,34211,Platte Valley Bank,17205,The Potter State Bank of Potter,34211,Platte Valley Bank,FI,223
+2026006675,810,Participated in Absorbtion/Consolidation/Merger,2026-03-13T00:00:00,2026-03-20T00:00:00,34211,,34211,Platte Valley Bank,17205,The Potter State Bank of Potter,34211,Platte Valley Bank,FI,810
+2026006753,223,Merger -Without Assistance,2026-03-10T00:00:00,2026-03-23T00:00:00,10467,,5768,The Fountain Trust Company,10467,The Gifford State Bank,5768,The Fountain Trust Company,FI,223
+2026006753,810,Participated in Absorbtion/Consolidation/Merger,2026-03-10T00:00:00,2026-03-23T00:00:00,5768,,5768,The Fountain Trust Company,10467,The Gifford State Bank,5768,The Fountain Trust Company,FI,810
+2026006772,712,Branch Purchased,2026-03-01T00:00:00,2026-03-23T00:00:00,37592,,37592,MIDFLORIDA CREDIT UNION,58694,Prime Meridian Bank,,,FI,712
+2026007004,712,Branch Purchased,2026-01-01T00:00:00,2026-03-24T00:00:00,31462,,31462,ESL Federal Credit Union,16040,Generations Bank,,,FI,712
+2026007137,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-03-20T00:00:00,2026-03-25T00:00:00,,,1617,The Bank of Missouri,9797,M1 Bank,1617,The Bank of Missouri,FI,224
+2026007137,810,Participated in Absorbtion/Consolidation/Merger,2026-03-20T00:00:00,2026-03-25T00:00:00,1617,,1617,The Bank of Missouri,9797,M1 Bank,1617,The Bank of Missouri,FI,810
+2026007604,223,Merger -Without Assistance,2026-03-20T00:00:00,2026-03-31T00:00:00,13018,,6760,"Citizens Bank of West Virginia, Inc.",13018,Miners & Merchants Bank,6760,"Citizens Bank of West Virginia, Inc.",FI,223
+2026007604,810,Participated in Absorbtion/Consolidation/Merger,2026-03-20T00:00:00,2026-03-31T00:00:00,6760,,6760,"Citizens Bank of West Virginia, Inc.",13018,Miners & Merchants Bank,6760,"Citizens Bank of West Virginia, Inc.",FI,810
+2026007607,223,Merger -Without Assistance,2026-03-01T00:00:00,2026-03-31T00:00:00,19788,,1213,"Cornerstone Capital Bank, SSB",19788,Peoples Bank,1213,"Cornerstone Capital Bank, SSB",FI,223
+2026007607,810,Participated in Absorbtion/Consolidation/Merger,2026-03-01T00:00:00,2026-03-31T00:00:00,1213,,1213,"Cornerstone Capital Bank, SSB",19788,Peoples Bank,1213,"Cornerstone Capital Bank, SSB",FI,810
+2026007609,223,Merger -Without Assistance,2026-02-27T00:00:00,2026-03-31T00:00:00,35456,,9889,Mid Penn Bank,35456,1st Colonial Community Bank,9889,Mid Penn Bank,FI,223
+2026007609,810,Participated in Absorbtion/Consolidation/Merger,2026-02-27T00:00:00,2026-03-31T00:00:00,9889,,9889,Mid Penn Bank,35456,1st Colonial Community Bank,9889,Mid Penn Bank,FI,810
+2026007893,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-02T00:00:00,58615,,7714,QNB Bank,58615,The Victory Bank,7714,QNB Bank,FI,223
+2026007893,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-02T00:00:00,7714,,7714,QNB Bank,58615,The Victory Bank,7714,QNB Bank,FI,810
+2026007998,712,Branch Purchased,2026-04-01T00:00:00,2026-04-03T00:00:00,51117,,51117,ONPATH FEDERAL CREDIT UNION,29577,Heritage Bank of St Tammany,,,FI,712
+2026008002,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-03T00:00:00,17910,,14065,Vallant Bank,17910,Morris Bank,14065,Vallant Bank,FI,223
+2026008002,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-03T00:00:00,14065,,14065,Vallant Bank,17910,Morris Bank,14065,Vallant Bank,FI,810
+2026008187,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-07T00:00:00,4931,,11241,Centennial Bank,4931,Mountain Commerce Bank,11241,Centennial Bank,FI,223
+2026008187,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-07T00:00:00,11241,,11241,Centennial Bank,4931,Mountain Commerce Bank,11241,Centennial Bank,FI,810
+2026008192,223,Merger -Without Assistance,2026-03-20T00:00:00,2026-04-07T00:00:00,31479,,2832,First Bank of Alabama,31479,First Fidelity Bank,2832,First Bank of Alabama,FI,223
+2026008192,810,Participated in Absorbtion/Consolidation/Merger,2026-03-20T00:00:00,2026-04-07T00:00:00,2832,,2832,First Bank of Alabama,31479,First Fidelity Bank,2832,First Bank of Alabama,FI,810
+2026008259,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-08T00:00:00,27153,,15310,"CB&S Bank, Inc.",27153,"Citizens Bank & Trust, Inc.",15310,"CB&S Bank, Inc.",FI,223
+2026008259,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-08T00:00:00,15310,,15310,"CB&S Bank, Inc.",27153,"Citizens Bank & Trust, Inc.",15310,"CB&S Bank, Inc.",FI,810
+2026008268,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-08T00:00:00,58647,,4767,"Sunflower Bank, National Association",58647,First Foundation Bank,4767,"Sunflower Bank, National Association",FI,223
+2026008268,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-08T00:00:00,4767,,4767,"Sunflower Bank, National Association",58647,First Foundation Bank,4767,"Sunflower Bank, National Association",FI,810
+2026008583,223,Merger -Without Assistance,2026-04-08T00:00:00,2026-04-13T00:00:00,26340,,16402,The Bennington State Bank,26340,Flint Hills Bank,16402,The Bennington State Bank,FI,223
+2026008583,810,Participated in Absorbtion/Consolidation/Merger,2026-04-08T00:00:00,2026-04-13T00:00:00,16402,,16402,The Bennington State Bank,26340,Flint Hills Bank,16402,The Bennington State Bank,FI,810
+2026008694,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-14T00:00:00,9327,,12203,Merchants & Marine Bank,9327,Farmers-Merchants Bank & Trust Company,12203,Merchants & Marine Bank,FI,223
+2026008694,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-14T00:00:00,12203,,12203,Merchants & Marine Bank,9327,Farmers-Merchants Bank & Trust Company,12203,Merchants & Marine Bank,FI,810
+2026008702,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-14T00:00:00,7018,,6959,Ballston Spa National Bank,7018,The National Bank of Coxsackie,6959,Ballston Spa National Bank,FI,223
+2026008702,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-14T00:00:00,6959,,6959,Ballston Spa National Bank,7018,The National Bank of Coxsackie,6959,Ballston Spa National Bank,FI,810
+2026008953,223,Merger -Without Assistance,2026-04-03T00:00:00,2026-04-15T00:00:00,27132,,23030,Community West Bank,27132,United Security Bank,23030,Community West Bank,FI,223
+2026008953,810,Participated in Absorbtion/Consolidation/Merger,2026-04-03T00:00:00,2026-04-15T00:00:00,23030,,23030,Community West Bank,27132,United Security Bank,23030,Community West Bank,FI,810
+2026008954,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-04-15T00:00:00,3178,,25103,City Bank,3178,Bank of Houston,25103,City Bank,FI,223
+2026008954,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-15T00:00:00,25103,,25103,City Bank,3178,Bank of Houston,25103,City Bank,FI,810
+2026008962,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-04-01T00:00:00,2026-04-15T00:00:00,,,5296,"Associated Bank, National Association",19300,American National Bank,5296,"Associated Bank, National Association",FI,224
+2026008962,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-04-15T00:00:00,5296,,5296,"Associated Bank, National Association",19300,American National Bank,5296,"Associated Bank, National Association",FI,810
+2026008964,223,Merger -Without Assistance,2026-02-13T00:00:00,2026-04-15T00:00:00,14843,,57038,Nicolet National Bank,14843,MidWestOne Bank,57038,Nicolet National Bank,FI,223
+2026008964,810,Participated in Absorbtion/Consolidation/Merger,2026-02-13T00:00:00,2026-04-15T00:00:00,57038,,57038,Nicolet National Bank,14843,MidWestOne Bank,57038,Nicolet National Bank,FI,810
+2026009062,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-03-23T00:00:00,2026-04-16T00:00:00,,,8439,Centennial Bank,34457,The Bank of Jackson,8439,Centennial Bank,FI,224
+2026009062,810,Participated in Absorbtion/Consolidation/Merger,2026-03-23T00:00:00,2026-04-16T00:00:00,8439,,8439,Centennial Bank,34457,The Bank of Jackson,8439,Centennial Bank,FI,810
+2026009063,223,Merger -Without Assistance,2026-04-07T00:00:00,2026-04-16T00:00:00,16110,,16339,The Tri-County Bank,16110,Butte State Bank,16339,The Tri-County Bank,FI,223
+2026009063,810,Participated in Absorbtion/Consolidation/Merger,2026-04-07T00:00:00,2026-04-16T00:00:00,16339,,16339,The Tri-County Bank,16110,Butte State Bank,16339,The Tri-County Bank,FI,810
+2026010338,712,Branch Purchased,2026-03-20T00:00:00,2026-04-24T00:00:00,10594,,10594,Bank of Franklin,5903,BankPlus,,,FI,712
+2026010558,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-04-18T00:00:00,2026-04-27T00:00:00,,,11521,Chickasaw Community Bank,22855,Oklahoma Heritage Bank,11521,Chickasaw Community Bank,FI,224
+2026010558,810,Participated in Absorbtion/Consolidation/Merger,2026-04-18T00:00:00,2026-04-27T00:00:00,11521,,11521,Chickasaw Community Bank,22855,Oklahoma Heritage Bank,11521,Chickasaw Community Bank,FI,810
+2026010559,223,Merger -Without Assistance,2026-04-22T00:00:00,2026-04-27T00:00:00,3029,,3017,High Plains Bank,3029,The First National Bank of Hugo,3017,High Plains Bank,FI,223
+2026010559,810,Participated in Absorbtion/Consolidation/Merger,2026-04-22T00:00:00,2026-04-27T00:00:00,3017,,3017,High Plains Bank,3029,The First National Bank of Hugo,3017,High Plains Bank,FI,810
+2026011765,223,Merger -Without Assistance,2026-04-22T00:00:00,2026-05-04T00:00:00,9794,,4540,HNB National Bank,9794,Kearney Trust Company,4540,HNB National Bank,FI,223
+2026011765,810,Participated in Absorbtion/Consolidation/Merger,2026-04-22T00:00:00,2026-05-04T00:00:00,4540,,4540,HNB National Bank,9794,Kearney Trust Company,4540,HNB National Bank,FI,810
+2026011767,211,Failure - Whole Institution,2026-05-01T00:00:00,2026-05-04T00:00:00,,,57931,Anchor Bank,25796,Community Bank and Trust - West Georgia,57931,Anchor Bank,FI,211
+2026011767,811,Participated in FDIC Assisted Merger,2026-05-01T00:00:00,2026-05-04T00:00:00,57931,,57931,Anchor Bank,25796,Community Bank and Trust - West Georgia,57931,Anchor Bank,FI,811
+2026011806,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-05-03T00:00:00,2026-05-05T00:00:00,,,13565,Bank of Sun Prairie,10374,Banner Banks,13565,Bank of Sun Prairie,FI,224
+2026011806,810,Participated in Absorbtion/Consolidation/Merger,2026-05-03T00:00:00,2026-05-05T00:00:00,13565,,13565,Bank of Sun Prairie,10374,Banner Banks,13565,Bank of Sun Prairie,FI,810
+2026012147,712,Branch Purchased,2026-04-10T00:00:00,2026-05-05T00:00:00,5415,,5415,Security First Bank,1105,First Interstate Bank,,,FI,712
+2026012556,223,Merger -Without Assistance,2026-05-01T00:00:00,2026-05-08T00:00:00,14863,,11578,Burke & Herbert Bank & Trust Company,14863,LINKBANK,11578,Burke & Herbert Bank & Trust Company,FI,223
+2026012556,810,Participated in Absorbtion/Consolidation/Merger,2026-05-01T00:00:00,2026-05-08T00:00:00,11578,,11578,Burke & Herbert Bank & Trust Company,14863,LINKBANK,11578,Burke & Herbert Bank & Trust Company,FI,810
+2026012894,223,Merger -Without Assistance,2026-04-17T00:00:00,2026-05-11T00:00:00,33905,,21716,"Citizens Business Bank, National Association",33905,Heritage Bank of Commerce,21716,"Citizens Business Bank, National Association",FI,223
+2026012894,810,Participated in Absorbtion/Consolidation/Merger,2026-04-17T00:00:00,2026-05-11T00:00:00,21716,,21716,"Citizens Business Bank, National Association",33905,Heritage Bank of Commerce,21716,"Citizens Business Bank, National Association",FI,810
+2026013157,712,Branch Purchased,2026-05-01T00:00:00,2026-05-12T00:00:00,46907,,46907,MICHIGAN STATE UNIVERSITY FEDERAL CREDIT UNION,58556,Gold Coast Bank,,,FI,712
+2026013222,223,Merger -Without Assistance,2026-05-08T00:00:00,2026-05-13T00:00:00,4649,,4752,The First Security Bank,4649,Conway Bank,4752,The First Security Bank,FI,223
+2026013222,810,Participated in Absorbtion/Consolidation/Merger,2026-05-08T00:00:00,2026-05-13T00:00:00,4752,,4752,The First Security Bank,4649,Conway Bank,4752,The First Security Bank,FI,810
+2026013223,223,Merger -Without Assistance,2026-04-27T00:00:00,2026-05-13T00:00:00,14690,,4432,"Midwest Heritage Bank, FSB",14690,Iowa Savings Bank,4432,"Midwest Heritage Bank, FSB",FI,223
+2026013223,810,Participated in Absorbtion/Consolidation/Merger,2026-04-27T00:00:00,2026-05-13T00:00:00,4432,,4432,"Midwest Heritage Bank, FSB",14690,Iowa Savings Bank,4432,"Midwest Heritage Bank, FSB",FI,810
+2026013345,223,Merger -Without Assistance,2026-04-01T00:00:00,2026-05-14T00:00:00,8840,,14195,Farmers Trust and Savings Bank,8840,Peoples State Bank of Wells,14195,Farmers Trust and Savings Bank,FI,223
+2026013345,810,Participated in Absorbtion/Consolidation/Merger,2026-04-01T00:00:00,2026-05-14T00:00:00,14195,,14195,Farmers Trust and Savings Bank,8840,Peoples State Bank of Wells,14195,Farmers Trust and Savings Bank,FI,810
+2026014299,223,Merger -Without Assistance,2026-05-15T00:00:00,2026-05-19T00:00:00,966,,9105,West Iowa Bank,966,Home State Bank,9105,West Iowa Bank,FI,223
+2026014299,810,Participated in Absorbtion/Consolidation/Merger,2026-05-15T00:00:00,2026-05-19T00:00:00,9105,,9105,West Iowa Bank,966,Home State Bank,9105,West Iowa Bank,FI,810
+2026014619,712,Branch Purchased,2026-05-14T00:00:00,2026-05-22T00:00:00,8028,,8028,Mount Vernon Bank,16281,Bank of Lumber City,,,FI,712
+2026015250,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-05-15T00:00:00,2026-05-27T00:00:00,,,418,High Plains Bank,25750,Community Bank,418,High Plains Bank,FI,224
+2026015250,810,Participated in Absorbtion/Consolidation/Merger,2026-05-15T00:00:00,2026-05-27T00:00:00,418,,418,High Plains Bank,25750,Community Bank,418,High Plains Bank,FI,810
+2026015266,223,Merger -Without Assistance,2026-05-01T00:00:00,2026-05-28T00:00:00,13838,,258,Stock Yards Bank & Trust Company,13838,Field & Main Bank,258,Stock Yards Bank & Trust Company,FI,223
+2026015266,810,Participated in Absorbtion/Consolidation/Merger,2026-05-01T00:00:00,2026-05-28T00:00:00,258,,258,Stock Yards Bank & Trust Company,13838,Field & Main Bank,258,Stock Yards Bank & Trust Company,FI,810
+2026015490,223,Merger -Without Assistance,2026-05-18T00:00:00,2026-05-29T00:00:00,15471,,15472,First United Bank,15471,First State Bank of Cando,15472,First United Bank,FI,223
+2026015490,810,Participated in Absorbtion/Consolidation/Merger,2026-05-18T00:00:00,2026-05-29T00:00:00,15472,,15472,First United Bank,15471,First State Bank of Cando,15472,First United Bank,FI,810
+2026015907,223,Merger -Without Assistance,2026-06-01T00:00:00,2026-06-03T00:00:00,59178,,57071,Georgia Banking Company,59178,Tandem Bank,57071,Georgia Banking Company,FI,223
+2026015907,810,Participated in Absorbtion/Consolidation/Merger,2026-06-01T00:00:00,2026-06-03T00:00:00,57071,,57071,Georgia Banking Company,59178,Tandem Bank,57071,Georgia Banking Company,FI,810
+2026015919,712,Branch Purchased,2026-06-01T00:00:00,2026-06-03T00:00:00,34784,,34784,Commercial Capital Bank,35019,Currency Bank,,,FI,712
+2026016066,223,Merger -Without Assistance,2026-06-02T00:00:00,2026-06-05T00:00:00,58564,,28359,"OceanFirst Bank, National Association",58564,Flushing Bank,28359,"OceanFirst Bank, National Association",FI,223
+2026016066,810,Participated in Absorbtion/Consolidation/Merger,2026-06-02T00:00:00,2026-06-05T00:00:00,28359,,28359,"OceanFirst Bank, National Association",58564,Flushing Bank,28359,"OceanFirst Bank, National Association",FI,810
+2026016071,712,Branch Purchased,2026-05-01T00:00:00,2026-06-05T00:00:00,6672,,6672,"Fifth Third Bank, National Association",1768,Mechanics Bank,,,FI,712
+2026016115,712,Branch Purchased,2026-05-31T00:00:00,2026-06-08T00:00:00,40948,,40948,AMERICA FIRST CREDIT UNION,58722,Meadows Bank,,,FI,712
+2026016121,223,Merger -Without Assistance,2026-04-17T00:00:00,2026-06-08T00:00:00,1941,,10618,BTC Bank,1941,"The Tipton Latham Bank, National Association",10618,BTC Bank,FI,223
+2026016121,810,Participated in Absorbtion/Consolidation/Merger,2026-04-17T00:00:00,2026-06-08T00:00:00,10618,,10618,BTC Bank,1941,"The Tipton Latham Bank, National Association",10618,BTC Bank,FI,810
+2026016866,223,Merger -Without Assistance,2026-04-09T00:00:00,2026-06-11T00:00:00,1609,,58039,First Resource Bank,1609,First State Bank of Wyoming,58039,First Resource Bank,FI,223
+2026016866,810,Participated in Absorbtion/Consolidation/Merger,2026-04-09T00:00:00,2026-06-11T00:00:00,58039,,58039,First Resource Bank,1609,First State Bank of Wyoming,58039,First Resource Bank,FI,810
+2026017334,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-04-27T00:00:00,2026-06-16T00:00:00,,,11319,Longview Community Bank,10463,Middletown State Bank,11319,Longview Community Bank,FI,224
+2026017334,810,Participated in Absorbtion/Consolidation/Merger,2026-04-27T00:00:00,2026-06-16T00:00:00,11319,,11319,Longview Community Bank,10463,Middletown State Bank,11319,Longview Community Bank,FI,810
+2026017402,223,Merger -Without Assistance,2026-06-01T00:00:00,2026-06-16T00:00:00,32306,,32293,Miami Savings Bank,32306,New Foundation Savings Bank,32293,Miami Savings Bank,FI,223
+2026017402,810,Participated in Absorbtion/Consolidation/Merger,2026-06-01T00:00:00,2026-06-16T00:00:00,32293,,32293,Miami Savings Bank,32306,New Foundation Savings Bank,32293,Miami Savings Bank,FI,810
+2026017404,223,Merger -Without Assistance,2026-06-01T00:00:00,2026-06-16T00:00:00,34748,,6989,"Community Bank, National Association",34748,ClearPoint Federal Bank & Trust,6989,"Community Bank, National Association",FI,223
+2026017404,810,Participated in Absorbtion/Consolidation/Merger,2026-06-01T00:00:00,2026-06-16T00:00:00,6989,,6989,"Community Bank, National Association",34748,ClearPoint Federal Bank & Trust,6989,"Community Bank, National Association",FI,810
+2026017561,223,Merger -Without Assistance,2026-05-08T00:00:00,2026-06-17T00:00:00,58106,,34171,Eagle Rock Bank,58106,Riverland Bank,34171,Eagle Rock Bank,FI,223
+2026017561,810,Participated in Absorbtion/Consolidation/Merger,2026-05-08T00:00:00,2026-06-17T00:00:00,34171,,34171,Eagle Rock Bank,58106,Riverland Bank,34171,Eagle Rock Bank,FI,810
+2026017583,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-06-12T00:00:00,2026-06-18T00:00:00,,,3705,"First Mid Bank & Trust, National Association",58013,Two Rivers Bank & Trust,3705,"First Mid Bank & Trust, National Association",FI,224
+2026017583,810,Participated in Absorbtion/Consolidation/Merger,2026-06-12T00:00:00,2026-06-18T00:00:00,3705,,3705,"First Mid Bank & Trust, National Association",58013,Two Rivers Bank & Trust,3705,"First Mid Bank & Trust, National Association",FI,810
+2026018142,712,Branch Purchased,2026-05-01T00:00:00,2026-06-23T00:00:00,10988,,10988,Stearns Bank National Association,10160,VersaBank USA National Association,,,FI,712
+2026018328,223,Merger -Without Assistance,2026-06-12T00:00:00,2026-06-24T00:00:00,11465,,10618,BTC Bank,11465,Tri-County Trust Company,10618,BTC Bank,FI,223
+2026018328,810,Participated in Absorbtion/Consolidation/Merger,2026-06-12T00:00:00,2026-06-24T00:00:00,10618,,10618,BTC Bank,11465,Tri-County Trust Company,10618,BTC Bank,FI,810
+2026018660,712,Branch Purchased,2026-06-26T00:00:00,2026-07-01T00:00:00,8321,,8321,Stockmens Bank,20156,Kirkpatrick Bank,,,FI,712
+2026018925,223,Merger -Without Assistance,2026-06-18T00:00:00,2026-07-06T00:00:00,18714,,6384,"PNC Bank, National Association",18714,FirstBank,6384,"PNC Bank, National Association",FI,223
+2026018925,810,Participated in Absorbtion/Consolidation/Merger,2026-06-18T00:00:00,2026-07-06T00:00:00,6384,,6384,"PNC Bank, National Association",18714,FirstBank,6384,"PNC Bank, National Association",FI,810
+2026019121,223,Merger -Without Assistance,2026-07-01T00:00:00,2026-07-07T00:00:00,29005,,29488,First Federal Savings and Loan Association of Lakewood,29005,First Federal Savings and Loan Association,29488,First Federal Savings and Loan Association of Lakewood,FI,223
+2026019121,810,Participated in Absorbtion/Consolidation/Merger,2026-07-01T00:00:00,2026-07-07T00:00:00,29488,,29488,First Federal Savings and Loan Association of Lakewood,29005,First Federal Savings and Loan Association,29488,First Federal Savings and Loan Association of Lakewood,FI,810
+2026019179,712,Branch Purchased,2026-07-01T00:00:00,2026-07-08T00:00:00,46907,,46907,MICHIGAN STATE UNIVERSITY FEDERAL CREDIT UNION,57359,American Eagle Bank,,,FI,712
+2026019374,712,Branch Purchased,2026-06-30T00:00:00,2026-07-10T00:00:00,53156,,53156,Rev Federal Credit Union,6800,First Neighborhood Bank,,,FI,712
+2026019459,211,Failure - Whole Institution,2026-07-10T00:00:00,2026-07-13T00:00:00,,,13843,Kentland Bank,28722,Kentland Federal Savings and Loan Association,13843,Kentland Bank,FI,211
+2026019459,811,Participated in FDIC Assisted Merger,2026-07-10T00:00:00,2026-07-13T00:00:00,13843,,13843,Kentland Bank,28722,Kentland Federal Savings and Loan Association,13843,Kentland Bank,FI,811
+2026019673,712,Branch Purchased,2026-07-01T00:00:00,2026-07-16T00:00:00,47702,,47702,SAN FRANCISCO FEDERAL CREDIT UNION,23864,Summit Bank,,,FI,712
+2026019706,211,Failure - Whole Institution,2026-07-17T00:00:00,2026-07-17T00:00:00,,,1867,"The Farmers State Bank of Oakley, Kansas",25744,Small Business Bank,1867,"The Farmers State Bank of Oakley, Kansas",FI,211
+2026019706,811,Participated in FDIC Assisted Merger,2026-07-17T00:00:00,2026-07-17T00:00:00,1867,,1867,"The Farmers State Bank of Oakley, Kansas",25744,Small Business Bank,1867,"The Farmers State Bank of Oakley, Kansas",FI,811
+2026020081,712,Branch Purchased,2026-06-16T00:00:00,2026-07-20T00:00:00,23627,,23627,Republic Bank & Trust Company,12368,Regions Bank,,,FI,712
+2026020398,223,Merger -Without Assistance,2026-07-01T00:00:00,2026-07-22T00:00:00,58629,,16835,Prosperity Bank,58629,Stellar Bank,16835,Prosperity Bank,FI,223
+2026020398,810,Participated in Absorbtion/Consolidation/Merger,2026-07-01T00:00:00,2026-07-22T00:00:00,16835,,16835,Prosperity Bank,58629,Stellar Bank,16835,Prosperity Bank,FI,810
+2026020469,223,Merger -Without Assistance,2026-07-01T00:00:00,2026-07-23T00:00:00,18454,,3337,Texas National Bank,18454,Zapata National Bank,3337,Texas National Bank,FI,223
+2026020469,810,Participated in Absorbtion/Consolidation/Merger,2026-07-01T00:00:00,2026-07-23T00:00:00,3337,,3337,Texas National Bank,18454,Zapata National Bank,3337,Texas National Bank,FI,810
+2026020552,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-07-01T00:00:00,2026-07-24T00:00:00,,,28533,First Bank Richmond,12828,"The Farmers Bank, Frankfort, Indiana",28533,First Bank Midwest,FI,224
+2026020552,810,Participated in Absorbtion/Consolidation/Merger,2026-07-01T00:00:00,2026-07-24T00:00:00,28533,,28533,First Bank Richmond,12828,"The Farmers Bank, Frankfort, Indiana",28533,First Bank Midwest,FI,810
+2026023069,223,Merger -Without Assistance,2026-08-01T00:00:00,2026-08-07T00:00:00,15101,,14185,"First State Bank and Trust Company, Inc.",15101,Senath State Bank,14185,"First State Bank and Trust Company, Inc.",FI,223
+2026023069,810,Participated in Absorbtion/Consolidation/Merger,2026-08-01T00:00:00,2026-08-07T00:00:00,14185,,14185,"First State Bank and Trust Company, Inc.",15101,Senath State Bank,14185,"First State Bank and Trust Company, Inc.",FI,810
+2026023070,223,Merger -Without Assistance,2026-07-31T00:00:00,2026-08-07T00:00:00,15364,,11482,Homestead Bank,15364,First State Bank,11482,Homestead Bank,FI,223
+2026023070,810,Participated in Absorbtion/Consolidation/Merger,2026-07-31T00:00:00,2026-08-07T00:00:00,11482,,11482,Homestead Bank,15364,First State Bank,11482,Homestead Bank,FI,810
+2026023109,223,Merger -Without Assistance,2026-08-01T00:00:00,2026-08-10T00:00:00,57923,,16889,United Community Bank,57923,Peach State Bank & Trust,16889,United Community Bank,FI,223
+2026023109,810,Participated in Absorbtion/Consolidation/Merger,2026-08-01T00:00:00,2026-08-10T00:00:00,16889,,16889,United Community Bank,57923,Peach State Bank & Trust,16889,United Community Bank,FI,810
+2026023233,223,Merger -Without Assistance,2026-07-14T00:00:00,2026-08-12T00:00:00,58961,,29804,Catalyst Bank,58961,Lakeside Bank,29804,Catalyst Bank,FI,223
+2026023233,810,Participated in Absorbtion/Consolidation/Merger,2026-07-14T00:00:00,2026-08-12T00:00:00,29804,,29804,Catalyst Bank,58961,Lakeside Bank,29804,Catalyst Bank,FI,810
+2026023240,712,Branch Purchased,2026-07-31T00:00:00,2026-08-12T00:00:00,45223,,45223,Palmetto Citizens Federal Credit Union,16288,Southern Bank,,,FI,712
+2026023463,223,Merger -Without Assistance,2026-07-01T00:00:00,2026-08-17T00:00:00,28380,,7074,Arrow Bank National Association,28380,Adirondack Bank,7074,Arrow Bank National Association,FI,223
+2026023463,810,Participated in Absorbtion/Consolidation/Merger,2026-07-01T00:00:00,2026-08-17T00:00:00,7074,,7074,Arrow Bank National Association,28380,Adirondack Bank,7074,Arrow Bank National Association,FI,810
+2026023466,223,Merger -Without Assistance,2026-08-01T00:00:00,2026-08-17T00:00:00,58811,,12441,Hancock Whitney Bank,58811,One Florida Bank,12441,Hancock Whitney Bank,FI,223
+2026023466,810,Participated in Absorbtion/Consolidation/Merger,2026-08-01T00:00:00,2026-08-17T00:00:00,12441,,12441,Hancock Whitney Bank,58811,One Florida Bank,12441,Hancock Whitney Bank,FI,810
+2026023467,223,Merger -Without Assistance,2026-08-03T00:00:00,2026-08-17T00:00:00,1098,,25894,First National Bank,1098,Root River State Bank,25894,First National Bank,FI,223
+2026023467,810,Participated in Absorbtion/Consolidation/Merger,2026-08-03T00:00:00,2026-08-17T00:00:00,25894,,25894,First National Bank,1098,Root River State Bank,25894,First National Bank,FI,810
+2026023470,221,Absorbtion - Without Assistance,2026-08-03T00:00:00,2026-08-17T00:00:00,9349,,25894,First National Bank,9349,First State Bank of Fountain,25894,First National Bank,FI,221
+2026023470,810,Participated in Absorbtion/Consolidation/Merger,2026-08-03T00:00:00,2026-08-17T00:00:00,25894,,25894,First National Bank,9349,First State Bank of Fountain,25894,First National Bank,FI,810
+2026023595,223,Merger -Without Assistance,2026-08-01T00:00:00,2026-08-18T00:00:00,29510,,11507,The Fidelity Bank,29510,"Affinity Bank, National Association",11507,The Fidelity Bank,FI,223
+2026023595,810,Participated in Absorbtion/Consolidation/Merger,2026-08-01T00:00:00,2026-08-18T00:00:00,11507,,11507,The Fidelity Bank,29510,"Affinity Bank, National Association",11507,The Fidelity Bank,FI,810
+2026023836,211,Failure - Whole Institution,2026-08-21T00:00:00,2026-08-21T00:00:00,,,29627,Second Federal Savings and Loan Association of Philadelphia,33802,Tioga-Franklin Savings Bank,29627,Second Federal Savings and Loan Association of Philadelphia,FI,211
+2026023836,811,Participated in FDIC Assisted Merger,2026-08-21T00:00:00,2026-08-21T00:00:00,29627,,29627,Second Federal Savings and Loan Association of Philadelphia,33802,Tioga-Franklin Savings Bank,29627,Second Federal Savings and Loan Association of Philadelphia,FI,811
+2026023838,223,Merger -Without Assistance,2026-07-13T00:00:00,2026-08-24T00:00:00,30052,,7551,"Fulton Bank, National Association",30052,Blue Foundry Bank,7551,"Fulton Bank, National Association",FI,223
+2026023838,810,Participated in Absorbtion/Consolidation/Merger,2026-07-13T00:00:00,2026-08-24T00:00:00,7551,,7551,"Fulton Bank, National Association",30052,Blue Foundry Bank,7551,"Fulton Bank, National Association",FI,810
+2026023870,223,Merger -Without Assistance,2026-08-01T00:00:00,2026-08-24T00:00:00,58264,,58140,"Esquire Bank, National Association",58264,Signature Bank,58140,"Esquire Bank, National Association",FI,223
+2026023870,810,Participated in Absorbtion/Consolidation/Merger,2026-08-01T00:00:00,2026-08-24T00:00:00,58140,,58140,"Esquire Bank, National Association",58264,Signature Bank,58140,"Esquire Bank, National Association",FI,810
+2026023873,223,Merger -Without Assistance,2026-07-11T00:00:00,2026-08-24T00:00:00,21897,,15264,PSB Bank,21897,Bank Star,15264,PSB Bank,FI,223
+2026023873,810,Participated in Absorbtion/Consolidation/Merger,2026-07-11T00:00:00,2026-08-24T00:00:00,15264,,15264,PSB Bank,21897,Bank Star,15264,PSB Bank,FI,810
+2026024129,223,Merger -Without Assistance,2026-07-20T00:00:00,2026-08-25T00:00:00,28710,,28834,Columbia Bank,28710,Northfield Bank,28834,Columbia Bank,FI,223
+2026024129,810,Participated in Absorbtion/Consolidation/Merger,2026-07-20T00:00:00,2026-08-25T00:00:00,28834,,28834,Columbia Bank,28710,Northfield Bank,28834,Columbia Bank,FI,810
+2026024137,223,Merger -Without Assistance,2026-07-14T00:00:00,2026-08-25T00:00:00,9659,,3031,Points West Community Bank,9659,State Bank of Downs,3031,Points West Community Bank,FI,223
+2026024137,810,Participated in Absorbtion/Consolidation/Merger,2026-07-14T00:00:00,2026-08-25T00:00:00,3031,,3031,Points West Community Bank,9659,State Bank of Downs,3031,Points West Community Bank,FI,810
+2026024143,223,Merger -Without Assistance,2026-08-19T00:00:00,2026-08-25T00:00:00,57872,,57633,1st Security Bank of Washington,57872,Pacific West Bank,57633,1st Security Bank of Washington,FI,223
+2026024143,810,Participated in Absorbtion/Consolidation/Merger,2026-08-19T00:00:00,2026-08-25T00:00:00,57633,,57633,1st Security Bank of Washington,57872,Pacific West Bank,57633,1st Security Bank of Washington,FI,810
+2026024282,712,Branch Purchased,2026-08-21T00:00:00,2026-08-27T00:00:00,1402,,1402,Citizens Alliance Bank,5252,First Security Bank - Sleepy Eye,,,FI,712
+2026024399,223,Merger -Without Assistance,2026-08-20T00:00:00,2026-08-28T00:00:00,18221,,29950,"Santander Bank, N.A.",18221,"Webster Bank, National Association",29950,"Santander Bank, N.A.",FI,223
+2026024399,810,Participated in Absorbtion/Consolidation/Merger,2026-08-20T00:00:00,2026-08-28T00:00:00,29950,,29950,"Santander Bank, N.A.",18221,"Webster Bank, National Association",29950,"Santander Bank, N.A.",FI,810
+2026024401,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-08-22T00:00:00,2026-08-28T00:00:00,,,90188,TruNorth Bank,26523,Bankhometown,90188,TruNorth Bank,FI,224
+2026024401,810,Participated in Absorbtion/Consolidation/Merger,2026-08-22T00:00:00,2026-08-28T00:00:00,90188,,90188,TruNorth Bank,26523,Bankhometown,90188,TruNorth Bank,FI,810
+2026024402,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-08-22T00:00:00,2026-08-28T00:00:00,,,90188,TruNorth Bank,26484,TruNorth Bank,90188,TruNorth Bank,FI,224
+2026024402,810,Participated in Absorbtion/Consolidation/Merger,2026-08-22T00:00:00,2026-08-28T00:00:00,90188,,90188,TruNorth Bank,26484,TruNorth Bank,90188,TruNorth Bank,FI,810
+2026024871,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-08-31T00:00:00,2026-09-04T00:00:00,,,14556,Exchange State Bank,13729,Prescott State Bank,14556,Exchange State Bank,FI,224
+2026024871,810,Participated in Absorbtion/Consolidation/Merger,2026-08-31T00:00:00,2026-09-04T00:00:00,14556,,14556,Exchange State Bank,13729,Prescott State Bank,14556,Exchange State Bank,FI,810
+2026025059,223,Merger -Without Assistance,2026-09-04T00:00:00,2026-09-09T00:00:00,414,,11526,Cowboy Bank,414,The Stock Exchange Bank,11526,Cowboy Bank,FI,223
+2026025059,810,Participated in Absorbtion/Consolidation/Merger,2026-09-04T00:00:00,2026-09-09T00:00:00,11526,,11526,Cowboy Bank,414,The Stock Exchange Bank,11526,Cowboy Bank,FI,810
+2026025588,223,Merger -Without Assistance,2026-09-01T00:00:00,2026-09-14T00:00:00,23041,,28489,Banner Bank,23041,Bank of the Pacific,28489,Banner Bank,FI,223
+2026025588,810,Participated in Absorbtion/Consolidation/Merger,2026-09-01T00:00:00,2026-09-14T00:00:00,28489,,28489,Banner Bank,23041,Bank of the Pacific,28489,Banner Bank,FI,810
+2026025589,223,Merger -Without Assistance,2026-08-13T00:00:00,2026-09-14T00:00:00,34900,,3722,Prospect Bank,34900,Preferred Bank,3722,Prospect Bank,FI,223
+2026025589,810,Participated in Absorbtion/Consolidation/Merger,2026-08-13T00:00:00,2026-09-14T00:00:00,3722,,3722,Prospect Bank,34900,Preferred Bank,3722,Prospect Bank,FI,810
+2026026921,223,Merger -Without Assistance,2026-07-11T00:00:00,2026-09-22T00:00:00,13025,,11623,Bank Cmg,13025,Farmers Savings Bank,11623,Bank Cmg,FI,223
+2026026921,810,Participated in Absorbtion/Consolidation/Merger,2026-07-11T00:00:00,2026-09-22T00:00:00,11623,,11623,Bank Cmg,13025,Farmers Savings Bank,11623,Bank Cmg,FI,810
+2026027226,211,Failure - Whole Institution,2026-09-25T00:00:00,2026-09-25T00:00:00,,,20164,Sunwest Bank,58590,Nano Banc,20164,Sunwest Bank,FI,211
+2026027226,811,Participated in FDIC Assisted Merger,2026-09-25T00:00:00,2026-09-25T00:00:00,20164,,20164,Sunwest Bank,58590,Nano Banc,20164,Sunwest Bank,FI,811
+2026027346,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-09-18T00:00:00,2026-09-28T00:00:00,,,15321,First State Bank,34407,NorthStar Bank,15321,First State Bank,FI,224
+2026027346,810,Participated in Absorbtion/Consolidation/Merger,2026-09-18T00:00:00,2026-09-28T00:00:00,15321,,15321,First State Bank,34407,NorthStar Bank,15321,First State Bank,FI,810
+2026027349,712,Branch Purchased,2026-09-01T00:00:00,2026-09-28T00:00:00,53596,,53596,LAND OF LINCOLN CREDIT UNION,12388,Williamsville State Bank & Trust,,,FI,712
+2026027454,223,Merger -Without Assistance,2026-09-03T00:00:00,2026-09-29T00:00:00,13897,,10619,Hawthorn Bank,13897,Farmers State Bank,10619,Hawthorn Bank,FI,223
+2026027454,810,Participated in Absorbtion/Consolidation/Merger,2026-09-03T00:00:00,2026-09-29T00:00:00,10619,,10619,Hawthorn Bank,13897,Farmers State Bank,10619,Hawthorn Bank,FI,810
+2026027457,223,Merger -Without Assistance,2026-08-01T00:00:00,2026-09-29T00:00:00,12315,,3091,The First National Bank of Bastrop,12315,The First State Bank,3091,The First National Bank of Bastrop,FI,223
+2026027457,810,Participated in Absorbtion/Consolidation/Merger,2026-08-01T00:00:00,2026-09-29T00:00:00,3091,,3091,The First National Bank of Bastrop,12315,The First State Bank,3091,The First National Bank of Bastrop,FI,810
+2026027684,712,Branch Purchased,2026-09-11T00:00:00,2026-10-02T00:00:00,57301,,57301,"United Community Bank of West Kentucky, Inc.",21342,Sonata Bank,,,FI,712
+2026027737,712,Branch Purchased,2026-10-02T00:00:00,2026-10-05T00:00:00,52131,,52131,EDUCATIONAL COMMUNITY CREDIT UNION,10055,First Southern Bank,,,FI,712
+2026027744,712,Branch Purchased,2026-07-28T00:00:00,2026-10-05T00:00:00,20164,,20164,Sunwest Bank,57038,Nicolet National Bank,,,FI,712
+2026028114,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-10-01T00:00:00,2026-10-07T00:00:00,,,57570,Comenity Capital Bank,27499,Comenity Bank,57570,Comenity Capital Bank,FI,224
+2026028114,810,Participated in Absorbtion/Consolidation/Merger,2026-10-01T00:00:00,2026-10-07T00:00:00,57570,,57570,Comenity Capital Bank,27499,Comenity Bank,57570,Comenity Capital Bank,FI,810
+2026028121,223,Merger -Without Assistance,2026-10-01T00:00:00,2026-10-07T00:00:00,9320,,16689,Gibsland Bank & Trust Company,9320,Marion State Bank,16689,Gibsland Bank & Trust Company,FI,223
+2026028121,810,Participated in Absorbtion/Consolidation/Merger,2026-10-01T00:00:00,2026-10-07T00:00:00,16689,,16689,Gibsland Bank & Trust Company,9320,Marion State Bank,16689,Gibsland Bank & Trust Company,FI,810
+2026028126,712,Branch Purchased,2026-09-21T00:00:00,2026-10-07T00:00:00,35546,,35546,Axos Bank,4297,"Capital One, National Association",,,FI,712
+2026028196,223,Merger -Without Assistance,2026-10-01T00:00:00,2026-10-08T00:00:00,17933,,5452,First National Bank of Omaha,17933,Blue Ridge Bank and Trust Co.,5452,First National Bank of Omaha,FI,223
+2026028196,810,Participated in Absorbtion/Consolidation/Merger,2026-10-01T00:00:00,2026-10-08T00:00:00,5452,,5452,First National Bank of Omaha,17933,Blue Ridge Bank and Trust Co.,5452,First National Bank of Omaha,FI,810
+2026028317,223,Merger -Without Assistance,2026-10-01T00:00:00,2026-10-09T00:00:00,59106,,58864,Coastal Carolina National Bank,59106,Beacon Community Bank,58864,Coastal Carolina National Bank,FI,223
+2026028317,810,Participated in Absorbtion/Consolidation/Merger,2026-10-01T00:00:00,2026-10-09T00:00:00,58864,,58864,Coastal Carolina National Bank,59106,Beacon Community Bank,58864,Coastal Carolina National Bank,FI,810
+2026028831,712,Branch Purchased,2026-07-08T00:00:00,2026-10-14T00:00:00,6672,,6672,"Fifth Third Bank, National Association",12368,Regions Bank,,,FI,712
+2026029545,223,Merger -Without Assistance,2026-10-07T00:00:00,2026-10-19T00:00:00,11682,,34566,Alliance Bank,11682,Anna State Bank,34566,Alliance Bank,FI,223
+2026029545,810,Participated in Absorbtion/Consolidation/Merger,2026-10-07T00:00:00,2026-10-19T00:00:00,34566,,34566,Alliance Bank,11682,Anna State Bank,34566,Alliance Bank,FI,810
+2026029548,224,Affiliated Institution Merger (Pooling) (i.e. Corporate Reorganization,2026-10-10T00:00:00,2026-10-19T00:00:00,,,19459,United Community Bank,19796,Midland Community Bank,19459,United Community Bank,FI,224
+2026029548,810,Participated in Absorbtion/Consolidation/Merger,2026-10-10T00:00:00,2026-10-19T00:00:00,19459,,19459,United Community Bank,19796,Midland Community Bank,19459,United Community Bank,FI,810
+2026030842,712,Branch Purchased,2026-10-09T00:00:00,2026-10-26T00:00:00,47382,,47382,Blaze Credit Union,16635,Luminate Bank,,,FI,712
+2026030965,223,Merger -Without Assistance,2026-08-31T00:00:00,2026-10-27T00:00:00,59199,,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",59199,Riverside Bank of Dublin,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",FI,223
+2026030965,810,Participated in Absorbtion/Consolidation/Merger,2026-08-31T00:00:00,2026-10-27T00:00:00,7900,,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",59199,Riverside Bank of Dublin,7900,"NEXTIER BANK, NATIONAL ASSOCIATION",FI,810
+2026030968,223,Merger -Without Assistance,2026-10-01T00:00:00,2026-10-27T00:00:00,28266,,57373,Oregon Coast Bank,28266,Connect Community Bank,57373,Oregon Coast Bank,FI,223
+2026030968,810,Participated in Absorbtion/Consolidation/Merger,2026-10-01T00:00:00,2026-10-27T00:00:00,57373,,57373,Oregon Coast Bank,28266,Connect Community Bank,57373,Oregon Coast Bank,FI,810
+2026030973,712,Branch Purchased,2026-09-08T00:00:00,2026-10-27T00:00:00,11063,,11063,First-Citizens Bank & Trust Company,16571,BMO Bank National Association,,,FI,712
+2026031119,223,Merger -Without Assistance,2026-10-01T00:00:00,2026-10-28T00:00:00,26260,,25738,Sovereign Bank,26260,The First National Bank in Marlow,25738,Sovereign Bank,FI,223
+2026031119,810,Participated in Absorbtion/Consolidation/Merger,2026-10-01T00:00:00,2026-10-28T00:00:00,25738,,25738,Sovereign Bank,26260,The First National Bank in Marlow,25738,Sovereign Bank,FI,810
+2026031180,223,Merger -Without Assistance,2026-10-01T00:00:00,2026-10-29T00:00:00,29744,,17870,Cambridge Savings Bank,29744,First Seacoast Bank,17870,Cambridge Savings Bank,FI,223
+2026031180,810,Participated in Absorbtion/Consolidation/Merger,2026-10-01T00:00:00,2026-10-29T00:00:00,17870,,17870,Cambridge Savings Bank,29744,First Seacoast Bank,17870,Cambridge Savings Bank,FI,810

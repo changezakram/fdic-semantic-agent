@@ -25,6 +25,7 @@ import yaml
 ROOT = Path(__file__).parent
 MODEL_FILE = ROOT / "semantic_model.yaml"
 SNAPSHOT = ROOT / "data" / "snapshot_2026Q2"
+EXT_SNAPSHOT = ROOT / "data" / "snapshot_2026Q2_ext"      # app-only extra fields, merger history, SOD
 MAX_ROWS = 60   # all 50 states + DC fit in one result (was 50 in the frozen experiment)
 
 # Dimensions whose values are names (matched by search); the rest are fixed categories.
@@ -36,18 +37,73 @@ class QueryError(Exception):
 
 
 class SemanticLayer:
-    def __init__(self, model_file: Path = MODEL_FILE, snapshot: Path = SNAPSHOT):
+    def __init__(self, model_file: Path = MODEL_FILE, snapshot: Path = SNAPSHOT, ext: Path | None = None,
+                 pro_forma: bool = False):
+        """Defaults reproduce the frozen experiment's layer (the tests use them). The app passes
+        ext=EXT_SNAPSHOT and pro_forma=True: extra metrics, and every acquired bank's history restated to its
+        acquirer (see extensions in the model). Metrics marked extension: true exist only with ext."""
         self.model = yaml.safe_load(Path(model_file).read_text())
         self.version = self.model["version"]
+        self.pro_forma = pro_forma
         self.con = duckdb.connect()
         self.con.execute(f"CREATE TABLE raw_financials AS SELECT * FROM read_csv_auto('{snapshot / 'raw_financials.csv'}')")
         self.con.execute(f"CREATE TABLE raw_institutions AS SELECT * FROM read_csv_auto('{snapshot / 'raw_institutions.csv'}')")
-        self.con.execute("CREATE VIEW bank_quarter AS " + self.model["base_view"]["sql"])
+        sql = self.model["base_view"]["sql"]
+        self.has_ext = bool(ext and (Path(ext) / "fin_extra.csv").exists())
+        if self.has_ext:
+            sql = self._extend(sql, Path(ext))
+        elif pro_forma:
+            raise QueryError("pro_forma needs the extended snapshot (merger history).")
+        self.con.execute("CREATE VIEW bank_quarter AS " + sql)
         self.periods = [r[0] for r in self.con.execute(
             "SELECT DISTINCT period FROM bank_quarter ORDER BY 1").fetchall()]
         self.dims = self.model["dimensions"]
-        self.metrics = self.model["metrics"]
+        self.metrics = {k: v for k, v in self.model["metrics"].items()
+                        if self.has_ext or not (isinstance(v, dict) and v.get("extension"))}
         self.measures = self.model["measures"]
+
+    # ------------------------------------------------------------------ extended snapshot (app only)
+    def _extend(self, sql: str, ext: Path) -> str:
+        """Add the extra call-report fields, quarterly versions of the new income fields, and (when
+        pro_forma) the merger restatement, without changing the frozen base view text in the model."""
+        self.con.execute(f"CREATE TABLE fin_extra_raw AS SELECT * FROM read_csv_auto('{ext / 'fin_extra.csv'}')")
+        have = {r[0] for r in self.con.execute("DESCRIBE raw_financials").fetchall()}
+        cols = [r[0] for r in self.con.execute("DESCRIBE fin_extra_raw").fetchall()
+                if r[0] not in have and r[0] not in ("CERT", "REPDTE")]
+        self.con.execute("CREATE VIEW fin_extra AS SELECT CERT, REPDTE, " + ", ".join(cols) + " FROM fin_extra_raw")
+        if "FROM raw_financials\n" not in sql:
+            raise QueryError("Base view changed: cannot attach the extra fields.")
+        sql = sql.replace("FROM raw_financials\n", "FROM raw_financials LEFT JOIN fin_extra USING (CERT, REPDTE)\n", 1)
+        decum = "".join(
+            f",\n      CASE WHEN f.REPDTE = 20240930 THEN NULL ELSE f.{c} - COALESCE(LAG(f.{c}) OVER w, 0) END AS {c}_Q"
+            for c in ("EDEP", "EINTEXP", "INTINC"))
+        sql = sql.replace("ELSE f.NTLNLS - COALESCE(LAG(f.NTLNLS) OVER w, 0) END AS NTLNLS_Q",
+                          "ELSE f.NTLNLS - COALESCE(LAG(f.NTLNLS) OVER w, 0) END AS NTLNLS_Q" + decum, 1)
+        mh = ext / "merger_history.csv"
+        cfg = self.model.get("extensions", {}).get("pro_forma", {})
+        codes = ", ".join(str(c) for c in cfg.get("change_codes", [221, 223, 224, 811]))
+        cutoff = cfg.get("through", "2026-06-30")
+        self.con.execute(f"""CREATE TABLE merger_events AS SELECT DISTINCT CAST(OUT_CERT AS BIGINT) AS OUT_CERT,
+            CAST(ACQ_CERT AS BIGINT) AS ACQ_CERT, CAST(EFFDATE AS DATE) AS EFFDATE, OUT_INSTNAME, ACQ_INSTNAME
+            FROM read_csv_auto('{mh}') WHERE CHANGECODE IN ({codes}) AND CAST(EFFDATE AS DATE) <= DATE '{cutoff}'
+            AND OUT_CERT IS NOT NULL AND ACQ_CERT IS NOT NULL AND OUT_CERT <> ACQ_CERT""")
+        # resolve chains (A -> B -> C) to the bank that survives today
+        edges = dict(self.con.execute("SELECT OUT_CERT, ACQ_CERT FROM merger_events").fetchall())
+        surv = {}
+        for a in edges:
+            b, seen = edges[a], {a}
+            while b in edges and b not in seen:
+                seen.add(b)
+                b = edges[b]
+            surv[a] = b
+        self.con.execute("CREATE TABLE survivor (CERT BIGINT, SURV_CERT BIGINT)")
+        if surv:
+            self.con.executemany("INSERT INTO survivor VALUES (?, ?)", list(surv.items()))
+        if self.pro_forma:
+            sql = sql.replace("LEFT JOIN raw_institutions i USING (CERT)",
+                              "LEFT JOIN survivor s ON s.CERT = f.CERT\n"
+                              "    LEFT JOIN raw_institutions i ON i.CERT = COALESCE(s.SURV_CERT, f.CERT)", 1)
+        return sql
 
     # ------------------------------------------------------------------ periods
     def _resolve_period(self, period, basis):
@@ -247,7 +303,7 @@ class SemanticLayer:
                 else:
                     row["change"] = round(a - b, 4)
                     row["change_pct"] = round((a / b - 1) * 100, 4) if b else None
-            if d in ("organization", "holding_company"):
+            if d in ("organization", "holding_company") and not self.pro_forma:
                 row["banks_changed"] = p.get("_banks") != r.get("_banks")
             rows.append(row)
         key = str(order_by).split()[0] if order_by else ("change_pct" if unit != "pct" else "change_pp")
@@ -257,7 +313,10 @@ class SemanticLayer:
         truncated = len(rows) > cap
         rows = rows[:cap]
         note = f"Compared {base} with {other} for each {d.replace('_', ' ')}. Groups are set by {base}."
-        if d in ("organization", "holding_company"):
+        if self.pro_forma:
+            note += (" Pro forma for mergers: banks acquired before the later period are counted with their "
+                     "acquirer in both periods, so changes are like for like.")
+        elif d in ("organization", "holding_company"):
             note += (" banks_changed = the organization's own banks differ between the periods (a merger), so its "
                      "change is not organic. Not yet detected: buying a bank that sat under another holding company "
                      "(merger history is not loaded). Over a year, treat large jumps as possible acquisitions; "

@@ -17,7 +17,7 @@ problem they find fails the run.
 """
 from __future__ import annotations
 
-from semantic_layer import SemanticLayer
+from semantic_layer import EXT_SNAPSHOT, SemanticLayer
 
 TERRITORIES = ["Guam", "Puerto Rico", "Virgin Islands", "Micronesia"]
 PEERS = ["M&T BANK CORP", "CITIZENS FINANCIAL GROUP INC (RI)", "KEYCORP", "HUNTINGTON BANCSHARES INC"]
@@ -32,7 +32,7 @@ def _by(rows, dim, metric):
 
 
 def build(L: SemanticLayer | None = None) -> list[dict]:
-    L = L or SemanticLayer()
+    L = L or SemanticLayer(ext=EXT_SNAPSHOT, pro_forma=True)
     Q = []
 
     # E01 peer scorecard (generic regional peers)
@@ -193,9 +193,23 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   expect="answer", headline=[["Rhode Island", "RI"]], numbers=[rows[0]["noncurrent_loan_rate"], 1.07],
                   must_text=[["Citizens"]], chart=True, key=rows))
 
+    # E21 trend for named-size peers, pro forma for mergers (Eastern's HarborOne, Beacon's Brookline banks)
+    rows = L.query_metrics(metrics=["loan_to_deposit_ratio"], period="2024Q3:2026Q2",
+                           dimensions=["period", "organization"],
+                           filters={"us_region": "New England", "organization_asset_band": ["$10B-$50B"]})["rows"]
+    beacon = {r["period"]: r["loan_to_deposit_ratio"] for r in rows if r["organization"].startswith("BEACON")}
+    Q.append(dict(id="E21", topic="trend, pro forma",
+                  question="Loan-to-deposit ratio trend for New England banking organizations with $10B-$50B in "
+                           "assets since 2024",
+                  expect="answer", headline=[["loan-to-deposit"]], numbers=[beacon["2026Q2"]], chart=True,
+                  not_text=["best loan-to-deposit", "worst loan-to-deposit"], key=rows))
+
     # E13-E15 out of scope: must decline, not estimate
-    Q.append(dict(id="E13", topic="decline", question="What's the cost of deposits for $10B-$100B banks?",
-                  expect="decline"))
+    r = L.query_metrics(metrics=["cost_of_deposits"], period="2026Q2", filters={"size_class": "$10B-$100B"})["rows"][0]
+    Q.append(dict(id="E13", topic="funding cost (new in v0.2.0)",
+                  question="What's the cost of deposits for $10B-$100B banks?",
+                  expect="answer", headline=[["cost of deposits", "deposit cost", "cost"]],
+                  numbers=[r["cost_of_deposits"]], key=r))
     Q.append(dict(id="E14", topic="decline",
                   question="What share of loans is commercial real estate at banks under $10B?", expect="decline"))
     Q.append(dict(id="E15", topic="decline",

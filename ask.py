@@ -15,7 +15,7 @@ import streamlit as st
 
 import analyst
 import charts
-from semantic_layer import SemanticLayer
+from semantic_layer import EXT_SNAPSHOT, SemanticLayer
 
 SESSION_CAP = 10
 SAMPLES = [   # (button label, full question). Balance-sheet and credit measures that reconcile to FDIC call
@@ -33,8 +33,8 @@ SAMPLES = [   # (button label, full question). Balance-sheet and credit measures
      "Top 10 New England banking organizations with $5B-$50B in assets by noncurrent loan rate, highest first, 2026Q2"),
     ("Credit quality by New England state",
      "Noncurrent loan rate by New England state, 2026Q2"),
-    # Held until merger history is loaded (acquired banks are missing from early quarters):
-    # "Loan-to-deposit ratio trend for New England banking organizations with $10B-$50B in assets since 2024"
+    ("Loan-to-deposit trend, $10B-$50B New England peers",
+     "Loan-to-deposit ratio trend for New England banking organizations with $10B-$50B in assets since 2024"),
 ]
 
 
@@ -209,7 +209,7 @@ if question:
         st.session_state["asked"] = used + 1
         layer_key = (id(SemanticLayer), SemanticLayer.__module__)      # rebuilt if the code was reloaded
         if st.session_state.get("layer_key") != layer_key:
-            st.session_state["layer"], st.session_state["layer_key"] = SemanticLayer(), layer_key
+            st.session_state["layer"], st.session_state["layer_key"] = SemanticLayer(ext=EXT_SNAPSHOT, pro_forma=True), layer_key
         import anthropic
         client = anthropic.Anthropic(api_key=key, max_retries=4)
         with st.status("Working on it…", expanded=False) as status:

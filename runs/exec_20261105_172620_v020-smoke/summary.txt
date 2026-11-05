@@ -1,0 +1,9 @@
+Executive questions, 2026-11-05 17:26, model claude-haiku-5-5, semantic model v0.2.0
+
+E16  1/1  gainers and losers               Show the top 5 deposit gainers and the top 5 decliners among New Engla
+E21  0/1  trend, pro forma                 Loan-to-deposit ratio trend for New England banking organizations with
+      run 1: number 95.57 not stated
+E13  1/1  funding cost (new in v0.2.0)     What's the cost of deposits for $10B-$100B banks?
+
+TOTAL  2/3 runs fully correct (67%)
+Questions correct in every run: 2/3

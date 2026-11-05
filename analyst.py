@@ -7,6 +7,8 @@ Every number comes from the semantic layer; charts are drawn by the app from tho
 from __future__ import annotations
 
 import ast
+from pathlib import Path
+import yaml
 import copy
 import json
 import re
@@ -37,10 +39,14 @@ How to work:
   recompute it from rounded numbers. Feed calculate the full-precision values the results returned.
 - Gainers and losers, or growth by group: ONE query_metrics call with compare_to and one dimension. Chart it
   as a bar with y = "change_pct" (or "change_pp" for ratios) so gains and losses show on each side of zero.
-  If a row has banks_changed true, say its change includes a merger and is not organic. Over a year, also say
-  that acquisitions of banks from other holding companies are not yet detected.
+  Results are pro forma for mergers (acquired banks counted with their acquirer in every period), so growth is
+  like for like. Say "pro forma for mergers" once when you report an organization's growth over time.
 - Peer groups by place and size: us_region (e.g. "New England") and organization_asset_band (e.g. $5B-$50B =
   ["$5B-$10B", "$10B-$50B"]). Use these filters, never a hand-made list of states or companies.
+- ROA for a quarter means return_on_assets_quarterly (the quarter annualized, as banks report it). Use
+  return_on_assets (year-to-date) only when the user asks for year-to-date. Margin: net_interest_margin.
+  Funding: cost_of_funds, cost_of_deposits, cost_of_interest_bearing_deposits (all quarterly, lower is better).
+  These are bank-level call-report figures; they can differ slightly from a holding company's earnings release.
 - If a result has a "concentration" block, one bank drives that group's figure. Say so in an insight,
   name the bank, and give the group's rate without it (both numbers are in the block).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
@@ -226,8 +232,9 @@ def concentration(layer, res: dict, request: dict, ranks: dict | None):
     return None
 
 
-LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio"}
-HIGHER_IS_BETTER = {"return_on_assets", "return_on_equity", "equity_to_assets", "mean_bank_roa", "median_bank_roa",
+LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio",
+                   "cost_of_funds", "cost_of_deposits", "cost_of_interest_bearing_deposits"}
+HIGHER_IS_BETTER = {"return_on_assets", "return_on_assets_quarterly", "net_interest_margin", "return_on_equity", "equity_to_assets", "mean_bank_roa", "median_bank_roa",
                     "median_bank_nim", "median_bank_leverage_ratio", "reported_roa", "reported_roe", "reported_nim",
                     "reported_leverage_ratio"}
 _SUPER = re.compile(r"\b(second[- ]highest|second[- ]lowest|second[- ]best|highest|lowest|best|worst|"
@@ -407,14 +414,18 @@ def check_percentages(answer: dict, results: dict, calc_values: list[float]) -> 
 def build_spec() -> dict:
     """System prompt and tools: analyst rules + the same governed glossary as Setup C."""
     c = prompts.build("C")
-    system = f"{ANALYST_RULES}\n\nThe data covers 2024Q3 through 2026Q2.\n\n{prompts.render_glossary()}"
+    glossary = prompts.render_glossary()
+    for item in (yaml.safe_load(Path(prompts.__file__).with_name("semantic_model.yaml").read_text())
+                 .get("extensions", {}).get("retires_out_of_scope", [])):
+        glossary = glossary.replace(f"- {item}\n", "").replace(f"- {item}", "")
+    system = f"{ANALYST_RULES}\n\nThe data covers 2024Q3 through 2026Q2.\n\n{glossary}"
     tools = [copy.deepcopy(t) for t in c["tools"] if t["name"] in ("query_metrics", "list_values")]
     props = tools[0]["input_schema"]["properties"]      # the app's layer does more than the frozen Setup C
     props["compare_to"]["description"] = (
         "Optional. 'prior_quarter', 'prior_year', or a 'YYYYQn' period. Returns both values and the change "
         "(percent change, or percentage-point change for ratios). With no dimensions: any metrics. With ONE "
         "dimension and ONE metric: the change for every group, sorted by change (gainers and losers), with "
-        "banks_changed flagging organizations whose banks changed (a merger).")
+        "results pro forma for mergers.")
     props["limit"]["description"] = "Optional. Maximum rows (up to 60)."
     return {"system": system, "tools": tools + [CALC_TOOL, PRESENT_TOOL]}
 
