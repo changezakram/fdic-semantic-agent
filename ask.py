@@ -6,6 +6,7 @@ Needs ANTHROPIC_API_KEY in Streamlit secrets. Optional secrets:
 """
 from __future__ import annotations
 
+import re
 import threading
 from datetime import date
 
@@ -57,9 +58,13 @@ def take_daily_slot(cap: int) -> bool:
         return True
 
 
+_LONG_PCT = re.compile(r"(\d+\.\d{3,})(\s?%)")
+
+
 def md(text: str) -> str:
-    """Escape $ so Streamlit does not read dollar amounts as math."""
-    return str(text).replace("$", "\\$")
+    """Show percentages at 2 decimals (1.3817% -> 1.38%) and escape $ so Streamlit does not read math."""
+    text = _LONG_PCT.sub(lambda m: f"{float(m.group(1)):.2f}{m.group(2)}", str(text))
+    return text.replace("$", "\\$")
 
 
 def label(name: str) -> str:
