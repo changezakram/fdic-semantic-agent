@@ -31,6 +31,9 @@ How to work:
   (total assets of the whole organization), not size_class (each bank charter separately).
 - For rankings or comparisons "by state", filter geography_type = "State or DC" unless the user asks
   about territories. Treat "Unknown" (banks with no institution record) as a data caveat, never as a peer.
+- Industry and group TOTALS always include every filer, "Unknown" too (it is part of the industry). Leave
+  "Unknown" out of rankings and charts only. For a total's growth, use query_metrics compare_to; never
+  recompute it from rounded numbers. Feed calculate the full-precision values the results returned.
 - If a result has a "concentration" block, one bank drives that group's figure. Say so in an insight,
   name the bank, and give the group's rate without it (both numbers are in the block).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
@@ -217,6 +220,42 @@ HIGHER_IS_BETTER = {"return_on_assets", "return_on_equity", "equity_to_assets", 
 _SUPER = re.compile(r"\b(second[- ]highest|second[- ]lowest|second[- ]best|highest|lowest|best|worst|"
                     r"led|leads|leading|strongest|weakest|largest|smallest|top|bottom)\b", re.I)
 _NUM = re.compile(r"-?\d[\d,]*\.?\d*")
+_SENT = re.compile(r"(?<=[.;!?])\s+")
+
+
+def _sentence(text: str, sm) -> str:
+    cuts = [0] + [m.end() for m in _SENT.finditer(text)] + [len(text)]
+    return text[max(c for c in cuts if c <= sm.start()): min(c for c in cuts if c > sm.start())]
+
+
+def _sentence_numbers(sent: str) -> list[tuple[float, int]]:
+    out = []
+    for m in _NUM.finditer(sent):
+        raw = m.group().replace(",", "").rstrip(".")
+        try:
+            out.append((float(raw), len(raw.split(".")[1]) if "." in raw else 0))
+        except ValueError:
+            pass
+    return out
+
+
+def _claim_number(text: str, sm):
+    """The number a superlative refers to: the nearest number in the same sentence, before or after it.
+    Periods and years (2026Q2, 2025) are not candidates."""
+    cuts = [0] + [m.end() for m in _SENT.finditer(text)] + [len(text)]
+    start = max(c for c in cuts if c <= sm.start())
+    end = min(c for c in cuts if c > sm.start())
+    best = None
+    for m in _NUM.finditer(text, start, end):
+        if text[m.end(): m.end() + 1] in ("Q", "q") or text[max(0, m.start() - 1): m.start()] in ("Q", "q") \
+                or re.fullmatch(r"(19|20)\d\d", m.group()):
+            continue
+        if sm.start() <= m.start() < sm.end():
+            continue
+        dist = m.start() - sm.end() if m.start() >= sm.end() else sm.start() - m.end()
+        if dist <= 90:
+            best = (best or []) + [(dist, m)]
+    return [m for _, m in sorted(best, key=lambda t: t[0])] if best else []
 
 
 def _direction(word: str, metric: str):
@@ -260,46 +299,62 @@ def check_claims(answer: dict, results: dict) -> list[str]:
                 index.append((v, ent, m, vals, end))
     if not index:
         return []
-    texts = [(answer or {}).get("headline", "")] + list((answer or {}).get("insights") or [])
+    texts = [(answer or {}).get("headline", "") or ""] + list((answer or {}).get("insights") or [])
     problems = []
     for text in texts:
         for sm in _SUPER.finditer(text):
-            nm = _NUM.search(text[sm.end(): sm.end() + 70])
-            if not nm:                                   # "Maine (0.42%) has the lowest ..." - number before
-                before = list(_NUM.finditer(text[max(0, sm.start() - 70): sm.start()]))
-                nm = before[-1] if before else None
+            if re.search(r"next[- ]?$", text[max(0, sm.start() - 6): sm.start()], re.I):
+                continue                                 # "next-highest" lists, not a superlative claim
+            nm = hits = None
+            for cand in _claim_number(text, sm):      # nearest number that is one of the result values
+                try:
+                    n = float(cand.group().replace(",", "").rstrip("."))
+                except ValueError:
+                    continue
+                decimals = len(cand.group().rstrip(".").split(".")[1]) if "." in cand.group().rstrip(".") else 0
+                hits = [h for h in index if abs(round(h[0], decimals) - n) < 1e-9]
+                if hits:
+                    nm = cand
+                    break
             if not nm:
-                continue
-            try:
-                n = float(nm.group().replace(",", "").rstrip("."))
-            except ValueError:
-                continue
-            decimals = len(nm.group().rstrip(".").split(".")[1]) if "." in nm.group().rstrip(".") else 0
-            hits = [h for h in index if abs(round(h[0], decimals) - n) < 1e-9]
-            if not hits:
                 continue
             metrics_hit = {h[2] for h in hits}
             if len(metrics_hit) != 1:
                 continue                                     # same number in two metrics: cannot tell which
-            _, _, m, vals, end = hits[0]
+            m = hits[0][2]
             d = _direction(sm.group(), m)
             if d is None:
                 continue
             how, rank = d
-            if end and end != how:
+            # Judge the claim against each result that contains this number; it stands if it holds in any
+            # (a peer-group result and a broader one can both contain the same value).
+            verdicts = []
+            for vals, end in {(id(h[3]), h[4]): (h[3], h[4]) for h in hits}.values():
+                if end and end != how:
+                    verdicts.append(("cutoff", None))
+                    continue
+                ordered = sorted(vals, key=lambda t: t[1], reverse=(how == "max"))
+                if len(ordered) < rank:
+                    verdicts.append(("ok", None))
+                    continue
+                true_ent, true_v = ordered[rank - 1]
+                ok = true_ent in {h[1] for h in hits if h[3] is vals}
+                if not ok:                                    # a list such as "Hawaii (0.26%), Maine (0.42%) ... have
+                    sent = _sentence(text, sm)               # the lowest rates": the true value is in the sentence
+                    ok = any(abs(round(true_v, dd) - nn) < 1e-9 for nn, dd in _sentence_numbers(sent))
+                verdicts.append(("ok", None) if ok else ("wrong", (true_ent, true_v)))
+            if any(v == "ok" for v, _ in verdicts):
+                continue
+            if any(v == "wrong" for v, _ in verdicts):
+                true_ent, true_v = next(x for v, x in verdicts if v == "wrong")
+                problems.append(f'You wrote "{sm.group()} ... {nm.group()}" for {m}, but the '
+                                f'{"second " if rank == 2 else ""}{"highest" if how == "max" else "lowest"} {m} is '
+                                f"{true_v:.2f} ({true_ent}). Fix this claim.")
+            else:
                 problems.append(f'You wrote "{sm.group()} ... {nm.group()}" for {m}, but that result was sorted '
                                 f'the other way and cut off, so its {"low" if how == "min" else "high"} end is '
                                 f'missing. Run query_metrics with order_by "{m} {"asc" if how == "min" else "desc"}" '
                                 f"and a limit, or drop the claim.")
-                continue
-            ordered = sorted(vals, key=lambda t: t[1], reverse=(how == "max"))
-            if len(ordered) < rank:
-                continue
-            true_ent, true_v = ordered[rank - 1]
-            if true_ent not in {h[1] for h in hits}:          # also catches rounding ties (0.42 = ME or SC)
-                problems.append(f'You wrote "{sm.group()} ... {nm.group()}" for {m}, but the '
-                                f'{"second " if rank == 2 else ""}{"highest" if how == "max" else "lowest"} {m} is '
-                                f"{true_v:.2f} ({true_ent}). Fix this claim.")
     return problems
 
 
@@ -466,7 +521,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
 
     if answer is None and error is None:
         error = "The model did not finish an answer."
-    return {"answer": answer, "results": results, "steps": steps, "usage": usage, "log": log,
+    return {"answer": answer, "results": results, "steps": steps, "usage": usage, "log": log, "calc": calc_values,
             "latency_s": round(time.time() - t0, 1), "error": error}
 
 
@@ -477,10 +532,13 @@ def auto_chart(results: dict) -> dict | None:
         rows, req = r.get("rows") or [], r.get("request", {})
         dims = [d for d in req.get("dimensions") or [] if rows and d in rows[0]]
         metrics = [m for m in req.get("metrics") or [] if rows and m in rows[0]]
-        if dims and metrics and 2 <= len(rows) <= 25:
+        if dims and metrics and 2 <= len(rows) <= (60 if "period" in dims else 25):
             candidates.append((len(metrics), order, rid, r, dims, metrics))
-    if len(candidates) != 1:          # never guess between several results
+    if not candidates:
         return None
+    if len(candidates) > 1:           # several results: prefer the latest trend, else the latest result
+        trends = [c for c in candidates if "period" in c[4]]
+        candidates = [(trends or candidates)[-1]]
     for _, _, rid, r, dims, metrics in candidates:
         ratios = [m for m in metrics if r.get("units", {}).get(m) == "percent"]
         metrics = ratios + [m for m in metrics if m not in ratios]   # a scorecard charts its ratio first

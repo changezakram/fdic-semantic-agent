@@ -1,0 +1,7 @@
+Executive questions, 2026-11-04 20:31, model claude-haiku-5-5, semantic model v0.1.4
+
+E02  1/1  state ranking + concentration    Which states have the highest noncurrent loan rates in 2026Q2?
+E13  1/1  decline                          What's the cost of deposits for $10B-$100B banks?
+
+TOTAL  2/2 runs fully correct (100%)
+Questions correct in every run: 2/2
