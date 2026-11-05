@@ -199,9 +199,10 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                            filters={"us_region": "New England", "organization_asset_band": ["$10B-$50B"]})["rows"]
     beacon = {r["period"]: r["loan_to_deposit_ratio"] for r in rows if r["organization"].startswith("BEACON")}
     Q.append(dict(id="E21", topic="trend, pro forma",
-                  question="Loan-to-deposit ratio trend for New England banking organizations with $10B-$50B in "
-                           "assets since 2024",
+                  question="Loan-to-deposit ratio trend by banking organization for New England organizations with "
+                           "$10B-$50B in assets since 2024",
                   expect="answer", headline=[["loan-to-deposit"]], numbers=[beacon["2026Q2"]], chart=True,
+                  must_text=[["Beacon"], ["Eastern"], ["Independent"]],
                   not_text=["best loan-to-deposit", "worst loan-to-deposit"], key=rows))
 
     # E13-E15 out of scope: must decline, not estimate

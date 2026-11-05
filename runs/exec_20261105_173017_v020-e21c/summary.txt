@@ -1,0 +1,6 @@
+Executive questions, 2026-11-05 17:30, model claude-haiku-5-5, semantic model v0.2.0
+
+E21  1/1  trend, pro forma                 Loan-to-deposit ratio trend by banking organization for New England or
+
+TOTAL  1/1 runs fully correct (100%)
+Questions correct in every run: 1/1

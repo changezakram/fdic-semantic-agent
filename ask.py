@@ -34,7 +34,7 @@ SAMPLES = [   # (button label, full question). Balance-sheet and credit measures
     ("Credit quality by New England state",
      "Noncurrent loan rate by New England state, 2026Q2"),
     ("Loan-to-deposit trend, $10B-$50B New England peers",
-     "Loan-to-deposit ratio trend for New England banking organizations with $10B-$50B in assets since 2024"),
+     "Loan-to-deposit ratio trend by banking organization for New England organizations with $10B-$50B in assets since 2024"),
 ]
 
 
