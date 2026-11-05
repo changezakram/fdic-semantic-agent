@@ -69,6 +69,10 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     if color:
         tooltip.insert(1, alt.Tooltip(f"{color}:N", title=label(color)))
 
+    if chart["kind"] == "line" and color and not chart.get("only") and df[color].nunique() > 2 \
+            and (df[color].astype(str) == "Unknown").any():
+        df = df[df[color].astype(str) != "Unknown"].reset_index(drop=True)
+        note = "Unknown (banks with no institution record) is left out of the chart; it is in the table under How I got this."
     if chart["kind"] == "line":
         enc = dict(x=alt.X(f"{x}:O", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
                    y=alt.Y(f"{y}:Q", title=y_title, scale=alt.Scale(zero=False), axis=alt.Axis(gridOpacity=0.3)),
@@ -87,6 +91,9 @@ def build(chart: dict, result: dict, max_bars: int = 15):
         return alt.layer(*layers).properties(title=chart.get("title", ""), height=320), note
 
     # bar
+    if not chart.get("only") and len(df) > 2 and (df[x].astype(str) == "Unknown").any():
+        df = df[df[x].astype(str) != "Unknown"].reset_index(drop=True)
+        note = "Unknown (banks with no institution record) is left out of the chart; it is in the table under How I got this."
     if not color and len(df[~df["_excl"]]) > max_bars:
         note = f"Showing the top {max_bars} of {len(df[~df['_excl']])}. The full table is under How I got this."
         df = pd.concat([df[~df["_excl"]].nlargest(max_bars, y), df[df["_excl"]]], ignore_index=True)
@@ -109,9 +116,14 @@ def build(chart: dict, result: dict, max_bars: int = 15):
     base = alt.Chart(df).encode(y=y_axis, x=x_axis, tooltip=tooltip)
     bars = base.mark_bar(cornerRadiusEnd=3, height={"band": 0.7}).encode(
         color=alt.condition("datum._excl", alt.value(BAR_LIGHT), alt.value(BAR)))
-    text = base.mark_text(align="right", dx=-8, fontSize=12, fontWeight="bold", color="white").encode(
+    df["_inside"] = df[y].abs() >= 0.15 * df[y].abs().max()        # short bars get their label outside
+    base = alt.Chart(df).encode(y=y_axis, x=x_axis, tooltip=tooltip)
+    inside = base.transform_filter("datum._inside").mark_text(
+        align="right", dx=-8, fontSize=12, fontWeight="bold").encode(
         text="_label:N", color=alt.condition("datum._excl", alt.value("#1F3B57"), alt.value("white")))
-    return (bars + text).properties(title=chart.get("title", ""), height=alt.Step(38)), note
+    outside = base.transform_filter("!datum._inside").mark_text(
+        align="left", dx=6, fontSize=12, fontWeight="bold", color="#8A94A6").encode(text="_label:N")
+    return (bars + inside + outside).properties(title=chart.get("title", ""), height=alt.Step(38)), note
 
 
 def scorecard(result: dict, request: dict, lower_is_better: set, higher_is_better: set):
