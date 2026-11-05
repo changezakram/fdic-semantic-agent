@@ -138,6 +138,11 @@ def scorecard(result: dict, request: dict, lower_is_better: set, higher_is_bette
     if request.get("order_by") and directional_count < 2:   # a ranked list, not a scorecard
         return None
     df = pd.DataFrame(rows)[[dims[0]] + metrics]
+    # Same rule as rankings: Unknown (and territories, by state) are not peers, so they never get "best"
+    non_peer = {"Unknown"} | ({"PR", "VI", "GU", "FM", "AS", "MP", "MH", "PW"} if dims[0] == "state" else set())
+    keep = ~df[dims[0]].astype(str).isin(non_peer)
+    if keep.sum() >= 2:
+        df = df[keep]
     units = result.get("units", {})
     fmt = {m: ("{:,.2f}%" if units.get(m) == "percent" else "${:,.1f}B" if units.get(m) == "$ billions" else "{:,.0f}")
            for m in metrics}

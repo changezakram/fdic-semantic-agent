@@ -104,7 +104,10 @@ def render_turn(turn: dict, idx: int, last: bool = False):
         r = results[rid]
         table = charts.scorecard(r, r["request"], analyst.LOWER_IS_BETTER, analyst.HIGHER_IS_BETTER)
         if table is not None:
-            st.markdown("**Scorecard** (best value highlighted where higher or lower is clearly better)")
+            st.markdown("**Scorecard** (best value highlighted where higher or lower is clearly better"
+                        + ("; Unknown, banks with no institution record, left out" if any(
+                            str(row.get(d)) == "Unknown" for row in r["rows"] for d in (r["request"].get("dimensions") or []))
+                           else "") + ")")
             st.dataframe(table, hide_index=True, width="stretch")
             break
     if chart_specs:
