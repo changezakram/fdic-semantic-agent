@@ -247,7 +247,7 @@ CONCENTRATION = {
     "net_charge_off_rate":   ("net_charge_offs", "gross_loans", ("highest",)),
     "loan_to_deposit_ratio": ("total_deposits", "total_deposits", ("highest", "lowest")),
 }
-DRILL_DIMS = {"state", "region", "regulator", "size_class", "organization_size_class", "specialization",
+DRILL_DIMS = {"state", "state_name", "region", "regulator", "size_class", "organization_size_class", "specialization",
               "charter_type", "fdic_community_bank", "geography_type", "us_region"}
 
 
