@@ -125,6 +125,14 @@ Public FDIC call-report data from the [FDIC BankFind Suite API](https://api.fdic
 fetched on 2026-11-02. This project is not affiliated with the FDIC. Figures follow the
 definitions in `semantic_model.yaml` and are for research and illustration, not investment advice.
 
+
+2026-11-04: Executive questions benchmark. 15 benchmarking questions (exec_questions.py), expected answers computed from the semantic layer, graded in code (run_exec.py), 3 runs each. Baseline 40/45, after fixes 45/45. Fixes: claim checker sentence-aware and judged per result; totals always include Unknown; growth of totals via compare_to.
+
+## 2026-11-05 — v0.2.0
+- Extended FDIC snapshot (merger history, funding, deposit mix, capital, loan mix, SOD); experiment snapshot untouched
+- Pro forma for mergers (app only); quarterly ROA is the default "ROA"; NIM, cost of funds/deposits added, within 0.03–0.07 pts of FDIC
+- Benchmark grades chart and scorecard too; 21 questions x 3 = 62/63
+
 ## Author
 
 Changez Akram · [changezakram.github.io](https://changezakram.github.io)

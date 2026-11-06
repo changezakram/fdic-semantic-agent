@@ -102,8 +102,9 @@ def render_turn(turn: dict, idx: int, last: bool = False):
     chart_specs = analyst.valid_charts(a, results)
     # Scorecard from the result the answer charts; otherwise the latest query (later queries refine earlier
     # ones, e.g. after a name lookup picked the wrong company). Never an earlier, superseded result.
-    order = [c["result_id"] for c in chart_specs] + [rid for rid in reversed(list(results)) if not results[rid].get("auto")]
-    for rid in dict.fromkeys(order):
+    for rid in [analyst.scorecard_result(chart_specs, results)] if results else []:
+        if rid is None:
+            break
         r = results[rid]
         table = charts.scorecard(r, r["request"], analyst.LOWER_IS_BETTER, analyst.HIGHER_IS_BETTER)
         if table is not None:
