@@ -89,6 +89,12 @@ def build(chart: dict, result: dict, max_bars: int = 20):
         lines = base.mark_line(strokeWidth=2.5, **solid)
         points = base.mark_circle(size=55, **solid)
         layers = [lines, points]
+        if "merger_quarter" in df.columns and df["merger_quarter"].fillna(False).astype(bool).any():
+            mq = df[df["merger_quarter"].fillna(False).astype(bool)]
+            layers.append(alt.Chart(mq).mark_point(shape="diamond", size=260, filled=False, color="#8A94A6",
+                                                     strokeWidth=2).encode(x=alt.X(f"{x}:O", sort=None), y=f"{y}:Q"))
+            note = (note + " " if note else "") + ("Gray diamonds: merger quarters. Call-report income in these "
+                                                   "quarters can differ materially from reported results.")
         if not color:   # label the last point
             last = df.iloc[[-1]]
             layers.append(alt.Chart(last).mark_text(align="left", dx=8, fontSize=12, fontWeight="bold", color=BAR)

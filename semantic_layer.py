@@ -62,6 +62,63 @@ class SemanticLayer:
                         if self.has_ext or not (isinstance(v, dict) and v.get("extension"))}
         self.measures = self.model["measures"]
 
+    # ------------------------------------------------------------------ merger-quarter flags (app only)
+    QUARTERLY_INCOME = {"return_on_assets_quarterly", "net_interest_margin", "cost_of_funds", "cost_of_deposits",
+                        "cost_of_interest_bearing_deposits"}
+    FLAG_DIMS = ("organization", "holding_company", "bank_name", "bank")
+
+    def query_metrics(self, metrics, period, dimensions=None, filters=None, basis=None, compare_to=None,
+                      order_by=None, limit=None):
+        res = self._query_metrics_core(metrics, period, dimensions=dimensions, filters=filters, basis=basis,
+                                       compare_to=compare_to, order_by=order_by, limit=limit)
+        if self.has_ext and set(metrics or []) & self.QUARTERLY_INCOME:
+            self._flag_merger_quarters(res, period, dimensions or [], filters or {})
+        return res
+
+    def _merger_flags(self, dim: str) -> set:
+        """(group value, period) pairs for the quarter a merger closed and the quarter after. In those
+        quarters call-report income can differ materially from reported results (merger charges, purchase
+        accounting, year-to-date restatement), so quarterly income ratios carry a caveat."""
+        if not hasattr(self, "_flag_cache"):
+            self._flag_cache = {}
+        if dim in self._flag_cache:
+            return self._flag_cache[dim]
+        sql_dim = self.model["dimensions"][dim]["sql"] if isinstance(self.model["dimensions"][dim], dict) else dim
+        rows = self.con.execute(f"""
+            WITH ev AS (SELECT ACQ_CERT AS ACQ, EFFDATE FROM merger_events),
+            q AS (SELECT ACQ, (year(EFFDATE) || 'Q' || quarter(EFFDATE)) AS p0,
+                         (year(EFFDATE + INTERVAL 3 MONTH) || 'Q' || quarter(EFFDATE + INTERVAL 3 MONTH)) AS p1 FROM ev)
+            SELECT DISTINCT {sql_dim} AS g, b.period FROM bank_quarter b
+            JOIN q ON COALESCE((SELECT SURV_CERT FROM survivor s WHERE s.CERT = q.ACQ), q.ACQ) = b.CERT
+            WHERE b.period IN (q.p0, q.p1)""").fetchall()
+        self._flag_cache[dim] = {(str(g), p) for g, p in rows}
+        return self._flag_cache[dim]
+
+    def _flag_merger_quarters(self, res, period, dimensions, filters):
+        hit = set()
+        dims = [d for d in dimensions if d in self.FLAG_DIMS]
+        for d in dims:
+            flags = self._merger_flags(d)
+            for row in res.get("rows") or []:
+                p = row.get("period", period if isinstance(period, str) and ":" not in str(period) else None)
+                if p and (str(row.get(d)), p) in flags:
+                    row["merger_quarter"] = True
+                    hit.add(f"{row.get(d)} {p}")
+        for d in self.FLAG_DIMS:                      # one organization or bank picked by filter
+            if d in filters and not dims:
+                vals = filters[d] if isinstance(filters[d], list) else [filters[d]]
+                flags = self._merger_flags(d)
+                for row in res.get("rows") or []:
+                    p = row.get("period", period)
+                    for v in vals:
+                        if any(str(g).upper() == str(v).upper() and q == p for g, q in flags):
+                            row["merger_quarter"] = True
+                            hit.add(f"{v} {p}")
+        if hit:
+            res.setdefault("notes", []).append(
+                "merger_quarter = a merger closed in this quarter or the one before. Quarterly income ratios from "
+                "call reports can differ materially from reported results in these quarters: " + ", ".join(sorted(hit)))
+
     # ------------------------------------------------------------------ extended snapshot (app only)
     def _extend(self, sql: str, ext: Path) -> str:
         """Add the extra call-report fields, quarterly versions of the new income fields, and (when
@@ -215,7 +272,7 @@ class SemanticLayer:
         return clauses, bank_single
 
     # ------------------------------------------------------------- main entry
-    def query_metrics(self, metrics, period, dimensions=None, filters=None, basis=None,
+    def _query_metrics_core(self, metrics, period, dimensions=None, filters=None, basis=None,
                       compare_to=None, order_by=None, limit=None):
         if isinstance(metrics, str):
             metrics = [metrics]

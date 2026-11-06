@@ -1,0 +1,9 @@
+Executive questions, 2026-11-05 20:05, model claude-haiku-5-5, semantic model v0.2.0
+
+E01  1/1  peer scorecard                   Compare ROA, efficiency ratio and noncurrent loan rate for M&T, Citize
+E06  1/1  two-period, two-metric judgment  Which FDIC regions improved ROA the most from 2025Q2 to 2026Q2, and di
+E11  1/1  industry trend                   How has industry ROA trended since 2024?
+E21  1/1  trend, pro forma                 Loan-to-deposit ratio trend by banking organization for New England or
+
+TOTAL  4/4 runs fully correct (100%)
+Questions correct in every run: 4/4

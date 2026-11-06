@@ -49,6 +49,9 @@ How to work:
   These are bank-level call-report figures; they can differ slightly from a holding company's earnings release.
 - If a result has "peer_aggregate", say where the leaders and laggards sit against it (it is the whole
   queried group's aggregate, drawn as a line on the chart).
+- If rows have merger_quarter true, the quarterly income figure for that organization and quarter is
+  distorted by a merger (charges, purchase accounting). Say so in an insight, and do not call it a
+  "best" or "worst" quarter or rank on it without that caveat.
 - If a result has a "concentration" block, one bank drives that group's figure. Say so in an insight,
   name the bank, and give the group's rate without it (both numbers are in the block).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
@@ -689,6 +692,14 @@ def answer_problems(answer: dict, results: dict) -> list[str]:
                 probs.append(f"A concentration check found that {blk['driver_bank']} drives {blk['group']} "
                              f"({blk['metric']} {blk['group_rate']}, {blk.get('group_rate_without_driver')} without "
                              "it). Say so in an insight.")
+    flagged = sorted({str(row.get(d)) for r in results.values() for row in (r.get("rows") or [])
+                      if row.get("merger_quarter") for d in ("organization", "holding_company", "bank_name")
+                      if row.get(d)} or ({"one or more organizations"} if any(
+                          row.get("merger_quarter") for r in results.values() for row in (r.get("rows") or [])) else set()))
+    if flagged and "merger" not in text:
+        probs.append(f"Some quarterly income figures fall in a merger quarter ({', '.join(flagged)[:200]}). Say in "
+                     "an insight that these quarters are distorted by the merger and can differ materially from "
+                     "reported results.")
     return probs
 
 
