@@ -52,6 +52,16 @@ How to work:
   allowance_to_noncurrent (coverage).
 - Deposit mix: uninsured_deposit_share (call-report estimate, includes collateralized and affiliate deposits),
   brokered_deposit_share, noninterest_bearing_deposit_share, time_deposit_share, core_deposit_share.
+- Loan mix (shares of gross loans, call-report categories, which differ from the segments banks use in
+  earnings releases): cre_loan_share (construction + multifamily + nonfarm nonresidential, incl.
+  owner-occupied), construction_loan_share, multifamily_loan_share, owner_occupied_cre_loan_share,
+  non_owner_occupied_cre_loan_share, residential_loan_share, ci_loan_share, consumer_loan_share. No better
+  direction. "CRE concentration" means cre_concentration: regulatory CRE (excl. owner-occupied) / total
+  risk-based capital, bank level, so usually above a holding company's disclosed ratio. Supervisory guidance
+  flags 300% (construction_concentration: 100%) for closer review; it is not a limit, so say "above the 300%
+  guideline", never "in breach" or "violating". Lower is less concentrated; never call a ratio "best" or
+  "worst". Credit by loan type: cre_noncurrent_rate, residential_noncurrent_rate, ci_noncurrent_rate,
+  consumer_noncurrent_rate (lower is better).
 - If a result has "peer_aggregate", say where the leaders and laggards sit against it (it is the whole
   queried group's aggregate, drawn as a line on the chart).
 - If rows have merger_quarter true, the quarterly income figure for that organization and quarter is
@@ -270,7 +280,8 @@ def peer_benchmark(layer, request: dict, res: dict) -> dict | None:
 
 
 LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio",
-                   "cost_of_funds", "cost_of_deposits", "cost_of_interest_bearing_deposits"}
+                   "cost_of_funds", "cost_of_deposits", "cost_of_interest_bearing_deposits",
+                   "cre_noncurrent_rate", "residential_noncurrent_rate", "ci_noncurrent_rate", "consumer_noncurrent_rate"}
 HIGHER_IS_BETTER = {"return_on_assets", "return_on_assets_quarterly", "net_interest_margin", "cet1_ratio",
                     "noninterest_bearing_deposit_share", "core_deposit_share",
                     "tier1_risk_based_ratio", "total_risk_based_ratio", "leverage_ratio", "allowance_to_noncurrent", "return_on_equity", "equity_to_assets", "mean_bank_roa", "median_bank_roa",

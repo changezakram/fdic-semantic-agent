@@ -26,7 +26,10 @@ def label(name: str) -> str:
     special = {"change_pct": "Change", "change_pp": "Change (points)", "change": "Change", "cet1_ratio": "CET1 ratio",
                "return_on_assets_quarterly": "Quarterly ROA", "net_interest_margin": "Net interest margin (NIM)",
                "tier1_risk_based_ratio": "Tier 1 risk-based ratio", "total_risk_based_ratio": "Total risk-based ratio",
-               "noninterest_bearing_deposit_share": "Non-interest-bearing deposit share"}
+               "noninterest_bearing_deposit_share": "Non-interest-bearing deposit share",
+               "ci_loan_share": "C&I loan share", "ci_noncurrent_rate": "C&I noncurrent rate",
+               "owner_occupied_cre_loan_share": "Owner-occupied CRE share",
+               "non_owner_occupied_cre_loan_share": "Non-owner-occupied CRE share"}
     if name in special:
         return special[name]
     words = name.replace("_", " ").capitalize().split()

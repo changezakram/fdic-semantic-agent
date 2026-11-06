@@ -238,14 +238,27 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   expect="answer", headline=[["deposit"]], must_text=[[top["organization"].split()[0].title()]],
                   numbers=[top["uninsured_deposit_share"]], not_text=["best uninsured", "worst uninsured"], key=rows))
 
-    # E13-E15 out of scope: must decline, not estimate
+    # E13-E15 were out of scope in v0.1; answerable since v0.2.0-v0.2.3
     r = L.query_metrics(metrics=["cost_of_deposits"], period="2026Q2", filters={"size_class": "$10B-$100B"})["rows"][0]
     Q.append(dict(id="E13", topic="funding cost (new in v0.2.0)",
                   question="What's the cost of deposits for $10B-$100B banks?",
                   expect="answer", headline=[["cost of deposits", "deposit cost", "cost"]],
                   numbers=[r["cost_of_deposits"]], key=r))
-    Q.append(dict(id="E14", topic="decline",
-                  question="What share of loans is commercial real estate at banks under $10B?", expect="decline"))
+    r = L.query_metrics(metrics=["cre_loan_share"], period="2026Q2", filters={"size_class": "Under $10B"})["rows"][0]
+    Q.append(dict(id="E14", topic="loan mix (new in v0.2.3)",
+                  question="What share of loans is commercial real estate at banks under $10B?",
+                  expect="answer", headline=[["commercial real estate", "CRE"]], numbers=[r["cre_loan_share"]], key=r))
+    # E24 CRE concentration, peer group (v0.2.3)
+    rows = L.query_metrics(metrics=["cre_concentration"], period="2026Q2", dimensions=["organization"],
+                           filters={"us_region": "New England", "organization_asset_band": ["$5B-$10B", "$10B-$50B"]},
+                           order_by="cre_concentration desc")["rows"]
+    Q.append(dict(id="E24", topic="CRE concentration (new in v0.2.3)",
+                  question="Which New England banking organizations with $5B-$50B in assets have the highest CRE "
+                           "concentration relative to capital, 2026Q2?",
+                  expect="answer", headline=[["CRE", "commercial real estate"]],
+                  must_text=[[rows[0]["organization"].split()[0].title()], ["300%"]],
+                  numbers=[rows[0]["cre_concentration"]], not_text=["breach", "violat", "best", "worst"], chart=True,
+                  key=rows))
     rows = L.query_metrics(metrics=["uninsured_deposit_share"], period="2026Q2", dimensions=["organization"],
                            filters={"organization_asset_band": ["$10B-$50B", "$50B-$100B"]},
                            order_by="uninsured_deposit_share desc", limit=10)["rows"]

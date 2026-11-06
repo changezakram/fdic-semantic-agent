@@ -83,6 +83,28 @@ def main():
                                   "time_deposit_share", "core_deposit_share"], period="2026Q2")["rows"][0]
     check("industry deposit shares are all between 0% and 100%", all(0 < v < 100 for v in m.values()), str(m))
 
+    print("Loan mix and CRE concentration (v0.2.3)")
+    lm = pf.con.execute("""SELECT LNRE, LNRECONS + LNREMULT + LNRENRES + LNRERES, LNRENRES, LNRENROW + LNRENROT,
+                                  NCRE, P9RECONS + NARECONS + P9REMULT + NAREMULT + P9RENRES + NARENRES + P9RERES + NARERES
+                           FROM bank_quarter WHERE CERT = 17798 AND period = '2026Q2'""").fetchone()
+    check("Beacon real estate loans = construction + multifamily + nonresidential + 1-4 family (farmland < $1M)",
+          0 <= lm[0] - lm[1] < 1000, f"{lm[0]} vs {lm[1]}")
+    check("Beacon nonresidential = owner-occupied + other", lm[2] == lm[3])
+    check("Beacon noncurrent real estate = sum of the types", lm[4] == lm[5], f"{lm[4]} vs {lm[5]}")
+    b = pf.query_metrics(metrics=["cre_concentration", "total_risk_based_ratio"], period="2026Q2",
+                         filters={"bank": 17798})["rows"][0]
+    # release: 317% of total risk-based capital, consolidated, at a 13.6% total capital ratio. Same loans over
+    # the bank's smaller capital: 317 x 13.6 / bank ratio
+    implied = 317 * 13.6 / b["total_risk_based_ratio"]
+    check("Beacon CRE concentration matches the release's 317% once restated to bank capital (within 3 pts)",
+          abs(b["cre_concentration"] - implied) < 3, f"{b['cre_concentration']:.1f} vs {implied:.1f}")
+    mix = ["construction_loan_share", "multifamily_loan_share", "owner_occupied_cre_loan_share",
+           "non_owner_occupied_cre_loan_share", "residential_loan_share", "ci_loan_share", "consumer_loan_share"]
+    m = pf.query_metrics(metrics=mix + ["cre_loan_share"], period="2026Q2")["rows"][0]
+    check("industry loan mix: the parts sum to less than 100%", sum(m[k] for k in mix) < 100, f"{sum(m[k] for k in mix):.1f}")
+    check("industry CRE share = construction + multifamily + nonresidential",
+          abs(m["cre_loan_share"] - sum(m[k] for k in mix[:4])) < 0.01)
+
     print(f"\n{'All extension tests pass' if not fails else f'{fails} FAILED'} (semantic model v{pf.version})")
     return fails
 
