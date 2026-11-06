@@ -23,8 +23,14 @@ STATE_NAMES = {
 
 
 def label(name: str) -> str:
-    special = {"change_pct": "Change", "change_pp": "Change (points)", "change": "Change"}
-    return special.get(name, name.replace("_", " ").capitalize())
+    special = {"change_pct": "Change", "change_pp": "Change (points)", "change": "Change", "cet1_ratio": "CET1 ratio",
+               "return_on_assets_quarterly": "Quarterly ROA", "net_interest_margin": "Net interest margin (NIM)",
+               "tier1_risk_based_ratio": "Tier 1 risk-based ratio", "total_risk_based_ratio": "Total risk-based ratio"}
+    if name in special:
+        return special[name]
+    words = name.replace("_", " ").capitalize().split()
+    acronyms = {"roa": "ROA", "roe": "ROE", "nim": "NIM", "cet1": "CET1", "fdic": "FDIC", "occ": "OCC", "cre": "CRE"}
+    return " ".join(acronyms.get(w.lower(), w) for w in words)
 
 
 def value_format(unit: str) -> tuple[str, str]:
