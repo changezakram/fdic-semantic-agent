@@ -93,7 +93,9 @@ How to work:
   earlier answer, put it in "correction", not in the insights.
 
 When done, call present_answer exactly once:
-- headline: one sentence that answers the question, with the key number and its unit.
+- headline: one sentence that answers the question, with the key number and its unit. When comparing named
+  organizations, banks or groups, the headline names the leader (or the standout) with its figure; a span
+  such as "ratios of 11.8% to 14.9%" is not a finding.
 - insights: 2 to 4 short sentences, each stating a specific observation backed by numbers from
   the results (largest/smallest, change over time, gaps between segments, notable outliers,
   data caveats such as the "Unknown" group). Do not speculate about causes.
@@ -291,6 +293,8 @@ _SUPER = re.compile(r"\b(second[- ]highest|second[- ]lowest|second[- ]best|highe
                     r"led|leads|leading|strongest|weakest|largest|smallest|top|bottom)\b", re.I)
 _NUM = re.compile(r"-?\d[\d,]*\.?\d*")
 _SENT = re.compile(r"(?<=[.;!?])\s+")
+_CHANGE_WORD = re.compile(r"[\s\w-]{0,28}?\b(change|changes|gain|gains|increase|increases|rise|rises|decline|declines|"
+                          r"drop|drops|improvement|improvements|deterioration|move|moves)\b", re.I)
 GUIDELINES = {"cre_concentration": 300, "construction_concentration": 100}   # 2006 interagency CRE guidance
 _BAND = re.compile(r"\$\d[\d.]*\s*[BMK]\b\s*(?:to|-|–|—|and)\s*\$\d|\$\d[\d.]*\s*[BMK]?\s*(?:to|-|–|—|and)\s*\$\d[\d.]*\s*[BMK]\b", re.I)
 
@@ -398,6 +402,8 @@ def check_claims(answer: dict, results: dict) -> list[str]:
             if len(metrics_hit) != 1:
                 continue                                     # same number in two metrics: cannot tell which
             m = hits[0][2]
+            if not m.startswith("change") and _CHANGE_WORD.match(text[sm.end(): sm.end() + 40]):
+                continue                                 # "the worst efficiency change": about the change, not the level
             d = _direction(sm.group(), m)
             if d is None:
                 continue
@@ -569,6 +575,11 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
         out = []
         for tu in uses:
             if tu.name == "present_answer":
+                if tu.input.get("answer_type") not in ("answer", "decline") or not str(tu.input.get("headline") or "").strip():
+                    out.append({"type": "tool_result", "tool_use_id": tu.id, "is_error": True,
+                                "content": "present_answer arrived empty or cut off. Call it again with answer_type, a "
+                                           "headline and at most 4 short insights."})
+                    continue
                 probs = (chart_problems(tu.input, results) + check_claims(tu.input, results)
                          + check_percentages(tu.input, results, calc_values) + answer_problems(tu.input, results)
                          + check_ranges(tu.input, results)
