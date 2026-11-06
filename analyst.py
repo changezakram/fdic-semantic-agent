@@ -291,6 +291,7 @@ _SUPER = re.compile(r"\b(second[- ]highest|second[- ]lowest|second[- ]best|highe
                     r"led|leads|leading|strongest|weakest|largest|smallest|top|bottom)\b", re.I)
 _NUM = re.compile(r"-?\d[\d,]*\.?\d*")
 _SENT = re.compile(r"(?<=[.;!?])\s+")
+_BAND = re.compile(r"\$\d[\d.]*\s*[BMK]\b\s*(?:to|-|–|—|and)\s*\$\d|\$\d[\d.]*\s*[BMK]?\s*(?:to|-|–|—|and)\s*\$\d[\d.]*\s*[BMK]\b", re.I)
 
 
 def _sentence(text: str, sm) -> str:
@@ -379,6 +380,8 @@ def check_claims(answer: dict, results: dict) -> list[str]:
                 continue                                 # "the three highest-ranked" describes a group
             nm = hits = None
             for cand in _claim_number(text, sm):      # nearest number that is one of the result values
+                if _BAND.search(text[max(0, cand.start() - 12): cand.end() + 12]):
+                    continue                             # "$5B to $50B" names the peer group, not a value
                 try:
                     n = float(cand.group().replace(",", "").rstrip("."))
                 except ValueError:
@@ -744,6 +747,11 @@ def answer_problems(answer: dict, results: dict) -> list[str]:
                 probs.append(f"A concentration check found that {blk['driver_bank']} drives {blk['group']} "
                              f"({blk['metric']} {blk['group_rate']}, {blk.get('group_rate_without_driver')} without "
                              "it). Say so in an insight.")
+    for metric, level in (("cre_concentration", "300%"), ("construction_concentration", "100%")):
+        if any(isinstance(row.get(metric), (int, float)) for r in results.values() for row in (r.get("rows") or [])) \
+                and level.rstrip("%") not in text:
+            probs.append(f"The answer reports {metric} but never states the {level} supervisory guideline. Say "
+                         f"which organizations are above {level}, and that it is a level for closer review, not a limit.")
     flagged = sorted({str(row.get(d)) for r in results.values() for row in (r.get("rows") or [])
                       if row.get("merger_quarter") for d in ("organization", "holding_company", "bank_name")
                       if row.get(d)} or ({"one or more organizations"} if any(
