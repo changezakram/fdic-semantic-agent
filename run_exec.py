@@ -83,12 +83,13 @@ def grade(q: dict, turn: dict) -> list[str]:
             fails.append(f"answer mentions {s}")
     found = numbers_in(body)
     for v in q.get("numbers", []):
-        if not any(d >= 1 and abs(round(abs(v), d) - n) < 1e-9 for n, d in found):
+        if not any(d >= 1 and abs(abs(v) - n) <= 0.5 * 10 ** -d + 1e-9 for n, d in found):   # -1.765 may read 1.76 or 1.77
             fails.append(f"number {abs(v):.2f} not stated")
     problems = analyst.check_claims(a, turn["results"]) + analyst.check_percentages(a, turn["results"], turn.get("calc", []))
     fails += [f"checker: {p[:120]}" for p in problems]
     if q.get("chart") and not analyst.valid_charts(a, turn["results"]):
         fails.append("no valid chart")
+    fails += [f"display: {p}" for p in analyst.display_problems(a, turn["results"])]
     return fails
 
 

@@ -512,7 +512,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
         for tu in uses:
             if tu.name == "present_answer":
                 probs = (chart_problems(tu.input, results) + check_claims(tu.input, results)
-                         + check_percentages(tu.input, results, calc_values)
+                         + check_percentages(tu.input, results, calc_values) + answer_problems(tu.input, results)
                          if tu.input.get("answer_type") == "answer" else [])
                 if probs and chart_retries < 2:
                     chart_retries += 1
@@ -623,6 +623,75 @@ def auto_chart(results: dict) -> dict | None:
     return None
 
 
+def scorecard_result(chart_specs: list[dict], results: dict) -> str | None:
+    """Which result the scorecard table is built from: the charted result first, otherwise the latest query
+    (later queries refine earlier ones). Never an earlier, superseded result. Used by the page and the
+    benchmark, so what is graded is what is shown."""
+    import charts
+    order = [c["result_id"] for c in chart_specs] + [rid for rid in reversed(list(results)) if not results[rid].get("auto")]
+    for rid in dict.fromkeys(order):
+        r = results[rid]
+        if charts.scorecard(r, r["request"], LOWER_IS_BETTER, HIGHER_IS_BETTER) is not None:
+            return rid
+    return None
+
+
+def display_problems(answer: dict, results: dict) -> list[str]:
+    """Checks on what the page will show besides the text: the chart and the scorecard must cover the same
+    group as the answer, and never rank non-peers."""
+    import charts
+    probs, specs = [], valid_charts(answer, results)
+    scoped = [x["request"].get("filters") for x in results.values()
+              if x.get("request", {}).get("filters") and not x.get("auto")]
+    for c in specs:
+        r = results[c["result_id"]]
+        cdims = set(r.get("request", {}).get("dimensions") or [])
+        if scoped and not r.get("request", {}).get("filters") and not r.get("auto") \
+                and not r.get("request", {}).get("derived_from") and "national" not in str(c.get("title", "")).lower() \
+                and not any(cdims & set(f) for f in scoped):
+            probs.append(f"chart {c['result_id']} is unfiltered while the answer is about a filtered group")
+        try:
+            ch, _ = charts.build(c, r)
+            data = ch.to_dict().get("datasets", {})
+            shown = {str(v) for rows in data.values() for row in rows for k, v in row.items() if k == c["x"]}
+            if shown & {"Unknown"}:
+                probs.append(f"chart {c['result_id']} shows Unknown")
+        except Exception as e:  # noqa: BLE001
+            probs.append(f"chart {c['result_id']} fails to draw: {type(e).__name__}")
+    rid = scorecard_result(specs, results)
+    if rid and specs:
+        c = specs[0]
+        sc, ch_r = results[rid], results[c["result_id"]]
+        d = (sc["request"].get("dimensions") or [None])[0]
+        if d and d == c.get("x") and not ch_r.get("auto"):
+            skip = {"Unknown"}
+            a = {str(x[d]) for x in sc["rows"]} - skip
+            b = {str(x[d]) for x in ch_r["rows"]} - skip
+            if c.get("only"):
+                b = b & {str(v) for v in c["only"]}
+            if not a <= b and not b <= a:
+                probs.append(f"scorecard ({rid}) and chart ({c['result_id']}) show different groups")
+    return probs
+
+
+def answer_problems(answer: dict, results: dict) -> list[str]:
+    """Answer-level checks: a real headline, and a concentration finding is never dropped."""
+    probs = []
+    head = str((answer or {}).get("headline") or "").strip()
+    if len(head) < 25 or re.search(r"placeholder|lorem|\bTBD\b|\.\.\.$", head, re.I):
+        probs.append("The headline is missing or a placeholder. Write the one-sentence answer with its key number.")
+    text = " ".join([head] + list((answer or {}).get("insights") or [])).lower()
+    for r in results.values():
+        blk = r.get("concentration")
+        if blk:
+            first = str(blk["driver_bank"]).split()[0].lower()
+            if first not in text:
+                probs.append(f"A concentration check found that {blk['driver_bank']} drives {blk['group']} "
+                             f"({blk['metric']} {blk['group_rate']}, {blk.get('group_rate_without_driver')} without "
+                             "it). Say so in an insight.")
+    return probs
+
+
 def chart_problems(answer: dict, results: dict) -> list[str]:
     """Specific, fixable problems with the model's chart specs (checked before the answer is accepted)."""
     if (answer or {}).get("answer_type") == "answer" and change_chart(results):
@@ -645,8 +714,10 @@ def chart_problems(answer: dict, results: dict) -> list[str]:
                 probs.append(f"Chart {i}: 'only' values {missing} are not in column {c['x']} of {c['result_id']}.")
         scoped = {rid: x["request"].get("filters") for rid, x in results.items()
                   if x.get("request", {}).get("filters") and not x.get("auto")}
+        cdims = set(r.get("request", {}).get("dimensions") or [])
         if scoped and not r.get("request", {}).get("filters") and not r.get("auto") \
-                and not r.get("request", {}).get("derived_from"):
+                and not r.get("request", {}).get("derived_from") \
+                and not any(cdims & set(f) for f in scoped.values()):   # same dimension = the group beside its peers
             rid0, f0 = next(iter(scoped.items()))
             probs.append(f"Chart {i}: {c['result_id']} has no filters, but the answer is about a filtered group "
                          f"({rid0}: {f0}). Chart a result with the same filters, or say in the chart title that it "

@@ -46,9 +46,9 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
     Q = []
 
     # E01 peer scorecard (generic regional peers)
-    rows = _q(L, metrics=["return_on_assets", "efficiency_ratio", "noncurrent_loan_rate"], period="2026Q2",
+    rows = _q(L, metrics=["return_on_assets_quarterly", "efficiency_ratio", "noncurrent_loan_rate"], period="2026Q2",
               dimensions=["holding_company"], filters={"holding_company": PEERS})
-    roa, eff = _by(rows, "holding_company", "return_on_assets"), _by(rows, "holding_company", "efficiency_ratio")
+    roa, eff = _by(rows, "holding_company", "return_on_assets_quarterly"), _by(rows, "holding_company", "efficiency_ratio")
     top_roa = max(roa, key=roa.get)
     Q.append(dict(id="E01", topic="peer scorecard",
                   question="Compare ROA, efficiency ratio and noncurrent loan rate for M&T, Citizens Financial Group, "
@@ -94,13 +94,13 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
     occ = (a["OCC"] - b["OCC"]) / b["OCC"] * 100
     Q.append(dict(id="E05", topic="growth by segment",
                   question="Deposit growth by regulator, year over year",
-                  expect="answer", headline=[["deposit"]], numbers=[tot["change_pct"], occ], chart=True,
+                  expect="answer", headline=[["deposit"]], numbers=[occ], chart=True,
                   key={"industry_pct": tot["change_pct"], "occ_pct": occ}))
 
     # E06 regions, two metrics, opposite directions
     def reg(p, m):
         return _by(_q(L, metrics=[m], period=p, dimensions=["region"]), "region", m)
-    r0, r1 = reg("2025Q2", "return_on_assets"), reg("2026Q2", "return_on_assets")
+    r0, r1 = reg("2025Q2", "return_on_assets_quarterly"), reg("2026Q2", "return_on_assets_quarterly")
     d = {k: r1[k] - r0[k] for k in r1 if k != "Unknown"}
     best = max(d, key=d.get)
     Q.append(dict(id="E06", topic="two-period, two-metric judgment",
@@ -142,10 +142,10 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   expect="answer", headline=[[rows[0]["organization"].split()[0]]], chart=True, key=rows))
 
     # E11 industry trend
-    rows = _q(L, metrics=["return_on_assets"], period="2024Q3:2026Q2", dimensions=["period"])
+    rows = _q(L, metrics=["return_on_assets_quarterly"], period="2024Q4:2026Q2", dimensions=["period"])
     Q.append(dict(id="E11", topic="industry trend",
                   question="How has industry ROA trended since 2024?",
-                  expect="answer", headline=[["ROA", "return on assets"]], numbers=[rows[-1]["return_on_assets"]],
+                  expect="answer", headline=[["ROA", "return on assets"]], numbers=[rows[-1]["return_on_assets_quarterly"]],
                   chart=True, key=rows))
 
     # E12 region with concentration
@@ -173,7 +173,7 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                            filters=band, order_by="loan_to_deposit_ratio desc")["rows"]
     Q.append(dict(id="E17", topic="peer ratio, no direction",
                   question="Loan-to-deposit ratio for New England banking organizations with $5B-$50B in assets, 2026Q2",
-                  expect="answer", headline=[[rows[0]["organization"].split()[0]]],
+                  expect="answer", headline=[["loan-to-deposit"]], must_text=[[rows[0]["organization"].split()[0]]],
                   numbers=[rows[0]["loan_to_deposit_ratio"]], not_text=["best loan-to-deposit", "worst loan-to-deposit"],
                   chart=True, key=rows))
 
