@@ -50,6 +50,8 @@ How to work:
 - Capital: cet1_ratio, tier1_risk_based_ratio, total_risk_based_ratio, leverage_ratio (bank level; usually
   above the holding company's ratios). Reserves: allowance_to_loans (no better direction) and
   allowance_to_noncurrent (coverage).
+- Deposit mix: uninsured_deposit_share (call-report estimate, includes collateralized and affiliate deposits),
+  brokered_deposit_share, noninterest_bearing_deposit_share, time_deposit_share, core_deposit_share.
 - If a result has "peer_aggregate", say where the leaders and laggards sit against it (it is the whole
   queried group's aggregate, drawn as a line on the chart).
 - If rows have merger_quarter true, the quarterly income figure for that organization and quarter is
@@ -270,6 +272,7 @@ def peer_benchmark(layer, request: dict, res: dict) -> dict | None:
 LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio",
                    "cost_of_funds", "cost_of_deposits", "cost_of_interest_bearing_deposits"}
 HIGHER_IS_BETTER = {"return_on_assets", "return_on_assets_quarterly", "net_interest_margin", "cet1_ratio",
+                    "noninterest_bearing_deposit_share", "core_deposit_share",
                     "tier1_risk_based_ratio", "total_risk_based_ratio", "leverage_ratio", "allowance_to_noncurrent", "return_on_equity", "equity_to_assets", "mean_bank_roa", "median_bank_roa",
                     "median_bank_nim", "median_bank_leverage_ratio", "reported_roa", "reported_roe", "reported_nim",
                     "reported_leverage_ratio"}

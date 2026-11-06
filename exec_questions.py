@@ -227,6 +227,17 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   expect="answer", headline=[[top["organization"].split()[0]]], numbers=[top["cet1_ratio"]],
                   must_text=[["Beacon"], ["Eastern"]], not_text=["best allowance", "worst allowance"], key=rows))
 
+    # E23 deposit mix, peer group (v0.2.2)
+    mix = ["uninsured_deposit_share", "noninterest_bearing_deposit_share", "brokered_deposit_share"]
+    rows = L.query_metrics(metrics=mix, period="2026Q2", dimensions=["organization"],
+                           filters={"us_region": "New England", "organization_asset_band": ["$10B-$50B"]})["rows"]
+    top = max(rows, key=lambda r: r["uninsured_deposit_share"])
+    Q.append(dict(id="E23", topic="deposit mix (new in v0.2.2)",
+                  question="Compare uninsured, non-interest-bearing and brokered deposit shares for New England "
+                           "banking organizations with $10B-$50B in assets, 2026Q2",
+                  expect="answer", headline=[["deposit"]], must_text=[[top["organization"].split()[0].title()]],
+                  numbers=[top["uninsured_deposit_share"]], not_text=["best uninsured", "worst uninsured"], key=rows))
+
     # E13-E15 out of scope: must decline, not estimate
     r = L.query_metrics(metrics=["cost_of_deposits"], period="2026Q2", filters={"size_class": "$10B-$100B"})["rows"][0]
     Q.append(dict(id="E13", topic="funding cost (new in v0.2.0)",
@@ -235,8 +246,12 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   numbers=[r["cost_of_deposits"]], key=r))
     Q.append(dict(id="E14", topic="decline",
                   question="What share of loans is commercial real estate at banks under $10B?", expect="decline"))
-    Q.append(dict(id="E15", topic="decline",
-                  question="Which banks have the highest uninsured deposit share?", expect="decline"))
+    rows = L.query_metrics(metrics=["uninsured_deposit_share"], period="2026Q2", dimensions=["organization"],
+                           filters={"organization_asset_band": ["$10B-$50B", "$50B-$100B"]},
+                           order_by="uninsured_deposit_share desc", limit=10)["rows"]
+    Q.append(dict(id="E15", topic="uninsured deposits (new in v0.2.2)",
+                  question="Which banks have the highest uninsured deposit share?",
+                  expect="answer", headline=[["uninsured"]], key=rows))
     return Q
 
 

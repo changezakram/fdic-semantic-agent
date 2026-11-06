@@ -72,6 +72,17 @@ def main():
             bad.append(h)
     check("every multi-bank group's CET1 lies within its banks' range", not bad, ", ".join(bad[:3]))
 
+    print("Deposit mix (v0.2.2)")
+    d = pf.con.execute("SELECT BRO, DEPNI, NTRTIME FROM bank_quarter WHERE CERT = 17798 AND period = '2026Q2'").fetchone()
+    check("Beacon brokered deposits = $231,357K (release)", d[0] == 231357, str(d[0]))
+    check("Beacon time deposits = CDs + brokered in release ($4,064,518K + $231,357K, within $1M)",
+          abs(d[2] - (4064518 + 231357)) < 1000, str(d[2]))
+    check("Beacon non-interest-bearing within intercompany cash of release ($3,910,604K, within $200M)",
+          0 <= d[1] - 3910604 < 200000, str(d[1]))
+    m = pf.query_metrics(metrics=["uninsured_deposit_share", "brokered_deposit_share", "noninterest_bearing_deposit_share",
+                                  "time_deposit_share", "core_deposit_share"], period="2026Q2")["rows"][0]
+    check("industry deposit shares are all between 0% and 100%", all(0 < v < 100 for v in m.values()), str(m))
+
     print(f"\n{'All extension tests pass' if not fails else f'{fails} FAILED'} (semantic model v{pf.version})")
     return fails
 

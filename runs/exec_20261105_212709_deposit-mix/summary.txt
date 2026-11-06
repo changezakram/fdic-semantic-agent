@@ -1,0 +1,7 @@
+Executive questions, 2026-11-05 21:27, model claude-haiku-5-5, semantic model v0.2.2
+
+E23  1/1  deposit mix (new in v0.2.2)      Compare uninsured, non-interest-bearing and brokered deposit shares fo
+E15  1/1  uninsured deposits (new in v0.2.2) Which banks have the highest uninsured deposit share?
+
+TOTAL  2/2 runs fully correct (100%)
+Questions correct in every run: 2/2

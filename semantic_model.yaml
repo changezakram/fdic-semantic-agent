@@ -8,7 +8,7 @@
 # and raw_institutions (i), plus the governed base view defined in `base_view`.
 # Change log lives in DECISIONS.md. Bump `version` on every edit.
 # =====================================================================
-version: 0.2.1   # 0.1.2: unique holding-company names; 0.1.3: organization_size_class; 0.1.4: geography_type; 0.1.5: us_region, organization_asset_band, change by group; 0.2.0: pro forma for mergers, quarterly ROA, NIM, cost of funds and deposits; 0.2.1: capital ratios and allowance (all after the frozen experiment, which used 0.1.1)
+version: 0.2.2   # 0.1.2: unique holding-company names; 0.1.3: organization_size_class; 0.1.4: geography_type; 0.1.5: us_region, organization_asset_band, change by group; 0.2.0: pro forma for mergers, quarterly ROA, NIM, cost of funds and deposits; 0.2.1: capital ratios and allowance; 0.2.2: deposit mix (all after the frozen experiment, which used 0.1.1)
 model: fdic_call_reports
 snapshot:
   path: data/snapshot_2026Q2/
@@ -498,6 +498,46 @@ metrics:
     description: >
       Allowance / noncurrent loans (coverage). Noncurrent = 90+ days past due + nonaccrual (FDIC), so it runs
       slightly below a bank's "allowance to nonaccrual" ratio. Higher means more coverage.
+
+  # ---- app extension: deposit mix (needs data/snapshot_2026Q2_ext) ----
+  uninsured_deposit_share:
+    type: ratio
+    extension: true
+    numerator:   "SUM(DEPUNINS)"
+    denominator: "SUM(CASE WHEN DEPUNINS IS NOT NULL THEN DEPDOM END)"
+    scale: 100
+    description: >
+      Estimated uninsured deposits / domestic deposits (call report estimate). Includes collateralized public
+      funds and affiliate deposits, so it is usually higher than the "adjusted" uninsured share banks disclose.
+      No "better" direction is applied.
+  brokered_deposit_share:
+    type: ratio
+    extension: true
+    numerator:   "SUM(BRO)"
+    denominator: "SUM(DEP)"
+    scale: 100
+    description: "Brokered deposits / total deposits. No 'better' direction is applied."
+  noninterest_bearing_deposit_share:
+    type: ratio
+    extension: true
+    numerator:   "SUM(DEPNI)"
+    denominator: "SUM(DEP)"
+    scale: 100
+    description: "Non-interest-bearing deposits / total deposits. Higher means cheaper funding."
+  time_deposit_share:
+    type: ratio
+    extension: true
+    numerator:   "SUM(NTRTIME)"
+    denominator: "SUM(DEP)"
+    scale: 100
+    description: "Time deposits (CDs, including brokered CDs) / total deposits. No 'better' direction is applied."
+  core_deposit_share:
+    type: ratio
+    extension: true
+    numerator:   "SUM(COREDEP)"
+    denominator: "SUM(DEP)"
+    scale: 100
+    description: "Core deposits (FDIC definition: excludes large time deposits and brokered deposits) / total deposits. Higher means more stable funding."
 
   # ---- share metrics ----
   share_of_industry_assets:
