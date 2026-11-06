@@ -62,6 +62,14 @@ How to work:
   guideline", never "in breach" or "violating". Lower is less concentrated; never call a ratio "best" or
   "worst". Credit by loan type: cre_noncurrent_rate, residential_noncurrent_rate, ci_noncurrent_rate,
   consumer_noncurrent_rate (lower is better).
+- Deposit market share, branch footprint, "who leads in <market>", competitors in a market: the market_share
+  tool (FDIC Summary of Deposits, as of June 30; not quarterly). A banking "market" is a metro area unless the
+  user says state or county. Say "as of June 30, 2026" and that it comes from the Summary of Deposits. For
+  competition or concentration questions, give the market's HHI (above 1,800 = highly concentrated under the
+  2023 DOJ/FTC Merger Guidelines). If rows are booked_at_few_offices, say those are head-office (custody,
+  internet or wholesale) deposits and name the leading branch-based organizations too. If merged_since_prior,
+  say share changes by market can reflect deposits re-booked after the merger. Quarterly deposits by
+  organization still come from query_metrics.
 - If a result has "peer_aggregate", say where the leaders and laggards sit against it (it is the whole
   queried group's aggregate, drawn as a line on the chart).
 - If rows have merger_quarter true, the quarterly income figure for that organization and quarter is
@@ -129,6 +137,26 @@ def calculate(expression: str) -> float:
         raise ValueError("expression too long")
     return round(ev(ast.parse(expression.replace(",", ""), mode="eval").body), 6)
 
+
+MARKET_TOOL = {
+    "name": "market_share",
+    "description": (
+        "Deposit market share from the FDIC Summary of Deposits (branch deposits as of June 30; years 2025 and 2026). "
+        "Two uses: (1) a market: give market_type and market to rank the organizations there by deposits, with "
+        "share, rank, branches and the market's HHI; (2) an organization's footprint: give organization and "
+        "market_type (optionally market = a state to stay within it) for its deposits, share and rank in each "
+        "market. compare_to_prior_year adds the share change (points) since June 30 of the prior year. "
+        "Pro forma for mergers."),
+    "input_schema": {"type": "object", "properties": {
+        "market_type": {"type": "string", "enum": ["state", "metro", "county"],
+                        "description": "metro = metropolitan statistical area, the usual banking market"},
+        "market": {"type": "string", "description": "e.g. 'MA', 'Boston', 'Worcester, MA', 'Berkshire, MA' (county)"},
+        "organization": {"type": "string", "description": "Banking organization name, e.g. 'Eastern Bankshares'"},
+        "year": {"type": "integer", "description": "2025 or 2026 (June 30). Default: latest"},
+        "compare_to_prior_year": {"type": "boolean"},
+        "limit": {"type": "integer", "description": "Rows to return (default 10 organizations or 25 markets)"}},
+        "required": ["market_type"]},
+}
 
 PRESENT_TOOL = {
     "name": "present_answer",
@@ -484,7 +512,8 @@ def check_percentages(answer: dict, results: dict, calc_values: list[float]) -> 
             for k, v in row.items():
                 if isinstance(v, (int, float)) and (units.get(k) == "percent" or pct_row or k.startswith("change_p")):
                     known.append(v)
-        for k, v in list((r.get("concentration") or {}).items()) + list((r.get("benchmark") or {}).items()):
+        for k, v in (list((r.get("concentration") or {}).items()) + list((r.get("benchmark") or {}).items())
+                     + list((r.get("market") or {}).items())):
             if isinstance(v, (int, float)):
                 known.append(v)
         for metric, level in GUIDELINES.items():            # supervisory levels are governed constants
@@ -522,7 +551,7 @@ def build_spec() -> dict:
         "dimension and ONE metric: the change for every group, sorted by change (gainers and losers), with "
         "results pro forma for mergers.")
     props["limit"]["description"] = "Optional. Maximum rows (up to 60)."
-    return {"system": system, "tools": tools + [CALC_TOOL, PRESENT_TOOL]}
+    return {"system": system, "tools": tools + [MARKET_TOOL, CALC_TOOL, PRESENT_TOOL]}
 
 
 def history_messages(history: list[dict]) -> list[dict]:
@@ -627,6 +656,22 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                         on_step(f"Queried {', '.join(tu.input.get('metrics', []))}"
                                 + (f" by {', '.join(tu.input['dimensions'])}" if tu.input.get("dimensions") else "")
                                 + f" for {tu.input.get('period')}")
+                elif tu.name == "market_share":
+                    res = layer.market_share(**tu.input)
+                    rid = f"q{len(results) + 1}"
+                    dim = [k for k in res["rows"][0] if k in ("organization", "state", "metro", "county")][0] if res["rows"] else "organization"
+                    req = {**tu.input, "metrics": list(res["units"]), "dimensions": [dim],
+                           "order_by": "deposit_share desc" if dim == "organization" else "deposits desc",
+                           "period": f"June 30, {res['market'].get('year')}",
+                           "filters": {"market": res["market"].get("market") or res["market"].get("organization")}}
+                    results[rid] = {"request": req, **res}
+                    shown = {"result_id": rid, **{k: v for k, v in res.items() if k != "sql"}}
+                    ranks = rankings(res, req)
+                    if ranks:
+                        shown["ranking"] = ranks
+                    content, is_err = json.dumps(shown, default=str)[:MAX_RESULT_CHARS], False
+                    if on_step:
+                        on_step(f"Looked up deposit market share ({tu.input.get('market') or tu.input.get('organization')})")
                 elif tu.name == "calculate":
                     try:
                         val = calculate(tu.input.get("expression", ""))
@@ -762,6 +807,22 @@ def answer_problems(answer: dict, results: dict) -> list[str]:
                 probs.append(f"A concentration check found that {blk['driver_bank']} drives {blk['group']} "
                              f"({blk['metric']} {blk['group_rate']}, {blk.get('group_rate_without_driver')} without "
                              "it). Say so in an insight.")
+    few = sorted({str(row.get("organization")) for r in results.values() for row in (r.get("rows") or [])
+                  if row.get("booked_at_few_offices")})
+    if few and not re.search(r"custody|head[- ]office|internet|wholesale|booked|one office|single office|branch-based", text):
+        probs.append(f"{', '.join(few)} books its deposits at one or two offices (custody, internet or wholesale "
+                     "funds). Say so in an insight and name the leading branch-based organizations too.")
+    merged = sorted({str(row.get("organization")) for r in results.values() for row in (r.get("rows") or [])
+                     if row.get("merged_since_prior") and str(row.get("organization")).split()[0].lower() in text})
+    if merged and not re.search(r"merg|re-?book", text):
+        probs.append(f"{', '.join(merged)} merged between the two June 30 dates. Say that its share change in a market "
+                     "can reflect deposits re-booked after the merger.")
+    for r in results.values():
+        if r.get("request", {}).get("organization") and "merged between the two dates" in " ".join(r.get("notes", [])) \
+                and r.get("request", {}).get("compare_to_prior_year") and not re.search(r"merg|re-?book", text):
+            probs.append("The organization merged between the two June 30 dates. Say that its share changes by market "
+                         "can reflect deposits re-booked after the merger, and that its total change is the reliable figure.")
+            break
     for metric, level in GUIDELINES.items():
         level = f"{level}%"
         if any(isinstance(row.get(metric), (int, float)) for r in results.values() for row in (r.get("rows") or [])) \

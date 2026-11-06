@@ -50,6 +50,7 @@ class SemanticLayer:
         self.con.execute(f"CREATE TABLE raw_institutions AS SELECT * FROM read_csv_auto('{snapshot / 'raw_institutions.csv'}')")
         sql = self.model["base_view"]["sql"]
         self.has_ext = bool(ext and (Path(ext) / "fin_extra.csv").exists())
+        self._ext_path = Path(ext) if self.has_ext else None
         if self.has_ext:
             sql = self._extend(sql, Path(ext))
         elif pro_forma:
@@ -440,6 +441,200 @@ class SemanticLayer:
             "semantic_model_version": self.version,
             "sql": sql,
         }
+
+    # ------------------------------------------------------------- deposit market share (app only)
+    def _load_sod(self):
+        """Branch deposits from the FDIC Summary of Deposits (June 30 each year), each branch tagged with its
+        banking organization: the same organization names as query_metrics and, when pro_forma, acquired
+        banks counted with their acquirer in both years."""
+        if getattr(self, "_sod_ready", False):
+            return
+        ext = getattr(self, "_ext_path", None)
+        files = sorted(Path(ext).glob("sod_*.csv")) if ext else []
+        if not files:
+            raise QueryError("Deposit market share needs the Summary of Deposits data (not loaded).")
+        self.con.execute("CREATE TABLE sod_raw AS SELECT * FROM read_csv_auto([" + ", ".join(f"'{f}'" for f in files)
+                         + "], union_by_name = true)")
+        self.con.execute("""CREATE TABLE cert_org AS SELECT CERT, arg_max(COALESCE(hc_name, NAME), period) AS organization
+                            FROM bank_quarter GROUP BY CERT""")
+        surv = "LEFT JOIN survivor s ON s.CERT = b.CERT" if self.pro_forma else ""
+        key = "COALESCE(s.SURV_CERT, b.CERT)" if self.pro_forma else "b.CERT"
+        self.con.execute(f"""CREATE TABLE sod AS
+            SELECT b.YEAR AS year, b.CERT, b.STALPBR AS state, b.CNTYNAMB AS county, b.MSANAMB AS metro,
+                   COALESCE(o.organization, b.NAMEHCR, b.NAMEFULL) AS organization,
+                   b.DEPSUMBR AS deposits_k
+            FROM sod_raw b {surv} LEFT JOIN cert_org o ON o.CERT = {key}""")
+        self.sod_years = [r[0] for r in self.con.execute("SELECT DISTINCT year FROM sod ORDER BY 1").fetchall()]
+        self._sod_ready = True
+
+    def _resolve_market(self, market_type, market, year):
+        col = {"state": "state", "metro": "metro", "county": "county"}.get(market_type)
+        if not col:
+            raise QueryError("market_type must be 'state', 'metro' (metropolitan statistical area) or 'county'.")
+        m = str(market).strip()
+        if col == "state":
+            try:
+                from charts import STATE_NAMES as states
+            except Exception:  # noqa: BLE001
+                states = {}
+            code = next((k for k, v in states.items() if v.lower() == m.lower()), m.upper())
+            if not self.con.execute("SELECT 1 FROM sod WHERE state = ? LIMIT 1", [code]).fetchone():
+                raise QueryError(f"No branches found for state '{market}'. Use a two-letter code such as 'MA'.")
+            return f"state = '{code}'", code
+        if col == "county":
+            name, _, st = m.partition(",")
+            cands = self.con.execute("SELECT DISTINCT county, state FROM sod WHERE year = ? AND LOWER(county) LIKE ? "
+                                     + ("AND state = ?" if st.strip() else ""),
+                                     [year, f"%{name.strip().lower()}%"] + ([st.strip().upper()] if st.strip() else [])).fetchall()
+            if len(cands) != 1:
+                raise QueryError((f"'{market}' matches {len(cands)} counties: " + "; ".join(f"{c}, {s}" for c, s in cands[:12])
+                                  if cands else f"No county matches '{market}'.") + " Give the county as 'Name, ST'.")
+            c, st = cands[0]
+            return f"county = '{c.replace(chr(39), chr(39) * 2)}' AND state = '{st}'", f"{c} County, {st}"
+        cands = [r[0] for r in self.con.execute("SELECT DISTINCT metro FROM sod WHERE year = ? AND LOWER(metro) LIKE ?",
+                                                 [year, f"%{m.lower()}%"]).fetchall()]
+        exact = [c for c in cands if c.lower() == m.lower() or c.lower().startswith(m.lower() + ",")]
+        cands = exact if len(exact) == 1 else cands
+        if len(cands) != 1:
+            raise QueryError((f"'{market}' matches {len(cands)} metro areas: " + "; ".join(cands[:12]) if cands
+                              else f"No metro area matches '{market}'.") + " Use the exact metro area name.")
+        return f"metro = '{cands[0].replace(chr(39), chr(39) * 2)}'", cands[0]
+
+    def market_share(self, market_type, market=None, organization=None, year=None, compare_to_prior_year=False,
+                     limit=10):
+        """Deposit market share from the Summary of Deposits.
+        With a market: organizations in that market ranked by deposits (share, rank, branches, HHI).
+        With an organization (and optionally market_type 'state' + market to stay in one state): that
+        organization's deposits, share and rank in every market of market_type where it has branches."""
+        self._load_sod()
+        year = int(year or self.sod_years[-1])
+        if year not in self.sod_years:
+            raise QueryError(f"Summary of Deposits years loaded: {', '.join(map(str, self.sod_years))} (as of June 30).")
+        prior = year - 1 if compare_to_prior_year else None
+        if prior is not None and prior not in self.sod_years:
+            raise QueryError(f"No Summary of Deposits for {prior}; years loaded: {', '.join(map(str, self.sod_years))}.")
+        notes = [f"Summary of Deposits, branch deposits as of June 30, {year}" + (f" vs {prior}" if prior else "") + ". "
+                 "FDIC-insured institutions only (no credit unions). Deposits are booked at the branch the bank "
+                 "assigns them to, so internet, credit card and custody banks can show very large deposits in their "
+                 "home market."]
+        if self.pro_forma:
+            notes.append("Pro forma for mergers: acquired banks are counted with their acquirer in both years.")
+        org_sql = None
+        if organization:
+            hits = [r[0] for r in self.con.execute("SELECT DISTINCT organization FROM sod WHERE year = ? AND LOWER(organization) LIKE ?",
+                                                    [year, f"%{str(organization).lower()}%"]).fetchall()]
+            exact = [h for h in hits if h.lower() == str(organization).lower()]
+            hits = exact or hits
+            if len(hits) != 1:
+                raise QueryError((f"'{organization}' matches {len(hits)} organizations: " + "; ".join(hits[:12]) if hits
+                                  else f"No organization matches '{organization}' in {year}."))
+            org_sql = hits[0].replace("'", "''")
+
+        if org_sql and market is None or (org_sql and market_type != "state" and market is not None):
+            # one organization across markets
+            col = {"state": "state", "metro": "metro", "county": "county"}.get(market_type)
+            if not col:
+                raise QueryError("market_type must be 'state', 'metro' or 'county'.")
+            within, label = ("TRUE", "all states")
+            if market is not None:
+                within, label = self._resolve_market("state", market, year)
+            key = f"{col} || ', ' || state" if col == "county" else col
+            years = [year] + ([prior] if prior else [])
+            sql = f"""WITH m AS (
+                SELECT year, {key} AS market, organization, SUM(deposits_k) AS dep, COUNT(*) AS branches
+                FROM sod WHERE year IN ({', '.join(map(str, years))}) AND {within} AND {col} IS NOT NULL
+                GROUP BY ALL),
+              t AS (SELECT year, market, SUM(dep) AS tot, COUNT(DISTINCT organization) AS orgs FROM m GROUP BY ALL),
+              r AS (SELECT m.*, t.tot, t.orgs, 100.0 * m.dep / t.tot AS share,
+                           RANK() OVER (PARTITION BY m.year, m.market ORDER BY m.dep DESC) AS rnk FROM m JOIN t USING (year, market))
+              SELECT a.market AS "{market_type}", a.dep / 1e6 AS deposits, a.share AS deposit_share, a.rnk AS market_rank,
+                     a.orgs AS organizations_in_market, a.branches, a.tot / 1e6 AS market_deposits
+                     {", a.share - p.share AS change_pp, p.rnk AS prior_rank" if prior else ""}
+              FROM r a {f"LEFT JOIN r p ON p.market = a.market AND p.organization = a.organization AND p.year = {prior}" if prior else ""}
+              WHERE a.year = {year} AND a.organization = '{org_sql}'
+              ORDER BY a.dep DESC"""
+            rows = self.con.execute(sql).df().to_dict("records")
+            shown = rows[:max(int(limit or 25), 1)]
+            if len(rows) > len(shown):
+                notes.append(f"Only the first {len(shown)} of {len(rows)} markets are shown (largest deposits first).")
+            notes.append(f"{hits[0]}: deposits, share and rank in each {market_type} ({label}).")
+            if prior and hits[0] in self._merged_orgs(prior, year):
+                notes.append(f"{hits[0]} merged between the two dates. After a merger a bank often re-books deposits "
+                             "between branches and markets, so share changes by market can reflect booking, not "
+                             "customers. Say so when you report these changes; its total change is the reliable figure.")
+            metrics = ["deposits", "deposit_share", "market_rank"] + (["change_pp"] if prior else [])
+            return self._sod_result(shown, metrics, [market_type], notes, sql,
+                                    {"organization": hits[0], "market_type": market_type, "year": year})
+
+        if market is None:
+            raise QueryError("Give a market (a state, metro area or county), or an organization to see its markets.")
+        where, label = self._resolve_market(market_type, market, year)
+        years = [year] + ([prior] if prior else [])
+        sql = f"""WITH m AS (
+            SELECT year, organization, SUM(deposits_k) AS dep, COUNT(*) AS branches
+            FROM sod WHERE year IN ({', '.join(map(str, years))}) AND {where} GROUP BY ALL),
+          r AS (SELECT m.*, 100.0 * dep / SUM(dep) OVER (PARTITION BY year) AS share,
+                       RANK() OVER (PARTITION BY year ORDER BY dep DESC) AS rnk FROM m)
+          SELECT a.organization, a.dep / 1e6 AS deposits, a.share AS deposit_share, a.rnk AS market_rank, a.branches
+                 {", a.share - COALESCE(p.share, 0) AS change_pp, p.rnk AS prior_rank, 100.0 * (a.dep / p.dep - 1) AS deposit_growth_pct" if prior else ""}
+          FROM r a {f"LEFT JOIN r p ON p.organization = a.organization AND p.year = {prior}" if prior else ""}
+          WHERE a.year = {year} ORDER BY a.dep DESC"""
+        rows = self.con.execute(sql).df().to_dict("records")
+        tot, hhi, n = self._sod_totals(year, where)
+        market_info = {"market": label, "market_type": market_type, "year": year, "market_deposits": round(tot / 1e6, 4),
+                       "organizations": n, "branches": int(sum(r["branches"] for r in rows)), "hhi": round(hhi)}
+        if prior:
+            ptot, phhi, pn = self._sod_totals(prior, where)
+            market_info.update({"prior_market_deposits": round(ptot / 1e6, 4), "prior_hhi": round(phhi),
+                                "market_deposit_growth_pct": round(100 * (tot / ptot - 1), 4)})
+        notes.append("HHI = sum of squared deposit shares (0-10,000). The 2023 DOJ/FTC Merger Guidelines treat a "
+                     "market above 1,800 as highly concentrated.")
+        shown = rows[:max(int(limit or 10), 1)]
+        if len(rows) > len(shown):
+            notes.append(f"Only the first {len(shown)} of {len(rows)} organizations are shown (largest deposits first).")
+        if org_sql and not any(r["organization"] == hits[0] for r in shown):
+            shown += [r for r in rows if r["organization"] == hits[0]]      # the asked-about organization, at its rank
+        few = [r for r in shown if r["branches"] <= 2 and r["deposit_share"] >= 10]
+        for r in shown:
+            r["booked_at_few_offices"] = r in few
+        if few:
+            notes.append("Booked at one or two offices: " + ", ".join(r["organization"] for r in few) + ". These deposits "
+                         "are mostly custody, internet or wholesale funds booked at a head office, not branch customers. "
+                         "Say so, and give the leading branch-based organizations as well.")
+        if prior:
+            merged = self._merged_orgs(prior, year)
+            hit = [r["organization"] for r in shown if r["organization"] in merged]
+            for r in shown:
+                r["merged_since_prior"] = r["organization"] in merged
+            if hit:
+                notes.append("Merged between the two dates: " + ", ".join(hit) + ". After a merger a bank often re-books "
+                             "deposits between branches and markets, so its share change in one market can reflect "
+                             "booking, not customers. Say so when you report these changes.")
+        metrics = ["deposits", "deposit_share", "market_rank"] + (["change_pp", "deposit_growth_pct"] if prior else [])
+        return self._sod_result(shown, metrics, ["organization"], notes, sql, market_info)
+
+    def _merged_orgs(self, prior, year) -> set:
+        """Organizations that absorbed a bank between June 30 of prior and June 30 of year."""
+        return {r[0] for r in self.con.execute(f"""SELECT DISTINCT o.organization FROM merger_events e
+            LEFT JOIN survivor s ON s.CERT = e.ACQ_CERT JOIN cert_org o ON o.CERT = COALESCE(s.SURV_CERT, e.ACQ_CERT)
+            WHERE e.EFFDATE > DATE '{prior}-06-30' AND e.EFFDATE <= DATE '{year}-06-30'""").fetchall()}
+
+    def _sod_totals(self, year, where):
+        return self.con.execute(f"""SELECT SUM(dep), SUM(s * s), COUNT(*) FROM (
+            SELECT dep, 100.0 * dep / SUM(dep) OVER () AS s FROM (
+              SELECT organization, SUM(deposits_k) AS dep FROM sod WHERE year = {year} AND {where} GROUP BY 1))""").fetchone()
+
+    def _sod_result(self, rows, metrics, dims, notes, sql, market):
+        units = {"deposits": "$ billions", "deposit_share": "percent", "market_rank": "count", "change_pp": "points",
+                 "deposit_growth_pct": "percent", "market_deposits": "$ billions"}
+        for r in rows:
+            for k, v in list(r.items()):
+                if isinstance(v, float):
+                    r[k] = None if v != v else round(v, 4)
+                elif hasattr(v, "item"):
+                    r[k] = v.item()
+        return {"rows": rows, "market": market, "units": {m: units[m] for m in metrics},
+                "notes": notes, "semantic_model_version": self.version, "sql": sql}
 
     # ------------------------------------------------------------- list_values
     def list_values(self, dimension, search=None):

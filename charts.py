@@ -29,7 +29,8 @@ def label(name: str) -> str:
                "noninterest_bearing_deposit_share": "Non-interest-bearing deposit share",
                "ci_loan_share": "C&I loan share", "ci_noncurrent_rate": "C&I noncurrent rate",
                "owner_occupied_cre_loan_share": "Owner-occupied CRE share",
-               "non_owner_occupied_cre_loan_share": "Non-owner-occupied CRE share"}
+               "non_owner_occupied_cre_loan_share": "Non-owner-occupied CRE share",
+               "market_rank": "Rank in market", "deposits": "Deposits"}
     if name in special:
         return special[name]
     words = name.replace("_", " ").capitalize().split()
@@ -41,6 +42,8 @@ def value_format(unit: str) -> tuple[str, str]:
     """(d3 number format, suffix) for value labels."""
     if unit == "percent":
         return ".2f", "%"
+    if unit == "points":
+        return "+.2f", " pts"
     if unit == "$ billions":
         return ",.1f", "B"
     return ",.0f", ""

@@ -105,6 +105,30 @@ def main():
     check("industry CRE share = construction + multifamily + nonresidential",
           abs(m["cre_loan_share"] - sum(m[k] for k in mix[:4])) < 0.01)
 
+    print("Deposit market share (v0.2.4)")
+    pf._load_sod()
+    for y, q, certs in [(2026, "2026Q2", "17798"), (2025, "2025Q2", "17798, 23621, 34147, 15995")]:
+        a = pf.con.execute(f"SELECT SUM(deposits_k) FROM sod WHERE year = {y} AND CERT IN ({certs})").fetchone()[0]
+        b = pf.con.execute(f"SELECT SUM(DEPDOM) FROM bank_quarter WHERE period = '{q}' AND CERT IN ({certs})").fetchone()[0]
+        check(f"Beacon branch deposits {y} = its call-report domestic deposits", a == b, f"{a} vs {b}")
+    a = pf.con.execute("SELECT SUM(deposits_k) FROM sod WHERE year = 2026").fetchone()[0]
+    b = pf.con.execute("SELECT SUM(DEPDOM) FROM bank_quarter WHERE period = '2026Q2'").fetchone()[0]
+    check("all branch deposits within 1% of industry domestic deposits", abs(a / b - 1) < 0.01, f"{a / b - 1:.2%}")
+    m = pf.market_share("metro", "Boston", limit=200)
+    check("Boston metro shares add to 100%", abs(sum(r["deposit_share"] for r in m["rows"]) - 100) < 0.01)
+    hhi = sum(r["deposit_share"] ** 2 for r in m["rows"])
+    check("Boston HHI = sum of squared shares", abs(hhi - m["market"]["hhi"]) < 1, f"{hhi:.0f} vs {m['market']['hhi']}")
+    check("State Street flagged as booked at few offices", m["rows"][0]["booked_at_few_offices"], m["rows"][0]["organization"])
+    m = pf.market_share("county", "Berkshire, MA", compare_to_prior_year=True)
+    top = m["rows"][0]
+    check("Beacon leads Berkshire County, MA and is flagged as merged",
+          top["organization"] == "BEACON FINANCIAL CORP" and top["merged_since_prior"], str(top))
+    try:
+        pf.market_share("metro", "Springfield")
+        check("ambiguous market is refused", False)
+    except Exception as e:  # noqa: BLE001
+        check("ambiguous market is refused with the candidates", "matches" in str(e), str(e)[:80])
+
     print(f"\n{'All extension tests pass' if not fails else f'{fails} FAILED'} (semantic model v{pf.version})")
     return fails
 

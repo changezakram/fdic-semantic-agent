@@ -238,6 +238,20 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   expect="answer", headline=[["deposit"]], must_text=[[top["organization"].split()[0].title()]],
                   numbers=[top["uninsured_deposit_share"]], not_text=["best uninsured", "worst uninsured"], key=rows))
 
+    # E25-E26 deposit market share (v0.2.4, Summary of Deposits)
+    m = L.market_share("metro", "Worcester, MA")
+    top = m["rows"][0]
+    Q.append(dict(id="E25", topic="market share (new in v0.2.4)",
+                  question="Who has the largest deposit market share in the Worcester, MA metro area?",
+                  expect="answer", headline=[[" ".join(w for w in top["organization"].split()
+                                                     if w not in ("CORP", "INC", "THE", "CO")).title()]],
+                  must_text=[["June 30"]], numbers=[top["deposit_share"]], chart=True, key=m))
+    m = L.market_share("county", "MA", organization="EASTERN BANKSHARES INC", limit=25)
+    top = max(m["rows"], key=lambda r: r["deposit_share"])
+    Q.append(dict(id="E26", topic="branch footprint (new in v0.2.4)",
+                  question="In which Massachusetts counties does Eastern Bankshares have its highest deposit market share?",
+                  expect="answer", headline=[[top["county"].split(",")[0]]], numbers=[top["deposit_share"]], key=m))
+
     # E13-E15 were out of scope in v0.1; answerable since v0.2.0-v0.2.3
     r = L.query_metrics(metrics=["cost_of_deposits"], period="2026Q2", filters={"size_class": "$10B-$100B"})["rows"][0]
     Q.append(dict(id="E13", topic="funding cost (new in v0.2.0)",
