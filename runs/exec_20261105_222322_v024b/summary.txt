@@ -1,0 +1,8 @@
+Executive questions, 2026-11-05 22:23, model claude-haiku-5-5, semantic model v0.2.4
+
+E02  3/3  state ranking + concentration    Which states have the highest noncurrent loan rates in 2026Q2?
+E12  3/3  region ranking + concentration   Noncurrent loan rate by FDIC region, 2026Q2
+E20  3/3  states + concentration           Noncurrent loan rate by New England state, 2026Q2
+
+TOTAL  9/9 runs fully correct (100%)
+Questions correct in every run: 3/3

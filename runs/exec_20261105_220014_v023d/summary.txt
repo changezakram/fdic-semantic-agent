@@ -1,0 +1,8 @@
+Executive questions, 2026-11-05 22:00, model claude-haiku-5-5, semantic model v0.2.3
+
+E06  3/3  two-period, two-metric judgment  Which FDIC regions improved ROA the most from 2025Q2 to 2026Q2, and di
+E10  3/3  top-N ranking                    Top 10 banking organizations by assets
+E22  3/3  capital and reserves (new in v0.2.1) Compare CET1 ratio, leverage ratio and allowance to loans for New Engl
+
+TOTAL  9/9 runs fully correct (100%)
+Questions correct in every run: 3/3

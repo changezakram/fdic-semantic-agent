@@ -1,0 +1,10 @@
+Executive questions, 2026-11-05 21:46, model claude-haiku-5-5, semantic model v0.2.3
+
+E23  3/3  deposit mix (new in v0.2.2)      Compare uninsured, non-interest-bearing and brokered deposit shares fo
+E14  3/3  loan mix (new in v0.2.3)         What share of loans is commercial real estate at banks under $10B?
+E24  1/3  CRE concentration (new in v0.2.3) Which New England banking organizations with $5B-$50B in assets have t
+      run 1: answer missing ['300%']
+      run 3: answer missing ['300%']; checker: You wrote "largest ... 5" for total_assets, but the highest total_assets is 31.13 (EASTERN BANKSHARES INC). Fix this cla
+
+TOTAL  7/9 runs fully correct (78%)
+Questions correct in every run: 2/3

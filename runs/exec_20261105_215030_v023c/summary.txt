@@ -1,0 +1,6 @@
+Executive questions, 2026-11-05 21:50, model claude-haiku-5-5, semantic model v0.2.3
+
+E24  3/3  CRE concentration (new in v0.2.3) Which New England banking organizations with $5B-$50B in assets have t
+
+TOTAL  3/3 runs fully correct (100%)
+Questions correct in every run: 1/1

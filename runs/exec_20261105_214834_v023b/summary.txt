@@ -1,0 +1,7 @@
+Executive questions, 2026-11-05 21:48, model claude-haiku-5-5, semantic model v0.2.3
+
+E24  2/3  CRE concentration (new in v0.2.3) Which New England banking organizations with $5B-$50B in assets have t
+      run 3: checker: "300%" does not match any number from query_metrics or calculate. Compute it with calculate (e.g. a share = part / total
+
+TOTAL  2/3 runs fully correct (67%)
+Questions correct in every run: 0/1

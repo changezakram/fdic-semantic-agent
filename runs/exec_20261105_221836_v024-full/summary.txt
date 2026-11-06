@@ -1,0 +1,35 @@
+Executive questions, 2026-11-05 22:22, model claude-haiku-5-5, semantic model v0.2.4
+
+E01  3/3  peer scorecard                   Compare ROA, efficiency ratio and noncurrent loan rate for M&T, Citize
+E02  3/3  state ranking + concentration    Which states have the highest noncurrent loan rates in 2026Q2?
+E03  3/3  state ranking, low end           Which states have the lowest noncurrent loan rates in 2026Q2?
+E04  3/3  trend by segment                 How has the noncurrent loan rate trended by organization size since 20
+E05  3/3  growth by segment                Deposit growth by regulator, year over year
+E06  3/3  two-period, two-metric judgment  Which FDIC regions improved ROA the most from 2025Q2 to 2026Q2, and di
+E07  3/3  peer medians, Unknown trap       Median ROA for community banks vs. other banks, 2026Q2
+E08  3/3  ratio change in points           How did the efficiency ratio for $10B-$100B banks change from 2025Q2 t
+E09  3/3  credit trend                     Net charge-off rate trend for banks over $100B since 2024
+E10  3/3  top-N ranking                    Top 10 banking organizations by assets
+E11  3/3  industry trend                   How has industry ROA trended since 2024?
+E12  3/3  region ranking + concentration   Noncurrent loan rate by FDIC region, 2026Q2
+E16  3/3  gainers and losers               Show the top 5 deposit gainers and the top 5 decliners among New Engla
+E17  3/3  peer ratio, no direction         Loan-to-deposit ratio for New England banking organizations with $5B-$
+E18  3/3  gainers and losers (loans)       Show the top 5 loan gainers and the top 5 decliners among New England 
+E19  3/3  top 10, credit, peer group       Top 10 New England banking organizations with $5B-$50B in assets by no
+E20  1/3  states + concentration           Noncurrent loan rate by New England state, 2026Q2
+      run 1: answer missing ['Citizens']; number 1.07 not stated
+      run 2: answer missing ['Citizens']; number 1.07 not stated
+E21  3/3  trend, pro forma                 Loan-to-deposit ratio trend by banking organization for New England or
+E22  3/3  capital and reserves (new in v0.2.1) Compare CET1 ratio, leverage ratio and allowance to loans for New Engl
+E23  3/3  deposit mix (new in v0.2.2)      Compare uninsured, non-interest-bearing and brokered deposit shares fo
+E25  3/3  market share (new in v0.2.4)     Who has the largest deposit market share in the Worcester, MA metro ar
+E26  3/3  branch footprint (new in v0.2.4) In which Massachusetts counties does Eastern Bankshares have its highe
+E27  3/3  market share, custody caveat     Deposit market share in the Boston metro area as of June 30, 2026, wit
+E28  3/3  loan mix, peer group             Compare CRE, residential and C&I loan shares for New England banking o
+E13  3/3  funding cost (new in v0.2.0)     What's the cost of deposits for $10B-$100B banks?
+E14  3/3  loan mix (new in v0.2.3)         What share of loans is commercial real estate at banks under $10B?
+E24  3/3  CRE concentration (new in v0.2.3) Which New England banking organizations with $5B-$50B in assets have t
+E15  3/3  uninsured deposits (new in v0.2.2) Which banks have the highest uninsured deposit share?
+
+TOTAL  82/84 runs fully correct (98%)
+Questions correct in every run: 27/28

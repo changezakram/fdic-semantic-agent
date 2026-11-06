@@ -1,0 +1,7 @@
+Executive questions, 2026-11-05 22:10, model claude-haiku-5-5, semantic model v0.2.4
+
+E25  3/3  market share (new in v0.2.4)     Who has the largest deposit market share in the Worcester, MA metro ar
+E26  3/3  branch footprint (new in v0.2.4) In which Massachusetts counties does Eastern Bankshares have its highe
+
+TOTAL  6/6 runs fully correct (100%)
+Questions correct in every run: 2/2

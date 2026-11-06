@@ -1,0 +1,8 @@
+Executive questions, 2026-11-05 22:17, model claude-haiku-5-5, semantic model v0.2.4
+
+E26  3/3  branch footprint (new in v0.2.4) In which Massachusetts counties does Eastern Bankshares have its highe
+E27  3/3  market share, custody caveat     Deposit market share in the Boston metro area as of June 30, 2026, wit
+E28  3/3  loan mix, peer group             Compare CRE, residential and C&I loan shares for New England banking o
+
+TOTAL  9/9 runs fully correct (100%)
+Questions correct in every run: 3/3
