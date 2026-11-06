@@ -216,6 +216,17 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   must_text=[["Beacon"], ["Eastern"], ["Independent"]],
                   not_text=["best loan-to-deposit", "worst loan-to-deposit"], key=rows))
 
+    # E22 capital and reserves scorecard, peer group (v0.2.1)
+    cap = ["cet1_ratio", "leverage_ratio", "allowance_to_loans"]
+    rows = L.query_metrics(metrics=cap, period="2026Q2", dimensions=["organization"],
+                           filters={"us_region": "New England", "organization_asset_band": ["$10B-$50B"]})["rows"]
+    top = max(rows, key=lambda r: r["cet1_ratio"])
+    Q.append(dict(id="E22", topic="capital and reserves (new in v0.2.1)",
+                  question="Compare CET1 ratio, leverage ratio and allowance to loans for New England banking "
+                           "organizations with $10B-$50B in assets, 2026Q2",
+                  expect="answer", headline=[[top["organization"].split()[0]]], numbers=[top["cet1_ratio"]],
+                  must_text=[["Beacon"], ["Eastern"]], not_text=["best allowance", "worst allowance"], key=rows))
+
     # E13-E15 out of scope: must decline, not estimate
     r = L.query_metrics(metrics=["cost_of_deposits"], period="2026Q2", filters={"size_class": "$10B-$100B"})["rows"][0]
     Q.append(dict(id="E13", topic="funding cost (new in v0.2.0)",

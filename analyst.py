@@ -47,6 +47,9 @@ How to work:
   return_on_assets (year-to-date) only when the user asks for year-to-date. Margin: net_interest_margin.
   Funding: cost_of_funds, cost_of_deposits, cost_of_interest_bearing_deposits (all quarterly, lower is better).
   These are bank-level call-report figures; they can differ slightly from a holding company's earnings release.
+- Capital: cet1_ratio, tier1_risk_based_ratio, total_risk_based_ratio, leverage_ratio (bank level; usually
+  above the holding company's ratios). Reserves: allowance_to_loans (no better direction) and
+  allowance_to_noncurrent (coverage).
 - If a result has "peer_aggregate", say where the leaders and laggards sit against it (it is the whole
   queried group's aggregate, drawn as a line on the chart).
 - If rows have merger_quarter true, the quarterly income figure for that organization and quarter is
@@ -266,7 +269,8 @@ def peer_benchmark(layer, request: dict, res: dict) -> dict | None:
 
 LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio",
                    "cost_of_funds", "cost_of_deposits", "cost_of_interest_bearing_deposits"}
-HIGHER_IS_BETTER = {"return_on_assets", "return_on_assets_quarterly", "net_interest_margin", "return_on_equity", "equity_to_assets", "mean_bank_roa", "median_bank_roa",
+HIGHER_IS_BETTER = {"return_on_assets", "return_on_assets_quarterly", "net_interest_margin", "cet1_ratio",
+                    "tier1_risk_based_ratio", "total_risk_based_ratio", "leverage_ratio", "allowance_to_noncurrent", "return_on_equity", "equity_to_assets", "mean_bank_roa", "median_bank_roa",
                     "median_bank_nim", "median_bank_leverage_ratio", "reported_roa", "reported_roe", "reported_nim",
                     "reported_leverage_ratio"}
 _SUPER = re.compile(r"\b(second[- ]highest|second[- ]lowest|second[- ]best|highest|lowest|best|worst|"

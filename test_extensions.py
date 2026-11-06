@@ -55,6 +55,23 @@ def main():
     except Exception:  # noqa: BLE001
         check("no quarterly figure for 2024Q3 (refused)", True)
 
+    print("Capital and reserves (v0.2.1)")
+    b = pf.query_metrics(metrics=["cet1_ratio", "total_risk_based_ratio", "leverage_ratio", "allowance_to_loans"],
+                         period="2026Q2", filters={"bank": 17798})["rows"][0]
+    check("Beacon Bank & Trust: CET1 11.77, total RBC 12.86, leverage 9.83 (FDIC); allowance/loans 1.34 (release)",
+          [round(b[k], 2) for k in ("cet1_ratio", "total_risk_based_ratio", "leverage_ratio", "allowance_to_loans")]
+          == [11.77, 12.86, 9.83, 1.34], str(b))
+    al = pf.con.execute("SELECT LNLSRES FROM bank_quarter WHERE CERT = 17798 AND period = '2026Q2'").fetchone()[0]
+    check("Beacon allowance = $238,189K (release)", al == 238189, str(al))
+    q = """SELECT hc_name, MIN(RBCT1CER), MAX(RBCT1CER) FROM bank_quarter WHERE period = '2026Q2' AND RBCT1CER > 0
+           AND hc_name IS NOT NULL GROUP BY 1 HAVING COUNT(*) > 2"""
+    bad = []
+    for h, lo, hi in pf.con.execute(q).fetchall():
+        v = pf.query_metrics(metrics=["cet1_ratio"], period="2026Q2", filters={"holding_company": [h]})["rows"][0]["cet1_ratio"]
+        if not (lo - 0.01 <= v <= hi + 0.01):
+            bad.append(h)
+    check("every multi-bank group's CET1 lies within its banks' range", not bad, ", ".join(bad[:3]))
+
     print(f"\n{'All extension tests pass' if not fails else f'{fails} FAILED'} (semantic model v{pf.version})")
     return fails
 

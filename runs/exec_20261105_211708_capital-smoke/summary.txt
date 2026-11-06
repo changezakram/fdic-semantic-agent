@@ -1,0 +1,6 @@
+Executive questions, 2026-11-05 21:17, model claude-haiku-5-5, semantic model v0.2.1
+
+E22  1/1  capital and reserves (new in v0.2.1) Compare CET1 ratio, leverage ratio and allowance to loans for New Engl
+
+TOTAL  1/1 runs fully correct (100%)
+Questions correct in every run: 1/1
