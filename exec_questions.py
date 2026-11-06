@@ -252,6 +252,24 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                   question="In which Massachusetts counties does Eastern Bankshares have its highest deposit market share?",
                   expect="answer", headline=[[top["county"].split(",")[0]]], numbers=[top["deposit_share"]], key=m))
 
+    # E27-E28 app samples added with v0.2.4
+    m = L.market_share("metro", "Boston", compare_to_prior_year=True)
+    Q.append(dict(id="E27", topic="market share, custody caveat",
+                  question="Deposit market share in the Boston metro area as of June 30, 2026, with change from 2025",
+                  expect="answer", headline=[["State Street", "Boston"]],
+                  must_text=[["Bank of America"], ["custody", "head office", "head-office", "one office", "booked"],
+                             ["HHI"]],
+                  numbers=[m["rows"][0]["deposit_share"]], chart=True, key=m))
+    mix = ["cre_loan_share", "residential_loan_share", "ci_loan_share"]
+    rows = L.query_metrics(metrics=mix, period="2026Q2", dimensions=["organization"],
+                           filters={"us_region": "New England", "organization_asset_band": ["$10B-$50B"]})["rows"]
+    top = max(rows, key=lambda r: r["cre_loan_share"])
+    Q.append(dict(id="E28", topic="loan mix, peer group",
+                  question="Compare CRE, residential and C&I loan shares for New England banking organizations with "
+                           "$10B-$50B in assets, 2026Q2",
+                  expect="answer", headline=[["loan", "CRE"]], must_text=[[top["organization"].split()[0].title()]],
+                  numbers=[top["cre_loan_share"]], not_text=["best", "worst"], chart=True, key=rows))
+
     # E13-E15 were out of scope in v0.1; answerable since v0.2.0-v0.2.3
     r = L.query_metrics(metrics=["cost_of_deposits"], period="2026Q2", filters={"size_class": "$10B-$100B"})["rows"][0]
     Q.append(dict(id="E13", topic="funding cost (new in v0.2.0)",

@@ -35,6 +35,12 @@ SAMPLES = [   # (button label, full question). Balance-sheet and credit measures
      "Noncurrent loan rate by New England state, 2026Q2"),
     ("Loan-to-deposit trend, $10B-$50B New England peers",
      "Loan-to-deposit ratio trend by banking organization for New England organizations with $10B-$50B in assets since 2024"),
+    ("Boston deposit market share",
+     "Deposit market share in the Boston metro area as of June 30, 2026, with change from 2025"),
+    ("A bank's deposit footprint by county",
+     "In which Massachusetts counties does Eastern Bankshares have its highest deposit market share?"),
+    ("Loan mix, $10B-$50B New England peers",
+     "Compare CRE, residential and C&I loan shares for New England banking organizations with $10B-$50B in assets, 2026Q2"),
 ]
 
 
