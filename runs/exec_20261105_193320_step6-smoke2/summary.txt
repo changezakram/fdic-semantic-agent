@@ -1,0 +1,7 @@
+Executive questions, 2026-11-05 19:33, model claude-haiku-5-5, semantic model v0.2.0
+
+E19  1/1  top 10, credit, peer group       Top 10 New England banking organizations with $5B-$50B in assets by no
+E20  1/1  states + concentration           Noncurrent loan rate by New England state, 2026Q2
+
+TOTAL  2/2 runs fully correct (100%)
+Questions correct in every run: 2/2

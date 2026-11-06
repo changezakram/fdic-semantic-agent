@@ -354,6 +354,8 @@ def check_claims(answer: dict, results: dict) -> list[str]:
         for sm in _SUPER.finditer(text):
             if re.search(r"next[- ]?$", text[max(0, sm.start() - 6): sm.start()], re.I):
                 continue                                 # "next-highest" lists, not a superlative claim
+            if re.match(r"-(ranked|rated|ranking)", text[sm.end(): sm.end() + 10], re.I):
+                continue                                 # "the three highest-ranked" describes a group
             nm = hits = None
             for cand in _claim_number(text, sm):      # nearest number that is one of the result values
                 try:
@@ -421,7 +423,7 @@ def check_percentages(answer: dict, results: dict, calc_values: list[float]) -> 
             for k, v in row.items():
                 if isinstance(v, (int, float)) and (units.get(k) == "percent" or pct_row or k.startswith("change_p")):
                     known.append(v)
-        for k, v in (r.get("concentration") or {}).items():
+        for k, v in list((r.get("concentration") or {}).items()) + list((r.get("benchmark") or {}).items()):
             if isinstance(v, (int, float)):
                 known.append(v)
     texts = [(answer or {}).get("headline", "")] + list((answer or {}).get("insights") or [])

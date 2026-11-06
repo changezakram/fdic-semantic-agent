@@ -31,6 +31,16 @@ def _by(rows, dim, metric):
     return {r[dim]: r[metric] for r in rows}
 
 
+def _without_driver(L, dim, group, filters):
+    """The group's noncurrent rate without its largest problem-loan bank, computed the way the app does."""
+    import analyst
+    req = {"metrics": ["noncurrent_loan_rate"], "period": "2026Q2", "dimensions": [dim], "filters": filters}
+    res = L.query_metrics(**req)
+    block = analyst.concentration(L, res, req, analyst.rankings(res, req))[2]
+    assert block["group"] == f"{dim} = {group}"
+    return block["group_rate_without_driver"]
+
+
 def build(L: SemanticLayer | None = None) -> list[dict]:
     L = L or SemanticLayer(ext=EXT_SNAPSHOT, pro_forma=True)
     Q = []
@@ -190,7 +200,8 @@ def build(L: SemanticLayer | None = None) -> list[dict]:
                            filters={"us_region": "New England"}, order_by="noncurrent_loan_rate desc")["rows"]
     Q.append(dict(id="E20", topic="states + concentration",
                   question="Noncurrent loan rate by New England state, 2026Q2",
-                  expect="answer", headline=[["Rhode Island", "RI"]], numbers=[rows[0]["noncurrent_loan_rate"], 1.07],
+                  expect="answer", headline=[["Rhode Island", "RI"]],
+                  numbers=[rows[0]["noncurrent_loan_rate"], _without_driver(L, "state", "RI", {"us_region": "New England"})],
                   must_text=[["Citizens"]], chart=True, key=rows))
 
     # E21 trend for named-size peers, pro forma for mergers (Eastern's HarborOne, Beacon's Brookline banks)
