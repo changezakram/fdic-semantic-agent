@@ -144,12 +144,21 @@ def build(chart: dict, result: dict, max_bars: int = 20):
         return (bars + pos + neg).properties(title=chart.get("title", ""), height=alt.Step(30)), note
     df["_inside"] = df[y].abs() >= 0.15 * df[y].abs().max()        # short bars get their label outside
     base = alt.Chart(df).encode(y=y_axis, x=x_axis, tooltip=tooltip)
+    bench = (result.get("benchmark") or {}).get(y)
     inside = base.transform_filter("datum._inside").mark_text(
         align="right", dx=-8, fontSize=12, fontWeight="bold").encode(
         text="_label:N", color=alt.condition("datum._excl", alt.value("#1F3B57"), alt.value("white")))
     outside = base.transform_filter("!datum._inside").mark_text(
         align="left", dx=6, fontSize=12, fontWeight="bold", color="#8A94A6").encode(text="_label:N")
-    return (bars + inside + outside).properties(title=chart.get("title", ""), height=alt.Step(38)), note
+    layers = bars + inside + outside
+    if bench is not None:                    # the whole group's aggregate, as a reference line
+        line = pd.DataFrame([{"v": bench, "t": f"All in group: {prefix}{bench:{fmt}}{suffix}"}])
+        rule = alt.Chart(line).mark_rule(strokeDash=[5, 4], color="#F2A65A", strokeWidth=2).encode(x="v:Q")
+        txt = alt.Chart(line).mark_text(align="left", dx=5, dy=-8, color="#F2A65A", fontWeight="bold",
+                                        fontSize=12).encode(x="v:Q", y=alt.value(0), text="t:N")
+        layers = layers + rule + txt
+        note = (note + " " if note else "") + "Dashed line: the aggregate for the whole group in the question."
+    return layers.properties(title=chart.get("title", ""), height=alt.Step(38)), note
 
 
 def scorecard(result: dict, request: dict, lower_is_better: set, higher_is_better: set):

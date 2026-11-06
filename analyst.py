@@ -47,6 +47,8 @@ How to work:
   return_on_assets (year-to-date) only when the user asks for year-to-date. Margin: net_interest_margin.
   Funding: cost_of_funds, cost_of_deposits, cost_of_interest_bearing_deposits (all quarterly, lower is better).
   These are bank-level call-report figures; they can differ slightly from a holding company's earnings release.
+- If a result has "peer_aggregate", say where the leaders and laggards sit against it (it is the whole
+  queried group's aggregate, drawn as a line on the chart).
 - If a result has a "concentration" block, one bank drives that group's figure. Say so in an insight,
   name the bank, and give the group's rate without it (both numbers are in the block).
 - Never do arithmetic in your head. Any number you state that query_metrics did not return
@@ -191,45 +193,72 @@ def rankings(res: dict, request: dict) -> dict | None:
     return out or None
 
 
-CONCENTRATION = {"noncurrent_loan_rate": "noncurrent_loans", "net_charge_off_rate": "net_charge_offs"}
+# metric -> (amount whose share picks the driver bank, denominator, which ends of the ranking to check)
+CONCENTRATION = {
+    "noncurrent_loan_rate":  ("noncurrent_loans", "gross_loans", ("highest",)),
+    "net_charge_off_rate":   ("net_charge_offs", "gross_loans", ("highest",)),
+    "loan_to_deposit_ratio": ("total_deposits", "total_deposits", ("highest", "lowest")),
+}
 DRILL_DIMS = {"state", "region", "regulator", "size_class", "organization_size_class", "specialization",
-              "charter_type", "fdic_community_bank", "geography_type"}
+              "charter_type", "fdic_community_bank", "geography_type", "us_region"}
 
 
 def concentration(layer, res: dict, request: dict, ranks: dict | None):
-    """For credit-rate rankings, check in code whether one bank drives the top group's rate.
+    """For ratio rankings, check in code whether one bank drives an extreme group's ratio (e.g. Oklahoma's
+    noncurrent rate = MidFirst; Massachusetts' loan-to-deposit ratio = State Street's custody deposits).
     Returns (drill request, drill result, block) or None."""
     dims = request.get("dimensions") or []
     if not ranks or len(dims) != 1 or dims[0] not in DRILL_DIMS or not isinstance(request.get("period"), str) \
             or ":" in request["period"]:
         return None
     d = dims[0]
-    for rate, amount in CONCENTRATION.items():
-        top = (ranks.get(rate) or {}).get("highest")
-        if not top:
-            continue
-        group = top[0][d]
-        filters = {**(request.get("filters") or {}), d: group}
-        req = {"metrics": [rate, amount, "gross_loans"], "period": request["period"], "dimensions": ["bank_name"],
-               "filters": filters, "order_by": f"{amount} desc", "limit": 3}
-        tot = layer.query_metrics(metrics=[rate, amount, "gross_loans"], period=request["period"], filters=filters)
-        drill = layer.query_metrics(**req)
-        if not tot["rows"] or not drill["rows"]:
-            continue
-        g, b = tot["rows"][0], drill["rows"][0]
-        if not g.get(amount) or g[amount] <= 0 or len(drill["rows"]) < 2:
-            continue
-        share = b[amount] / g[amount] * 100
-        if share < 40:
-            continue
-        rest_loans = g["gross_loans"] - b["gross_loans"]
-        rest = (g[rate] * g["gross_loans"] - b[rate] * b["gross_loans"]) / rest_loans if rest_loans > 0 else None
-        block = {"group": f"{d} = {group}", "metric": rate, "group_rate": round(g[rate], 4),
-                 "driver_bank": b["bank_name"], "driver_bank_rate": round(b[rate], 4),
-                 "driver_share_of_group_" + amount + "_pct": round(share, 1),
-                 "group_rate_without_driver": round(rest, 4) if rest is not None else None}
-        return req, drill, block
+    for rate, (amount, den, ends) in CONCENTRATION.items():
+        for end in ends:
+            top = (ranks.get(rate) or {}).get(end)
+            if not top:
+                continue
+            group = top[0][d]
+            filters = {**(request.get("filters") or {}), d: group}
+            mets = list(dict.fromkeys([rate, amount, den]))
+            req = {"metrics": mets, "period": request["period"], "dimensions": ["bank_name"],
+                   "filters": filters, "order_by": f"{amount} desc", "limit": 3}
+            tot = layer.query_metrics(metrics=mets, period=request["period"], filters=filters)
+            drill = layer.query_metrics(**req)
+            if not tot["rows"] or not drill["rows"] or len(drill["rows"]) < 2:
+                continue
+            g, b = tot["rows"][0], drill["rows"][0]
+            if not g.get(amount) or g[amount] <= 0 or g.get(rate) is None or b.get(rate) is None:
+                continue
+            share = b[amount] / g[amount] * 100
+            if share < 40:
+                continue
+            rest_den = g[den] - b[den]
+            rest = (g[rate] * g[den] - b[rate] * b[den]) / rest_den if rest_den > 0 else None
+            block = {"group": f"{d} = {group}", "metric": rate, "end": end, "group_rate": round(g[rate], 4),
+                     "driver_bank": b["bank_name"], "driver_bank_rate": round(b[rate], 4),
+                     "driver_share_of_group_" + amount + "_pct": round(share, 1),
+                     "group_rate_without_driver": round(rest, 4) if rest is not None else None}
+            return req, drill, block
     return None
+
+
+def peer_benchmark(layer, request: dict, res: dict) -> dict | None:
+    """The aggregate of the whole queried group (same filters and period, no grouping) for each percent
+    metric, so ranked charts can show a peer line and the answer can say above or below peers."""
+    dims = request.get("dimensions") or []
+    period = request.get("period")
+    if len(dims) != 1 or dims[0] == "period" or not isinstance(period, str) or ":" in period \
+            or request.get("compare_to") or len(res.get("rows") or []) < 3:
+        return None
+    mets = [m for m in request.get("metrics") or [] if (res.get("units") or {}).get(m) == "percent"
+            and not m.startswith(("median_", "mean_", "reported_"))]
+    if not mets:
+        return None
+    rows = layer.query_metrics(metrics=mets, period=period, filters=request.get("filters"))["rows"]
+    if not rows:
+        return None
+    out = {m: round(rows[0][m], 4) for m in mets if rows[0].get(m) is not None}
+    return out or None
 
 
 LOWER_IS_BETTER = {"efficiency_ratio", "noncurrent_loan_rate", "net_charge_off_rate", "median_bank_efficiency_ratio",
@@ -503,6 +532,13 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
                     if ranks:
                         shown["ranking"] = ranks
                     try:
+                        bench = peer_benchmark(layer, tu.input, res)
+                    except Exception:  # noqa: BLE001
+                        bench = None
+                    if bench:
+                        results[rid]["benchmark"] = bench
+                        shown["peer_aggregate"] = {"value": bench, "what": "the whole queried group, same filters"}
+                    try:
                         conc = concentration(layer, res, tu.input, ranks)
                     except Exception:  # noqa: BLE001 - a failed check never blocks the answer
                         conc = None
@@ -605,6 +641,14 @@ def chart_problems(answer: dict, results: dict) -> list[str]:
             missing = [v for v in c["only"] if str(v) not in present]
             if missing:
                 probs.append(f"Chart {i}: 'only' values {missing} are not in column {c['x']} of {c['result_id']}.")
+        scoped = {rid: x["request"].get("filters") for rid, x in results.items()
+                  if x.get("request", {}).get("filters") and not x.get("auto")}
+        if scoped and not r.get("request", {}).get("filters") and not r.get("auto") \
+                and not r.get("request", {}).get("derived_from"):
+            rid0, f0 = next(iter(scoped.items()))
+            probs.append(f"Chart {i}: {c['result_id']} has no filters, but the answer is about a filtered group "
+                         f"({rid0}: {f0}). Chart a result with the same filters, or say in the chart title that it "
+                         "is national context.")
         if c.get("kind") == "bar" and not c.get("color") and len(r["rows"]) > 20 and not c.get("only"):
             probs.append(f"Chart {i}: {c['result_id']} has {len(r['rows'])} rows, too many for a bar chart. "
                          "Run a narrower query_metrics filtered to the items you discuss, and chart that result.")

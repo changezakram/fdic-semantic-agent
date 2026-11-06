@@ -1,0 +1,9 @@
+Executive questions, 2026-11-05 19:26, model claude-haiku-5-5, semantic model v0.2.0
+
+E19  0/1  top 10, credit, peer group       Top 10 New England banking organizations with $5B-$50B in assets by no
+      run 1: checker: You wrote "highest ... 0.47" for noncurrent_loan_rate, but the highest noncurrent_loan_rate is 1.42 (HOMETOWN FINANCIAL 
+E20  0/1  states + concentration           Noncurrent loan rate by New England state, 2026Q2
+      run 1: number 1.07 not stated
+
+TOTAL  0/2 runs fully correct (0%)
+Questions correct in every run: 0/2
