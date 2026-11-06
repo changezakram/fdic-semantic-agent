@@ -291,6 +291,7 @@ _SUPER = re.compile(r"\b(second[- ]highest|second[- ]lowest|second[- ]best|highe
                     r"led|leads|leading|strongest|weakest|largest|smallest|top|bottom)\b", re.I)
 _NUM = re.compile(r"-?\d[\d,]*\.?\d*")
 _SENT = re.compile(r"(?<=[.;!?])\s+")
+GUIDELINES = {"cre_concentration": 300, "construction_concentration": 100}   # 2006 interagency CRE guidance
 _BAND = re.compile(r"\$\d[\d.]*\s*[BMK]\b\s*(?:to|-|–|—|and)\s*\$\d|\$\d[\d.]*\s*[BMK]?\s*(?:to|-|–|—|and)\s*\$\d[\d.]*\s*[BMK]\b", re.I)
 
 
@@ -480,6 +481,9 @@ def check_percentages(answer: dict, results: dict, calc_values: list[float]) -> 
         for k, v in list((r.get("concentration") or {}).items()) + list((r.get("benchmark") or {}).items()):
             if isinstance(v, (int, float)):
                 known.append(v)
+        for metric, level in GUIDELINES.items():            # supervisory levels are governed constants
+            if any(metric in row for row in r.get("rows") or []):
+                known.append(level)
     texts = [(answer or {}).get("headline", "")] + list((answer or {}).get("insights") or [])
     problems = []
     for text in texts:
@@ -747,7 +751,8 @@ def answer_problems(answer: dict, results: dict) -> list[str]:
                 probs.append(f"A concentration check found that {blk['driver_bank']} drives {blk['group']} "
                              f"({blk['metric']} {blk['group_rate']}, {blk.get('group_rate_without_driver')} without "
                              "it). Say so in an insight.")
-    for metric, level in (("cre_concentration", "300%"), ("construction_concentration", "100%")):
+    for metric, level in GUIDELINES.items():
+        level = f"{level}%"
         if any(isinstance(row.get(metric), (int, float)) for r in results.values() for row in (r.get("rows") or [])) \
                 and level.rstrip("%") not in text:
             probs.append(f"The answer reports {metric} but never states the {level} supervisory guideline. Say "
