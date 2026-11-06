@@ -184,8 +184,8 @@ def scorecard(result: dict, request: dict, lower_is_better: set, higher_is_bette
     metrics = [m for m in request.get("metrics") or [] if rows and m in rows[0]]
     if len(dims) != 1 or dims[0] == "period" or len(metrics) < 2 or not 2 <= len(rows) <= 15:
         return None
-    directional_count = sum(m in lower_is_better or m in higher_is_better for m in metrics)
-    if request.get("order_by") and directional_count < 2:   # a ranked list, not a scorecard
+    pct = sum(result.get("units", {}).get(m) == "percent" for m in metrics)
+    if request.get("order_by") and pct < 2:           # one ratio plus context columns: a ranked list, not a scorecard
         return None
     df = pd.DataFrame(rows)[[dims[0]] + metrics]
     # Same rule as rankings: Unknown (and territories, by state) are not peers, so they never get "best"

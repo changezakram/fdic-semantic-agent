@@ -670,6 +670,9 @@ def scorecard_result(chart_specs: list[dict], results: dict) -> str | None:
     benchmark, so what is graded is what is shown."""
     import charts
     order = [c["result_id"] for c in chart_specs] + [rid for rid in reversed(list(results)) if not results[rid].get("auto")]
+    if chart_specs:                  # a scorecard about other metrics than the chart would be off-topic
+        charted = {c["y"] for c in chart_specs} | set(results[chart_specs[0]["result_id"]]["request"].get("metrics") or [])
+        order = [rid for rid in order if set(results[rid]["request"].get("metrics") or []) & charted]
     for rid in dict.fromkeys(order):
         r = results[rid]
         if charts.scorecard(r, r["request"], LOWER_IS_BETTER, HIGHER_IS_BETTER) is not None:
