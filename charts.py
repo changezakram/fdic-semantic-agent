@@ -7,6 +7,7 @@ import pandas as pd
 UNIT_SUFFIX = {"$ billions": "($B)", "percent": "(%)", "count": "", "index": ""}
 BAR = "#5B9BD5"
 BAR_LIGHT = "#B9D3EC"
+SERIES = ["#4C9BE8", "#F2A65A", "#5CC08A", "#E0607E", "#A88BEB", "#E8C547", "#4DC4C4", "#B0B0B0"]  # distinct hues
 STATE_NAMES = {
     "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California", "CO": "Colorado",
     "CT": "Connecticut", "DE": "Delaware", "DC": "District of Columbia", "FL": "Florida", "GA": "Georgia",
@@ -79,11 +80,13 @@ def build(chart: dict, result: dict, max_bars: int = 20):
         df = df[df[color].astype(str) != "Unknown"].reset_index(drop=True)
         note = "Unknown (banks with no institution record) is left out of the chart; it is in the table under How I got this."
     if chart["kind"] == "line":
+        df = df[df[y].notna()].reset_index(drop=True)          # no empty quarters on the axis (e.g. 2024Q3)
         enc = dict(x=alt.X(f"{x}:O", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
                    y=alt.Y(f"{y}:Q", title=y_title, scale=alt.Scale(zero=False), axis=alt.Axis(gridOpacity=0.3)),
                    tooltip=tooltip)
         if color:
-            enc["color"] = alt.Color(f"{color}:N", title=label(color), legend=alt.Legend(orient="bottom", columns=4))
+            enc["color"] = alt.Color(f"{color}:N", title=label(color), legend=alt.Legend(orient="bottom", columns=4,
+                                     labelLimit=260), scale=alt.Scale(range=SERIES))
         base = alt.Chart(df).encode(**enc)
         solid = {} if color else {"color": BAR}
         lines = base.mark_line(strokeWidth=2.5, **solid)

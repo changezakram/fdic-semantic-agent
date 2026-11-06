@@ -415,6 +415,36 @@ def check_claims(answer: dict, results: dict) -> list[str]:
 _PCT = re.compile(r"(?<![\w.])[-\u2212]?(\d[\d,]*\.?\d*)\s?%")
 
 
+_RANGE = re.compile(r"(?:between|range[sd]?\s+(?:from|between))\s+(-?\d[\d.]*)%\s+(?:and|to)\s+(-?\d[\d.]*)%", re.I)
+
+
+def check_ranges(answer: dict, results: dict) -> list[str]:
+    """'between 0.67% and 1.85%' must really bound every value of that metric for the groups the sentence is
+    about (all groups, or the one it names)."""
+    probs = []
+    texts = [(answer or {}).get("headline", "") or ""] + list((answer or {}).get("insights") or [])
+    for text in texts:
+        for sent in _SENT.split(text):
+            for m in _RANGE.finditer(sent):
+                lo, hi = sorted((float(m.group(1)), float(m.group(2))))
+                for r in results.values():
+                    rows = r.get("rows") or []
+                    dims = [d for d in (r.get("request", {}).get("dimensions") or []) if d != "period"]
+                    for met in _metrics_in(r.get("request", {}), rows):
+                        vals = [(row.get(dims[0]) if dims else None, row[met]) for row in rows
+                                if isinstance(row.get(met), (int, float))]
+                        if not any(abs(v - lo) < 0.006 for _, v in vals) or not any(abs(v - hi) < 0.006 for _, v in vals):
+                            continue                      # not this metric
+                        named = {g for g, _ in vals if g and str(g).split()[0].lower() in sent.lower()}
+                        scope = [v for g, v in vals if len(named) != 1 or g in named]
+                        out = [v for v in scope if v < lo - 0.006 or v > hi + 0.006]
+                        if out:
+                            probs.append(f'"{m.group(0)}" for {met} leaves out {min(out) if min(out) < lo else max(out):.2f}%. '
+                                         f"The real range is {min(scope):.2f}% to {max(scope):.2f}%. Fix the range or say "
+                                         "which values it excludes and why.")
+    return probs
+
+
 def check_percentages(answer: dict, results: dict, calc_values: list[float]) -> list[str]:
     """Every 'X%' in the headline and insights must trace to a governed percent value, a growth or
     change figure the layer returned, a concentration figure, or a calculate result."""
@@ -516,6 +546,7 @@ def run(client, model: str, layer: SemanticLayer, question: str, history: list[d
             if tu.name == "present_answer":
                 probs = (chart_problems(tu.input, results) + check_claims(tu.input, results)
                          + check_percentages(tu.input, results, calc_values) + answer_problems(tu.input, results)
+                         + check_ranges(tu.input, results)
                          if tu.input.get("answer_type") == "answer" else [])
                 if probs and chart_retries < 2:
                     chart_retries += 1
